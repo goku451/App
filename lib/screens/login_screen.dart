@@ -1,6 +1,8 @@
+// lib/screens/login_screen.dart
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import '../services/api_service.dart';
 
-// Login Screen - For existing users to sign in
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -13,12 +15,73 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _rememberMe = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await ApiService.login(
+        correoElectronico: _emailController.text.trim(),
+        contrasena: _passwordController.text,
+      );
+
+      if (response.success && response.data != null) {
+        // Mostrar mensaje de éxito
+        Fluttertoast.showToast(
+          msg: '¡Bienvenido ${response.data!.nombreCompleto}!',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+        );
+
+        // Navegar a home
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/home',
+            (route) => false,
+          );
+        }
+      } else {
+        // Mostrar error
+        Fluttertoast.showToast(
+          msg: response.message,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: 'Error inesperado: $e',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -68,6 +131,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Email field
                         TextFormField(
                           controller: _emailController,
+                          enabled: !_isLoading,
+                          keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             labelText: 'Correo electrónico',
                             border: OutlineInputBorder(
@@ -75,9 +140,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if (value == null || value.trim().isEmpty) {
                               return 'Por favor ingrese su correo';
-                            } else if (!value.contains('@')) {
+                            }
+                            
+                            final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+                            if (!emailRegex.hasMatch(value.trim())) {
                               return 'Por favor ingrese un correo válido';
                             }
                             return null;
@@ -88,6 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Password field
                         TextFormField(
                           controller: _passwordController,
+                          enabled: !_isLoading,
                           obscureText: true,
                           decoration: InputDecoration(
                             labelText: 'Contraseña',
@@ -112,17 +181,28 @@ class _LoginScreenState extends State<LoginScreen> {
                               children: [
                                 Checkbox(
                                   value: _rememberMe,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _rememberMe = value ?? false;
-                                    });
-                                  },
+                                  onChanged: _isLoading
+                                      ? null
+                                      : (value) {
+                                          setState(() {
+                                            _rememberMe = value ?? false;
+                                          });
+                                        },
                                 ),
                                 const Text('Recordarme'),
                               ],
                             ),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: _isLoading
+                                  ? null
+                                  : () {
+                                      // TODO: Implementar recuperar contraseña
+                                      Fluttertoast.showToast(
+                                        msg: 'Función próximamente disponible',
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                      );
+                                    },
                               child: const Text(
                                 '¿Olvidaste tu contraseña?',
                                 style: TextStyle(color: Colors.black54),
@@ -136,12 +216,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                // Navigate to home page after successful login
-                                Navigator.pushNamed(context, '/home');
-                              }
-                            },
+                            onPressed: _isLoading ? null : _login,
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
                               backgroundColor: const Color(0xFF41277A),
@@ -150,7 +225,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: const Text('Iniciar sesión'),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Text('Iniciar sesión'),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -158,9 +242,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Register link
                         Center(
                           child: TextButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/register');
-                            },
+                            onPressed: _isLoading
+                                ? null
+                                : () {
+                                    Navigator.pushNamed(context, '/register');
+                                  },
                             child: const Text(
                               '¿No tienes cuenta?',
                               style: TextStyle(color: Colors.black54),

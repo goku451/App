@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../models/user.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -7,10 +9,46 @@ class AccountScreen extends StatefulWidget {
   State<AccountScreen> createState() => _AccountScreenState();
 }
 
-
 class _AccountScreenState extends State<AccountScreen> {
   int _selectedIndex = 4; // Profile tab selected
-  final String userName = "Elmer Rivas";
+  String userName = "Usuario"; // Valor por defecto
+  bool _isLoadingUser = true;
+  User? currentUser; // Para acceder a más datos del usuario si es necesario
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  // Cargar datos del usuario actual
+  Future<void> _loadUserData() async {
+    try {
+      final user = await ApiService.getCurrentUser();
+      
+      if (user != null && mounted) {
+        setState(() {
+          currentUser = user;
+          userName = user.nombreCompleto;
+          _isLoadingUser = false;
+        });
+        print('✅ Usuario cargado en Account: $userName');
+      } else {
+        // Si no hay datos del usuario, usar nombre por defecto
+        setState(() {
+          userName = "Usuario";
+          _isLoadingUser = false;
+        });
+        print('⚠️ No se encontraron datos del usuario en Account');
+      }
+    } catch (e) {
+      print('❌ Error cargando datos del usuario en Account: $e');
+      setState(() {
+        userName = "Usuario";
+        _isLoadingUser = false;
+      });
+    }
+  }
 
 void _onItemTapped(int index) {
   setState(() {
@@ -37,7 +75,6 @@ void _onItemTapped(int index) {
   }
 }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,26 +86,25 @@ void _onItemTapped(int index) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Top bar with notifications
-              Row(
+                            Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Stack(
-                    clipBehavior: Clip.none,
                     children: [
-                      Icon(Icons.notifications_none, size: 28),
+                      const Icon(
+                        Icons.notifications_outlined,
+                        size: 24,
+                        color: Colors.black54,
+                      ),
                       Positioned(
-                        right: -4,
-                        top: -4,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.red,
-                          radius: 8,
-                          child: Text(
-                            "4",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        right: 3,
+                        top: 3,
+                        child: Container(
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
                           ),
                         ),
                       ),
@@ -113,29 +149,39 @@ void _onItemTapped(int index) {
                               color: Colors.grey[600],
                             ),
                           ),
-                          Text(
-                            userName,
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF41277A), // Color SmartSys
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Text(
-                              "Hazte Premium",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
+                          
+                          // ✅ NOMBRE DINÁMICO DEL USUARIO
+                          _isLoadingUser 
+                            ? Row(
+                                children: [
+                                  Container(
+                                    width: 140,
+                                    height: 22,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  SizedBox(
+                                    width: 14,
+                                    height: 14,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.grey[400],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Text(
+                                userName,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                          ),
+                          
+                          const SizedBox(height: 8),
                         ],
                       ),
                     ),

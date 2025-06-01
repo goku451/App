@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../models/user.dart';
 
 // Home Screen - Dashboard after login
 class MyHomePage extends StatefulWidget {
@@ -12,7 +14,42 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
-  final String userName = "Elmer Rivas";
+  String userName = "Usuario"; // Valor por defecto
+  bool _isLoadingUser = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  // Cargar datos del usuario actual
+  Future<void> _loadUserData() async {
+    try {
+      final user = await ApiService.getCurrentUser();
+      
+      if (user != null && mounted) {
+        setState(() {
+          userName = user.nombreCompleto;
+          _isLoadingUser = false;
+        });
+        print('✅ Usuario cargado: $userName');
+      } else {
+        // Si no hay datos del usuario, usar nombre por defecto
+        setState(() {
+          userName = "Usuario";
+          _isLoadingUser = false;
+        });
+        print('⚠️ No se encontraron datos del usuario');
+      }
+    } catch (e) {
+      print('❌ Error cargando datos del usuario: $e');
+      setState(() {
+        userName = "Usuario";
+        _isLoadingUser = false;
+      });
+    }
+  }
 
 void _onItemTapped(int index) {
   setState(() {
@@ -108,7 +145,7 @@ void _onItemTapped(int index) {
 
               const SizedBox(height: 20),
 
-              // Welcome text
+              // Welcome text with dynamic user name
               Text(
                 "Bienvenido",
                 style: TextStyle(
@@ -117,10 +154,38 @@ void _onItemTapped(int index) {
                   color: Colors.grey[600],
                 ),
               ),
-              Text(
-                userName,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
+              
+              // ✅ NOMBRE DINÁMICO DEL USUARIO
+              _isLoadingUser 
+                ? Row(
+                    children: [
+                      Container(
+                        width: 150,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                    ],
+                  )
+                : Text(
+                    userName,
+                    style: const TextStyle(
+                      fontSize: 24, 
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+              
               const SizedBox(height: 16),
 
               // Search bar

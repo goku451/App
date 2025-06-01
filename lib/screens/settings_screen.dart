@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import '../services/api_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -35,6 +37,73 @@ void _onItemTapped(int index) {
   }
 }
 
+  // Función para cerrar sesión
+  Future<void> _logout() async {
+    try {
+      // Limpiar token guardado
+      await ApiService.logout();
+      
+      // ✅ INMEDIATAMENTE navegar a Welcome y limpiar todo el stack
+      if (mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/', // Ir a ruta raíz (Welcome)
+          (route) => false, // Limpiar todo el stack de navegación
+        );
+      }
+      
+      // Mostrar mensaje después de navegar
+      Fluttertoast.showToast(
+        msg: 'Sesión cerrada correctamente',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
+      
+    } catch (e) {
+      // Mostrar error si algo sale mal
+      Fluttertoast.showToast(
+        msg: 'Error al cerrar sesión',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
+  // Mostrar diálogo de confirmación para cerrar sesión
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Cerrar Sesión'),
+          content: const Text('¿Estás seguro de que quieres cerrar sesión?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar diálogo
+              },
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar diálogo
+                _logout(); // Ejecutar logout
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF41277A),
+              ),
+              child: const Text('Cerrar Sesión'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,22 +119,21 @@ void _onItemTapped(int index) {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Stack(
-                    clipBehavior: Clip.none,
                     children: [
-                      Icon(Icons.notifications_none, size: 28),
+                      const Icon(
+                        Icons.notifications_outlined,
+                        size: 24,
+                        color: Colors.black54,
+                      ),
                       Positioned(
-                        right: -4,
-                        top: -4,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.red,
-                          radius: 8,
-                          child: Text(
-                            "4",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        right: 3,
+                        top: 3,
+                        child: Container(
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
                           ),
                         ),
                       ),
@@ -176,7 +244,7 @@ void _onItemTapped(int index) {
 
                     const SizedBox(height: 24),
 
-                    // Delete account button
+                    // ✅ BOTÓN DE CERRAR SESIÓN - ACTUALIZADO
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -190,18 +258,16 @@ void _onItemTapped(int index) {
                         ],
                       ),
                       child: ListTile(
-                        leading: Icon(Icons.delete_forever, color: Colors.red),
+                        leading: Icon(Icons.logout, color: const Color(0xFF41277A)),
                         title: Text(
-                          "Desactivar o eliminar cuenta",
+                          "Cerrar sesión",
                           style: TextStyle(
-                            color: Colors.red,
+                            color: const Color(0xFF41277A),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        trailing: Icon(Icons.chevron_right, color: Colors.red),
-                        onTap: () {
-                          // Handle delete account
-                        },
+                        trailing: Icon(Icons.chevron_right, color: const Color(0xFF41277A)),
+                        onTap: _showLogoutDialog, // ← Función de logout
                       ),
                     ),
 

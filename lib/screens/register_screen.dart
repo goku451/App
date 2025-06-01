@@ -1,6 +1,8 @@
+// lib/screens/register_screen.dart
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import '../services/api_service.dart';
 
-// Register Screen - For new users to create an account
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -14,6 +16,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -22,6 +26,68 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _register() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await ApiService.register(
+        nombre: _nameController.text.trim(),
+        apellido: _lastNameController.text.trim(),
+        correoElectronico: _emailController.text.trim(),
+        contrasena: _passwordController.text,
+      );
+
+      if (response.success && response.data != null) {
+        // Mostrar mensaje de éxito
+        Fluttertoast.showToast(
+          msg: response.message,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+        );
+
+        // Navegar a home
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/login',
+            (route) => false,
+          );
+        }
+      } else {
+        // Mostrar error
+        Fluttertoast.showToast(
+          msg: response.message,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: 'Error inesperado: $e',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -70,6 +136,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         // Name field
                         TextFormField(
                           controller: _nameController,
+                          enabled: !_isLoading,
                           decoration: InputDecoration(
                             labelText: 'Nombres',
                             border: OutlineInputBorder(
@@ -77,8 +144,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if (value == null || value.trim().isEmpty) {
                               return 'Por favor ingrese su nombre';
+                            }
+                            if (value.trim().length < 2) {
+                              return 'El nombre debe tener al menos 2 caracteres';
                             }
                             return null;
                           },
@@ -88,6 +158,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         // Last name field
                         TextFormField(
                           controller: _lastNameController,
+                          enabled: !_isLoading,
                           decoration: InputDecoration(
                             labelText: 'Apellidos',
                             border: OutlineInputBorder(
@@ -95,8 +166,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if (value == null || value.trim().isEmpty) {
                               return 'Por favor ingrese su apellido';
+                            }
+                            if (value.trim().length < 2) {
+                              return 'El apellido debe tener al menos 2 caracteres';
                             }
                             return null;
                           },
@@ -106,6 +180,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         // Email field
                         TextFormField(
                           controller: _emailController,
+                          enabled: !_isLoading,
+                          keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             labelText: 'Correo electrónico',
                             border: OutlineInputBorder(
@@ -113,9 +189,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if (value == null || value.trim().isEmpty) {
                               return 'Por favor ingrese su correo';
-                            } else if (!value.contains('@')) {
+                            }
+                            
+                            final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+                            if (!emailRegex.hasMatch(value.trim())) {
                               return 'Por favor ingrese un correo válido';
                             }
                             return null;
@@ -126,6 +205,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         // Password field
                         TextFormField(
                           controller: _passwordController,
+                          enabled: !_isLoading,
                           obscureText: true,
                           decoration: InputDecoration(
                             labelText: 'Contraseña',
@@ -148,12 +228,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                // Navigate to home page after successful registration
-                                Navigator.pushNamed(context, '/home');
-                              }
-                            },
+                            onPressed: _isLoading ? null : _register,
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
                               backgroundColor: const Color(0xFF41277A),
@@ -162,16 +237,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: const Text('Crear cuenta'),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Text('Crear cuenta'),
                           ),
                         ),
                         const SizedBox(height: 16),
 
                         // Login link
                         TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/login');
-                          },
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                                  Navigator.pushNamed(context, '/login');
+                                },
                           child: const Text(
                             '¿Ya tienes una cuenta?',
                             style: TextStyle(color: Colors.black54),
