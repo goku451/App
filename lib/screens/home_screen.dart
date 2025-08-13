@@ -14,7 +14,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
-  String userName = "Usuario"; // Valor por defecto
+  String? userName; // Valor por defecto
   bool _isLoadingUser = true;
 
   @override
@@ -27,7 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _loadUserData() async {
     try {
       final user = await ApiService.getCurrentUser();
-      
+
       if (user != null && mounted) {
         setState(() {
           userName = user.nombreCompleto;
@@ -51,30 +51,33 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-void _onItemTapped(int index) {
-  setState(() {
-    _selectedIndex = index;
-  });
-  
-  // Navigate based on selected index
-  switch (index) {
-    case 0:
-      // Already on home screen
-      break;
-    case 1:
-      Navigator.pushNamed(context, '/chats'); // Navega a chats
-      break;
-    case 2:
-      Navigator.pushNamed(context, '/institutions'); // ✅ NUEVO - Navega a instituciones
-      break;
-    case 3:
-      Navigator.pushNamed(context, '/calendar'); // Navega a calendario
-      break;
-    case 4:
-      Navigator.pushNamed(context, '/settings'); // Navega a configuración
-      break;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    // Navigate based on selected index
+    switch (index) {
+      case 0:
+        // Already on home screen
+        break;
+      case 1:
+        Navigator.pushNamed(context, '/chats'); // Navega a chats
+        break;
+      case 2:
+        Navigator.pushNamed(
+          context,
+          '/institutions',
+        ); // ✅ NUEVO - Navega a instituciones
+        break;
+      case 3:
+        Navigator.pushNamed(context, '/calendar'); // Navega a calendario
+        break;
+      case 4:
+        Navigator.pushNamed(context, '/settings'); // Navega a configuración
+        break;
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +121,7 @@ void _onItemTapped(int index) {
                     ],
                   ),
                   // Notification bell
-                   Stack(
+                  Stack(
                     children: [
                       const Icon(
                         Icons.notifications_outlined,
@@ -142,22 +145,21 @@ void _onItemTapped(int index) {
                 ],
               ),
 
-
               const SizedBox(height: 20),
 
               // Welcome text with dynamic user name
               Text(
                 "Bienvenido",
                 style: TextStyle(
-                  fontSize: 16, 
+                  fontSize: 16,
                   fontWeight: FontWeight.normal,
                   color: Colors.grey[600],
                 ),
               ),
-              
+
               // ✅ NOMBRE DINÁMICO DEL USUARIO
-              _isLoadingUser 
-                ? Row(
+              _isLoadingUser
+                  ? Row(
                     children: [
                       Container(
                         width: 150,
@@ -178,18 +180,18 @@ void _onItemTapped(int index) {
                       ),
                     ],
                   )
-                : Text(
-                    userName,
+                  : Text(
+                    userName ??
+                        "Usuario", // Aquí debería aparecer el nombre real
                     style: const TextStyle(
-                      fontSize: 24, 
-                      fontWeight: FontWeight.bold
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-              
               const SizedBox(height: 16),
 
               // Search bar
-             Container(
+              Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -206,7 +208,10 @@ void _onItemTapped(int index) {
                     hintText: "Buscar en SmartSys",
                     prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 16),
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 15,
+                      horizontal: 16,
+                    ),
                   ),
                 ),
               ),
@@ -316,10 +321,14 @@ void _onItemTapped(int index) {
                               backgroundColor: Colors.white,
                               radius: 25,
                               child: Image.asset(
-                                'assets/images/avatars/dulceN.png', 
+                                'assets/images/avatars/dulceN.png',
                                 height: 30,
                                 errorBuilder: (context, error, stackTrace) {
-                                  return Icon(Icons.cake, size: 25, color: Colors.pink);
+                                  return Icon(
+                                    Icons.cake,
+                                    size: 25,
+                                    color: Colors.pink,
+                                  );
                                 },
                               ),
                             ),
@@ -346,7 +355,8 @@ void _onItemTapped(int index) {
                     // First group card - Totopia
                     _buildModernGroupCard(
                       title: "Totopia",
-                      description: "Seguimiento de ventas y gestión de\ndonaciones ortográficas.",
+                      description:
+                          "Seguimiento de ventas y gestión de\ndonaciones ortográficas.",
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -364,7 +374,8 @@ void _onItemTapped(int index) {
                     // Second group card - Language Learning
                     _buildModernGroupCard(
                       title: "Aprendizaje de idiomas",
-                      description: "Mejora tu escritura y aprende nuevos\nidiomas con ejercicios interactivos.",
+                      description:
+                          "Mejora tu escritura y aprende nuevos\nidiomas con ejercicios interactivos.",
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -400,10 +411,7 @@ void _onItemTapped(int index) {
         elevation: 0,
         backgroundColor: Colors.white,
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: '',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat_bubble_outline),
             label: '',
@@ -412,14 +420,8 @@ void _onItemTapped(int index) {
             icon: Icon(Icons.account_balance_outlined),
             label: '',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.work_outline),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: '',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.work_outline), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: const Color(0xFF41277A),
@@ -456,9 +458,7 @@ void _onItemTapped(int index) {
         child: Stack(
           children: [
             // Background gradient
-            Container(
-              decoration: BoxDecoration(gradient: gradient),
-            ),
+            Container(decoration: BoxDecoration(gradient: gradient)),
             // Pattern overlay
             Container(
               decoration: BoxDecoration(
@@ -509,11 +509,7 @@ void _onItemTapped(int index) {
                   CircleAvatar(
                     backgroundColor: Colors.white.withOpacity(0.2),
                     radius: 22,
-                    child: Icon(
-                      icon,
-                      color: iconColor,
-                      size: 24,
-                    ),
+                    child: Icon(icon, color: iconColor, size: 24),
                   ),
                   const SizedBox(width: 8),
                   Icon(

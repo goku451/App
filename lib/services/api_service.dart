@@ -7,7 +7,7 @@ import '../models/user.dart';
 class ApiService {
   // RECORDAR CAMBIAR SOLO LA IP A LA IP LOCAL DE LA COMPUTADORA
   // SI NO SABEN CUAL ES ESCRIBIR IPCONFIG EN CMD
-  static const String baseUrl = 'http://192.168.31.29:3000';
+  static const String baseUrl = 'http://192.168.1.6:3000';
 
   // Headers por defecto
   static Map<String, String> get defaultHeaders => {
@@ -35,11 +35,9 @@ class ApiService {
       print('🚀 Enviando registro a: $url');
       print('📦 Datos: $body');
 
-      final response = await http.post(
-        url,
-        headers: defaultHeaders,
-        body: body,
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .post(url, headers: defaultHeaders, body: body)
+          .timeout(const Duration(seconds: 10));
 
       print('📡 Respuesta del servidor: ${response.statusCode}');
       print('📄 Cuerpo de respuesta: ${response.body}');
@@ -49,6 +47,9 @@ class ApiService {
       if (response.statusCode == 201 && responseData['ok'] == true) {
         // Crear usuario desde la respuesta
         final user = User.fromJson(responseData['data']);
+
+        // Guardar usuario en SharedPreferences
+        await _saveUserData(user);
 
         print('🔍 Datos del usuario desde API: ${responseData['data']}');
         print('✅ Usuario guardado: ${user.nombreCompleto}');
@@ -65,7 +66,8 @@ class ApiService {
     } catch (e) {
       print('❌ Error en registro: $e');
       return ApiResponse.error(
-        message: 'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
       );
     }
   }
@@ -86,22 +88,22 @@ class ApiService {
       print('🚀 Enviando login a: $url');
       print('📦 Datos: $body');
 
-      final response = await http.post(
-        url,
-        headers: defaultHeaders,
-        body: body,
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .post(url, headers: defaultHeaders, body: body)
+          .timeout(const Duration(seconds: 10));
 
       print('📡 Respuesta del servidor: ${response.statusCode}');
       print('📄 Cuerpo de respuesta: ${response.body}');
 
       final responseData = json.decode(response.body);
 
-      if (response.statusCode == 200 && responseData['ok '] == true) {
+      if (response.statusCode == 200 && responseData['ok'] == true) {
         // Crear usuario desde la respuesta
         final user = User.fromJson(responseData['data']);
 
-        // Debug: Imprimir los datos antes de crear el usuario
+        // Guardar usuario en SharedPreferences
+        await _saveUserData(user);
+
         print('🔍 Datos del usuario desde API: ${responseData['data']}');
         print('✅ Usuario logueado: ${user.nombreCompleto}');
 
@@ -117,7 +119,8 @@ class ApiService {
     } catch (e) {
       print('❌ Error en login: $e');
       return ApiResponse.error(
-        message: 'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
       );
     }
   }
@@ -187,13 +190,12 @@ class ApiService {
     }
   }
 
-  // Actualizar perfil de usuario
+  //Actualizar perfil de usuario
   static Future<ApiResponse<User>> updateProfile({
     required int idUsuario,
     required String nombre,
     required String apellido,
     String? telefono,
-    String? genero,
     String? biografia,
   }) async {
     try {
@@ -204,25 +206,24 @@ class ApiService {
         'nombre': nombre,
         'apellido': apellido,
         'telefono': telefono,
-        'genero': genero,
         'biografia': biografia,
       });
 
       print('🚀 Enviando actualización de perfil a: $url');
       print('📦 Datos: $body');
 
-      final response = await http.put(
-        url,
-        headers: defaultHeaders,
-        body: body,
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .post(url, headers: defaultHeaders, body: body)
+          .timeout(const Duration(seconds: 10));
 
       print('📡 Respuesta del servidor: ${response.statusCode}');
       print('📄 Cuerpo de respuesta: ${response.body}');
 
       final responseData = json.decode(response.body);
 
-      if (response.statusCode == 200 && responseData['success'] == true) {
+      if (response.statusCode == 200 &&
+          responseData['success'] == true &&
+          responseData['data'] != null) {
         // Crear usuario actualizado desde la respuesta
         final updatedUser = User.fromJson(responseData['data']);
 
@@ -243,7 +244,8 @@ class ApiService {
     } catch (e) {
       print('❌ Error actualizando perfil: $e');
       return ApiResponse.error(
-        message: 'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
       );
     }
   }
@@ -270,7 +272,9 @@ class ApiService {
       request.files.add(file);
 
       // Enviar request
-      var streamedResponse = await request.send().timeout(const Duration(seconds: 30));
+      var streamedResponse = await request.send().timeout(
+        const Duration(seconds: 30),
+      );
       var response = await http.Response.fromStream(streamedResponse);
 
       print('📡 Respuesta del servidor: ${response.statusCode}');
@@ -299,7 +303,8 @@ class ApiService {
     } catch (e) {
       print('❌ Error subiendo foto: $e');
       return ApiResponse.error(
-        message: 'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
       );
     }
   }
@@ -311,25 +316,13 @@ class ApiResponse<T> {
   final T? data;
   final String message;
 
-  ApiResponse._({
-    required this.success,
-    this.data,
-    required this.message,
-  });
+  ApiResponse._({required this.success, this.data, required this.message});
 
   factory ApiResponse.success({required T data, required String message}) {
-    return ApiResponse._(
-      success: true,
-      data: data,
-      message: message,
-    );
+    return ApiResponse._(success: true, data: data, message: message);
   }
 
   factory ApiResponse.error({required String message}) {
-    return ApiResponse._(
-      success: false,
-      data: null,
-      message: message,
-    );
+    return ApiResponse._(success: false, data: null, message: message);
   }
 }

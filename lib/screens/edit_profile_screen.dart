@@ -22,7 +22,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String userName = "Usuario";
   String userEmail = "email@example.com";
   String userPhone = "";
-  String userGender = "";
   String userBio = "";
 
   @override
@@ -42,7 +41,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           userName = user.nombreCompleto;
           userEmail = user.correoElectronico;
           userPhone = user.telefono ?? "";
-          userGender = user.genero ?? "";
           userBio = user.biografia ?? "";
           _isLoadingUser = false;
         });
@@ -77,7 +75,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       String nombre = currentUser!.nombre;
       String apellido = currentUser!.apellido;
       String? telefono = currentUser!.telefono;
-      String? genero = currentUser!.genero;
       String? biografia = currentUser!.biografia;
 
       // Actualizar el campo específico
@@ -94,9 +91,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         case 'Teléfono':
           telefono = nuevoValor.isEmpty ? null : nuevoValor;
           break;
-        case 'Género':
-          genero = nuevoValor.isEmpty ? null : nuevoValor;
-          break;
         case 'Descripción':
           biografia = nuevoValor.isEmpty ? null : nuevoValor;
           break;
@@ -108,7 +102,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         nombre: nombre,
         apellido: apellido,
         telefono: telefono,
-        genero: genero,
         biografia: biografia,
       );
 
@@ -118,7 +111,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           currentUser = response.data;
           userName = response.data!.nombreCompleto;
           userPhone = response.data!.telefono ?? "";
-          userGender = response.data!.genero ?? "";
           userBio = response.data!.biografia ?? "";
         });
 
@@ -277,7 +269,7 @@ void _onItemTapped(int index) {
                                 CircleAvatar(
                                   radius: 50,
                                   backgroundColor: Colors.grey[300],
-                                  backgroundImage: AssetImage('assets/profile_image.jpg'),
+                                  backgroundImage: AssetImage('assets/plat.png'),
                                   child: Icon(Icons.person, size: 60, color: Colors.grey[600]),
                                 ),
                                 const SizedBox(height: 12),
@@ -324,8 +316,6 @@ void _onItemTapped(int index) {
                                 _buildNonEditableProfileField("Correo electrónico", userEmail),
                                 const SizedBox(height: 16),
                                 _buildEditableProfileField("Teléfono", userPhone.isEmpty ? "Sin teléfono" : userPhone),
-                                const SizedBox(height: 16),
-                                _buildEditableProfileField("Género", userGender.isEmpty ? "Sin especificar" : userGender),
                                 const SizedBox(height: 16),
                                 _buildEditableProfileField("Descripción", userBio.isEmpty ? "Sin biografía aún" : userBio),
                               ],
@@ -601,8 +591,6 @@ void _onItemTapped(int index) {
         return 'Ingresa tu nombre completo';
       case 'Teléfono':
         return 'Ej: +503 1234-5678';
-      case 'Género':
-        return 'Ej: Masculino, Femenino, Otro';
       case 'Descripción':
         return 'Cuéntanos un poco sobre ti...';
       default:

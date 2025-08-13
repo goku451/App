@@ -1,11 +1,9 @@
-// lib/models/user.dart
 class User {
   final int idUsuario;
   final String nombre;
   final String apellido;
   final String correoElectronico;
   final String? telefono;
-  final String? genero;
   final String tipoUsuario;
   final String estadoCuenta;
   final DateTime? fechaCreacion;
@@ -18,7 +16,6 @@ class User {
     required this.apellido,
     required this.correoElectronico,
     this.telefono,
-    this.genero,
     required this.tipoUsuario,
     required this.estadoCuenta,
     this.fechaCreacion,
@@ -34,12 +31,12 @@ class User {
       apellido: json['apellido'] ?? '',
       correoElectronico: json['correoElectronico'] ?? '',
       telefono: json['telefono'],
-      genero: json['genero'],
       tipoUsuario: json['tipoUsuario'] ?? 'Usuario',
       estadoCuenta: json['estadoCuenta'] ?? 'Activo',
-      fechaCreacion: json['fechaCreacion'] != null 
-          ? DateTime.tryParse(json['fechaCreacion'].toString()) 
-          : null,
+      fechaCreacion:
+          json['fechaCreacion'] != null
+              ? DateTime.tryParse(json['fechaCreacion'].toString())
+              : null,
       biografia: json['biografia'],
       fotoPerfil: json['foto_perfil'], // ← NUEVO: Mapear foto_perfil
     );
@@ -63,7 +60,6 @@ class User {
       'apellido': apellido,
       'correoElectronico': correoElectronico,
       'telefono': telefono,
-      'genero': genero,
       'tipoUsuario': tipoUsuario,
       'estadoCuenta': estadoCuenta,
       'fechaCreacion': fechaCreacion?.toIso8601String(),
@@ -89,7 +85,6 @@ class User {
     String? apellido,
     String? correoElectronico,
     String? telefono,
-    String? genero,
     String? tipoUsuario,
     String? estadoCuenta,
     DateTime? fechaCreacion,
@@ -102,7 +97,6 @@ class User {
       apellido: apellido ?? this.apellido,
       correoElectronico: correoElectronico ?? this.correoElectronico,
       telefono: telefono ?? this.telefono,
-      genero: genero ?? this.genero,
       tipoUsuario: tipoUsuario ?? this.tipoUsuario,
       estadoCuenta: estadoCuenta ?? this.estadoCuenta,
       fechaCreacion: fechaCreacion ?? this.fechaCreacion,
