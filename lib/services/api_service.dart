@@ -7,7 +7,7 @@ import '../models/user.dart';
 class ApiService {
   // RECORDAR CAMBIAR SOLO LA IP A LA IP LOCAL DE LA COMPUTADORA
   // SI NO SABEN CUAL ES ESCRIBIR IPCONFIG EN CMD
-  static const String baseUrl = 'http://192.168.1.6:3000';
+  static const String baseUrl = 'http://10.0.2.2:3000';
 
   // Headers por defecto
   static Map<String, String> get defaultHeaders => {

@@ -25,13 +25,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
       final response = await ApiService.login(
@@ -40,7 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (response.success && response.data != null) {
-        // Mostrar mensaje de éxito
         Fluttertoast.showToast(
           msg: '¡Bienvenido ${response.data!.nombreCompleto}!',
           toastLength: Toast.LENGTH_LONG,
@@ -49,16 +44,14 @@ class _LoginScreenState extends State<LoginScreen> {
           textColor: Colors.white,
         );
 
-        // Navegar a home
         if (mounted) {
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/home',
-            (route) => false,
+                (route) => false,
           );
         }
       } else {
-        // Mostrar error
         Fluttertoast.showToast(
           msg: response.message,
           toastLength: Toast.LENGTH_LONG,
@@ -76,104 +69,124 @@ class _LoginScreenState extends State<LoginScreen> {
         textColor: Colors.white,
       );
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.white,
+      backgroundColor: Colors.white,
+      body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
 
               // Logo
               Image.asset('assets/logo.png', height: 40),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
 
-              // Welcome back title
+              // Título principal
               const Text(
-                'Bienvenido de\nnuevo!',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                '¡Bienvenido de nuevo!',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2E2E3A),
+                ),
               ),
               const SizedBox(height: 16),
 
-              // Login description
+              // Subtítulo
               const Text(
-                'Inicio de sesión',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                'Iniciar sesión',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF41277A),
+                ),
               ),
               const SizedBox(height: 8),
 
+              // Descripción
               const Text(
-                'Inicia Sesión para descubrir el nuevo contenido que te ofrecemos',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
+                'Inicia sesión para descubrir el nuevo contenido que te ofrecemos.',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF7B7B8A),
+                ),
               ),
               const SizedBox(height: 24),
 
-              // Login form
+              // Formulario
               Expanded(
                 child: Form(
                   key: _formKey,
                   child: SingleChildScrollView(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Email field
+                        // Campo email
                         TextFormField(
                           controller: _emailController,
                           enabled: !_isLoading,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
-                            labelText: 'Correo electrónico',
+                            hintText: 'Correo electrónico',
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: Color(0xFF41277A)),
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Por favor ingrese su correo';
-                            }
-                            
+                            if (value == null || value.trim().isEmpty) return 'Por favor ingrese su correo';
                             final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
-                            if (!emailRegex.hasMatch(value.trim())) {
-                              return 'Por favor ingrese un correo válido';
-                            }
+                            if (!emailRegex.hasMatch(value.trim())) return 'Por favor ingrese un correo válido';
                             return null;
                           },
                         ),
                         const SizedBox(height: 16),
 
-                        // Password field
+                        // Campo contraseña
                         TextFormField(
                           controller: _passwordController,
                           enabled: !_isLoading,
                           obscureText: true,
                           decoration: InputDecoration(
-                            labelText: 'Contraseña',
+                            hintText: 'Contraseña',
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: Color(0xFF41277A)),
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor ingrese su contraseña';
-                            }
+                            if (value == null || value.isEmpty) return 'Por favor ingrese su contraseña';
                             return null;
                           },
                         ),
                         const SizedBox(height: 8),
 
-                        // Remember me and forgot password row
+                        // Recordarme + Olvidé contraseña
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -184,10 +197,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onChanged: _isLoading
                                       ? null
                                       : (value) {
-                                          setState(() {
-                                            _rememberMe = value ?? false;
-                                          });
-                                        },
+                                    setState(() {
+                                      _rememberMe = value ?? false;
+                                    });
+                                  },
                                 ),
                                 const Text('Recordarme'),
                               ],
@@ -196,61 +209,58 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: _isLoading
                                   ? null
                                   : () {
-                                      // TODO: Implementar recuperar contraseña
-                                      Fluttertoast.showToast(
-                                        msg: 'Función próximamente disponible',
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                      );
-                                    },
+                                Fluttertoast.showToast(
+                                  msg: 'Función próximamente disponible',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                );
+                              },
                               child: const Text(
                                 '¿Olvidaste tu contraseña?',
-                                style: TextStyle(color: Colors.black54),
+                                style: TextStyle(color: Color(0xFF7B7B8A)),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 32),
 
-                        // Login button
+                        // Botón login (texto blanco sin sombra)
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _login,
                             style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
                               backgroundColor: const Color(0xFF41277A),
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              foregroundColor: Colors.white, // Texto blanco
+                              textStyle: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                shadows: [], // Sin sombra
                               ),
                             ),
                             child: _isLoading
                                 ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2,
-                                    ),
-                                  )
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                            )
                                 : const Text('Iniciar sesión'),
                           ),
                         ),
                         const SizedBox(height: 16),
 
-                        // Register link
-                        Center(
-                          child: TextButton(
-                            onPressed: _isLoading
-                                ? null
-                                : () {
-                                    Navigator.pushNamed(context, '/register');
-                                  },
-                            child: const Text(
-                              '¿No tienes cuenta?',
-                              style: TextStyle(color: Colors.black54),
-                            ),
+                        // Link registro
+                        TextButton(
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                            Navigator.pushNamed(context, '/register');
+                          },
+                          child: const Text(
+                            '¿No tienes una cuenta?',
+                            style: TextStyle(color: Color(0xFF7B7B8A)),
                           ),
                         ),
                       ],
@@ -259,10 +269,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
 
-              // Help icon at bottom
+              // Icono ayuda
               const Align(
                 alignment: Alignment.centerLeft,
-                child: Icon(Icons.help_outline, color: Colors.grey, size: 24),
+                child: Icon(Icons.help_outline, color: Color(0xFFB0B0B8), size: 24),
               ),
             ],
           ),
