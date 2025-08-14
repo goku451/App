@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 class User {
   final int idUsuario;
   final String nombre;
@@ -8,7 +11,12 @@ class User {
   final String estadoCuenta;
   final DateTime? fechaCreacion;
   final String? biografia;
-  final String? fotoPerfil; // ← NUEVO: Campo para foto de perfil
+
+  /// Foto en Base64 (para guardar en SharedPreferences o enviar a la API)
+  final String? fotoPerfilBase64;
+
+  /// Bytes de la foto (para usar con Image.memory)
+  final Uint8List? fotoBytes;
 
   User({
     required this.idUsuario,
@@ -20,11 +28,35 @@ class User {
     required this.estadoCuenta,
     this.fechaCreacion,
     this.biografia,
-    this.fotoPerfil, // ← NUEVO
+    this.fotoPerfilBase64,
+    this.fotoBytes,
   });
 
-  // Crear usuario desde JSON (respuesta de la API)
+  /// Crear usuario desde JSON (respuesta de la API)
   factory User.fromJson(Map<String, dynamic> json) {
+    Uint8List? bytes;
+    String? base64Str;
+
+    final foto = json['foto_perfil'];
+    if (foto != null) {
+      if (foto is String && foto.isNotEmpty) {
+        try {
+          bytes = base64Decode(foto);
+          base64Str = foto;
+        } catch (e) {
+          print('❌ Error decodificando base64: $e');
+        }
+      } else if (foto is Map && foto['data'] != null) {
+        try {
+          List<dynamic> dataList = foto['data'];
+          bytes = Uint8List.fromList(dataList.map((e) => e as int).toList());
+          base64Str = base64Encode(bytes);
+        } catch (e) {
+          print('❌ Error convirtiendo Buffer a Uint8List: $e');
+        }
+      }
+    }
+
     return User(
       idUsuario: _parseId(json['idUsuario']),
       nombre: json['nombre'] ?? '',
@@ -33,26 +65,16 @@ class User {
       telefono: json['telefono'],
       tipoUsuario: json['tipoUsuario'] ?? 'Usuario',
       estadoCuenta: json['estadoCuenta'] ?? 'Activo',
-      fechaCreacion:
-          json['fechaCreacion'] != null
-              ? DateTime.tryParse(json['fechaCreacion'].toString())
-              : null,
+      fechaCreacion: json['fechaCreacion'] != null
+          ? DateTime.tryParse(json['fechaCreacion'].toString())
+          : null,
       biografia: json['biografia'],
-      fotoPerfil: json['foto_perfil'], // ← NUEVO: Mapear foto_perfil
+      fotoPerfilBase64: base64Str,
+      fotoBytes: bytes,
     );
   }
 
-  // Método helper para convertir ID de cualquier tipo a int
-  static int _parseId(dynamic id) {
-    if (id == null) return 0;
-    if (id is int) return id;
-    if (id is String) {
-      return int.tryParse(id) ?? 0;
-    }
-    return 0;
-  }
-
-  // Convertir usuario a JSON (para enviar a la API)
+  /// Convertir usuario a JSON (para enviar a la API)
   Map<String, dynamic> toJson() {
     return {
       'idUsuario': idUsuario,
@@ -64,21 +86,14 @@ class User {
       'estadoCuenta': estadoCuenta,
       'fechaCreacion': fechaCreacion?.toIso8601String(),
       'biografia': biografia,
-      'foto_perfil': fotoPerfil, // ← NUEVO
+      'foto_perfil': fotoPerfilBase64,
     };
   }
 
-  // Método para obtener nombre completo
+  /// Obtener nombre completo
   String get nombreCompleto => '$nombre $apellido';
 
-  // Método para obtener URL completa de foto de perfil
-  String? getPhotoUrl(String baseUrl) {
-    if (fotoPerfil == null || fotoPerfil!.isEmpty) return null;
-    if (fotoPerfil!.startsWith('http')) return fotoPerfil; // URL completa
-    return '$baseUrl/$fotoPerfil'; // URL relativa
-  }
-
-  // Copiar usuario con nuevos valores
+  /// Copiar usuario con nuevos valores
   User copyWith({
     int? idUsuario,
     String? nombre,
@@ -89,7 +104,8 @@ class User {
     String? estadoCuenta,
     DateTime? fechaCreacion,
     String? biografia,
-    String? fotoPerfil, // ← NUEVO
+    String? fotoPerfilBase64,
+    Uint8List? fotoBytes,
   }) {
     return User(
       idUsuario: idUsuario ?? this.idUsuario,
@@ -101,12 +117,21 @@ class User {
       estadoCuenta: estadoCuenta ?? this.estadoCuenta,
       fechaCreacion: fechaCreacion ?? this.fechaCreacion,
       biografia: biografia ?? this.biografia,
-      fotoPerfil: fotoPerfil ?? this.fotoPerfil, // ← NUEVO
+      fotoPerfilBase64: fotoPerfilBase64 ?? this.fotoPerfilBase64,
+      fotoBytes: fotoBytes ?? this.fotoBytes,
     );
   }
 
   @override
   String toString() {
-    return 'User{idUsuario: $idUsuario, nombreCompleto: $nombreCompleto, email: $correoElectronico, foto: $fotoPerfil}';
+    return 'User{idUsuario: $idUsuario, nombreCompleto: $nombreCompleto, email: $correoElectronico, fotoBase64: ${fotoPerfilBase64 != null ? "Sí" : "No"}}';
+  }
+
+  /// Helper para convertir ID a int
+  static int _parseId(dynamic id) {
+    if (id == null) return 0;
+    if (id is int) return id;
+    if (id is String) return int.tryParse(id) ?? 0;
+    return 0;
   }
 }

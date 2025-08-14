@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../services/api_service.dart';
 import '../models/user.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -19,6 +21,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool _isSaving = false;
   
   // Valores editables
+  String userLastName = "";
   String userName = "Usuario";
   String userEmail = "email@example.com";
   String userPhone = "";
@@ -34,11 +37,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> _loadUserData() async {
     try {
       final user = await ApiService.getCurrentUser();
-      
+
       if (user != null && mounted) {
         setState(() {
           currentUser = user;
-          userName = user.nombreCompleto;
+          userName = user.nombre;
+          userLastName = user.apellido;
           userEmail = user.correoElectronico;
           userPhone = user.telefono ?? "";
           userBio = user.biografia ?? "";
@@ -80,36 +84,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       // Actualizar el campo específico
       switch (campo) {
         case 'Nombre':
-          final nombreParts = nuevoValor.split(' ');
-          if (nombreParts.length >= 2) {
-            nombre = nombreParts.first;
-            apellido = nombreParts.sublist(1).join(' ');
-          } else {
-            nombre = nuevoValor;
-          }
+          nombre = nuevoValor;
+          break;
+        case 'Apellido':
+          apellido = nuevoValor;
           break;
         case 'Teléfono':
           telefono = nuevoValor.isEmpty ? null : nuevoValor;
+          userPhone = nuevoValor;
           break;
         case 'Descripción':
           biografia = nuevoValor.isEmpty ? null : nuevoValor;
+          userBio = nuevoValor;
           break;
       }
 
       // Llamar a la API
-      final response = await ApiService.updateProfile(
+      final response = await ApiService.updateProfileWithPhoto(
         idUsuario: currentUser!.idUsuario,
-        nombre: nombre,
-        apellido: apellido,
-        telefono: telefono,
-        biografia: biografia,
       );
 
       if (response.success && response.data != null) {
         // Actualizar datos locales
         setState(() {
           currentUser = response.data;
-          userName = response.data!.nombreCompleto;
+          userName = response.data!.nombre;
+          userLastName = response.data!.apellido;
           userPhone = response.data!.telefono ?? "";
           userBio = response.data!.biografia ?? "";
         });
@@ -267,10 +267,10 @@ void _onItemTapped(int index) {
                             child: Column(
                               children: [
                                 CircleAvatar(
-                                  radius: 50,
-                                  backgroundColor: Colors.grey[300],
-                                  backgroundImage: AssetImage('assets/plat.png'),
-                                  child: Icon(Icons.person, size: 60, color: Colors.grey[600]),
+                                  radius: 40,
+                                  backgroundImage: currentUser?.fotoBytes != null
+                                      ? MemoryImage(currentUser!.fotoBytes!)
+                                      : const AssetImage('assets/plat.png'),
                                 ),
                                 const SizedBox(height: 12),
                                 TextButton(
@@ -312,6 +312,8 @@ void _onItemTapped(int index) {
                             child: ListView(
                               children: [
                                 _buildEditableProfileField("Nombre", userName),
+                                const SizedBox(height: 16),
+                                _buildEditableProfileField("Apellido", userLastName),
                                 const SizedBox(height: 16),
                                 _buildNonEditableProfileField("Correo electrónico", userEmail),
                                 const SizedBox(height: 16),
@@ -503,7 +505,7 @@ void _onItemTapped(int index) {
               ),
               const SizedBox(height: 20),
               ListTile(
-                leading: Icon(Icons.camera_alt, color: const Color(0xFF41277A)), // Color SmartSys
+                leading: Icon(Icons.camera_alt, color: Color(0xFF41277A)),
                 title: Text("Tomar foto"),
                 onTap: () {
                   Navigator.pop(context);
@@ -515,15 +517,29 @@ void _onItemTapped(int index) {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.photo_library, color: const Color(0xFF41277A)), // Color SmartSys
+                leading: Icon(Icons.photo_library, color: Color(0xFF41277A)),
                 title: Text("Elegir de galería"),
-                onTap: () {
-                  Navigator.pop(context);
-                  Fluttertoast.showToast(
-                    msg: 'Funcionalidad de galería próximamente disponible',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                  );
+                onTap: () async {
+                  Navigator.pop(context); // Cierra el modal
+
+                  final picker = ImagePicker();
+                  final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+                  if (pickedFile != null && currentUser != null) {
+                    final response = await ApiService.updateProfileWithPhoto(
+                      idUsuario: currentUser!.idUsuario,
+                        pickedFile: pickedFile,
+                    );
+
+                    if (response.success) {
+                      setState(() {
+                        currentUser = response.data;
+                      });
+                      Fluttertoast.showToast(msg: 'Perfil actualizado con éxito');
+                    } else {
+                      Fluttertoast.showToast(msg: response.message);
+                    }
+                  }
                 },
               ),
             ],

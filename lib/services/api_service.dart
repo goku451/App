@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ApiService {
   // RECORDAR CAMBIAR SOLO LA IP A LA IP LOCAL DE LA COMPUTADORA
   // SI NO SABEN CUAL ES ESCRIBIR IPCONFIG EN CMD
-  static const String baseUrl = 'http://192.168.1.6:3000';
+  static const String baseUrl = 'http://192.168.56.1:3000';
 
   // Headers por defecto
   static Map<String, String> get defaultHeaders => {
@@ -190,7 +191,6 @@ class ApiService {
     }
   }
 
-  //Actualizar perfil de usuario
   static Future<ApiResponse<User>> updateProfile({
     required int idUsuario,
     required String nombre,
@@ -245,70 +245,63 @@ class ApiService {
       print('❌ Error actualizando perfil: $e');
       return ApiResponse.error(
         message:
-            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+        'Error de conexión. Verifica tu internet y que la API esté funcionando.',
       );
     }
   }
 
-  // Subir foto de perfil
-  static Future<ApiResponse<User>> uploadProfilePhoto({
+  static Future<ApiResponse<User>> updateProfileWithPhoto({
     required int idUsuario,
-    required String imagePath,
+    XFile? pickedFile, // ahora usamos XFile directamente desde image_picker
   }) async {
     try {
-      final url = Uri.parse('$baseUrl/subirFotoPerfil');
-
-      print('📸 Subiendo foto de perfil a: $url');
-      print('📁 Ruta de imagen: $imagePath');
-
-      // Crear multipart request
+      final url = Uri.parse('$baseUrl/actualizarPerfilImg');
       var request = http.MultipartRequest('POST', url);
 
-      // Agregar campos
+      // Campo de texto
       request.fields['idUsuario'] = idUsuario.toString();
 
-      // Agregar archivo
-      var file = await http.MultipartFile.fromPath('photo', imagePath);
-      request.files.add(file);
+      // Foto opcional
+      if (pickedFile != null) {
+        final bytes = await pickedFile.readAsBytes();
+        final multipartFile = http.MultipartFile.fromBytes(
+          'fotoPerfil',
+          bytes,
+          filename: pickedFile.name,
+        );
+        request.files.add(multipartFile);
+      }
 
-      // Enviar request
-      var streamedResponse = await request.send().timeout(
-        const Duration(seconds: 30),
-      );
+      // Enviar
+      var streamedResponse = await request.send().timeout(const Duration(seconds: 30));
       var response = await http.Response.fromStream(streamedResponse);
 
-      print('📡 Respuesta del servidor: ${response.statusCode}');
-      print('📄 Cuerpo de respuesta: ${response.body}');
+      print('📡 Respuesta: ${response.statusCode}');
+      print('📄 Cuerpo: ${response.body}');
 
       final responseData = json.decode(response.body);
 
-      if (response.statusCode == 200 && responseData['success'] == true) {
-        // Crear usuario actualizado desde la respuesta
+      if (response.statusCode == 200 && responseData['ok'] == true) {
         final updatedUser = User.fromJson(responseData['data']);
-
-        // Actualizar datos guardados localmente
         await _saveUserData(updatedUser);
-
-        print('✅ Foto subida: ${updatedUser.nombreCompleto}');
-
         return ApiResponse.success(
           data: updatedUser,
-          message: responseData['message'] ?? 'Foto actualizada exitosamente',
+          message: responseData['message'] ?? 'Perfil actualizado con éxito',
         );
       } else {
         return ApiResponse.error(
-          message: responseData['message'] ?? 'Error subiendo foto',
+          message: responseData['message'] ?? 'Error actualizando perfil',
         );
       }
     } catch (e) {
-      print('❌ Error subiendo foto: $e');
+      print('❌ Error actualizando perfil con foto: $e');
       return ApiResponse.error(
-        message:
-            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+        message: 'Error de conexión. Verifica tu internet y que la API esté funcionando.',
       );
     }
   }
 }
+
 
 // Clase para manejar respuestas de la API
 class ApiResponse<T> {
