@@ -134,8 +134,9 @@ void _onItemTapped(int index) {
                     CircleAvatar(
                       radius: 35,
                       backgroundColor: Colors.grey[300],
-                      backgroundImage: AssetImage('assets/profile_image.jpg'),
-                      child: Icon(Icons.person, size: 40, color: Colors.grey[600]),
+                      backgroundImage: currentUser?.fotoBytes != null
+                          ? MemoryImage(currentUser!.fotoBytes!)
+                          : const AssetImage('assets/plat.png'),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
