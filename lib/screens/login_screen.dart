@@ -16,6 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _rememberMe = false;
   bool _isLoading = false;
+  bool _obscurePassword = true; // Variable para controlar visibilidad de contraseña
 
   @override
   void dispose() {
@@ -158,11 +159,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Campo contraseña
+                        // Campo contraseña con toggle de visibilidad
                         TextFormField(
                           controller: _passwordController,
                           enabled: !_isLoading,
-                          obscureText: true,
+                          obscureText: _obscurePassword,
                           decoration: InputDecoration(
                             hintText: 'Contraseña',
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -177,6 +178,19 @@ class _LoginScreenState extends State<LoginScreen> {
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(color: Color(0xFF41277A)),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                                color: const Color(0xFF7B7B8A),
+                              ),
+                              onPressed: _isLoading
+                                  ? null
+                                  : () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
                             ),
                           ),
                           validator: (value) {

@@ -12,30 +12,30 @@ class _CalendarScreenState extends State<CalendarScreen> {
   DateTime selectedDate = DateTime.now();
   DateTime currentMonth = DateTime.now();
 
- void _onItemTapped(int index) {
-  setState(() {
-    _selectedIndex = index;
-  });
-  
-  // Navigate based on selected index
-  switch (index) {
-    case 0:
-      Navigator.pushReplacementNamed(context, '/home');
-      break;
-    case 1:
-      Navigator.pushReplacementNamed(context, '/chats');
-      break;
-    case 2:
-      Navigator.pushNamed(context, '/institutions'); // ✅ NUEVO - Navega a instituciones
-      break;
-    case 3:
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    // Navigate based on selected index
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/chats');
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/institutions'); // ✅ NUEVO - Navega a instituciones
+        break;
+      case 3:
       // Already on calendar screen
-      break;
-    case 4:
-      Navigator.pushNamed(context, '/settings');
-      break;
+        break;
+      case 4:
+        Navigator.pushNamed(context, '/settings');
+        break;
+    }
   }
-}
 
   // Sample events data
   Map<DateTime, List<CalendarEvent>> events = {
@@ -64,63 +64,55 @@ class _CalendarScreenState extends State<CalendarScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top bar with notifications
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Logo section
-                  Row(
-                    children: [
-                      Image.asset(
-                        'assets/logo.png',
-                        width: 24,
-                        height: 24,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(
-                            Icons.star_outline,
-                            size: 24,
-                            color: Color(0xFF41277A),
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'SmartSys',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
+              // Header with centered logo and notification bell (igual que en home)
+              Padding(
+                padding: const EdgeInsets.only(left: 0, right: 0, top: 8.0, bottom: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Empty container for spacing
+                    const SizedBox(width: 24),
+                    // Centered logo only
+                    Image.asset(
+                      'assets/logo.png',
+                      width: 130,
+                      height: 130,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.star_outline,
+                          size: 130,
+                          color: Color(0xFF41277A),
+                        );
+                      },
+                    ),
+                    // Notification bell with red dot
+                    Stack(
+                      children: [
+                        const Icon(
+                          Icons.notifications_outlined,
+                          size: 24,
+                          color: Colors.black54,
                         ),
-                      ),
-                    ],
-                  ),
-                  // Notification bell
-                   Stack(
-                    children: [
-                      const Icon(
-                        Icons.notifications_outlined,
-                        size: 24,
-                        color: Colors.black54,
-                      ),
-                      Positioned(
-                        right: 3,
-                        top: 3,
-                        child: Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
+                        Positioned(
+                          right: 3,
+                          top: 3,
+                          child: Container(
+                            width: 6,
+                            height: 6,
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 12), // Mismo espaciado que en home
 
               // Title and current date
               Text(
@@ -191,12 +183,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
                           .map((day) => Text(
-                                day,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey[600],
-                                ),
-                              ))
+                        day,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey[600],
+                        ),
+                      ))
                           .toList(),
                     ),
                     const SizedBox(height: 16),
@@ -307,8 +299,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
               color: isSelected
                   ? Color(0xFF41277A)
                   : isToday
-                      ? Color(0xFF41277A).withOpacity(0.1)
-                      : Colors.transparent,
+                  ? Color(0xFF41277A).withOpacity(0.1)
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
@@ -320,8 +312,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     color: isSelected
                         ? Colors.white
                         : isToday
-                            ? Color(0xFF41277A)
-                            : Colors.black,
+                        ? Color(0xFF41277A)
+                        : Colors.black,
                     fontWeight: isSelected || isToday ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),

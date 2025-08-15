@@ -13,30 +13,30 @@ class _ChatsScreenState extends State<ChatsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
- void _onItemTapped(int index) {
-  setState(() {
-    _selectedIndex = index;
-  });
-  
-  // Navigate based on selected index
-  switch (index) {
-    case 0:
-      Navigator.pushReplacementNamed(context, '/home'); // Navega a home
-      break;
-    case 1:
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    // Navigate based on selected index
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/home'); // Navega a home
+        break;
+      case 1:
       // Already on chats screen
-      break;
-    case 2:
-      Navigator.pushNamed(context, '/institutions'); // ✅ NUEVO - Navega a instituciones
-      break;
-    case 3:
-      Navigator.pushNamed(context, '/calendar'); // Navega a calendario
-      break;
-    case 4:
-      Navigator.pushNamed(context, '/settings'); // Navega a configuración
-      break;
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/institutions'); // ✅ NUEVO - Navega a instituciones
+        break;
+      case 3:
+        Navigator.pushNamed(context, '/calendar'); // Navega a calendario
+        break;
+      case 4:
+        Navigator.pushNamed(context, '/settings'); // Navega a configuración
+        break;
+    }
   }
-}
   @override
   void dispose() {
     _searchController.dispose();
@@ -50,38 +50,27 @@ class _ChatsScreenState extends State<ChatsScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Top bar with logo and notification bell
+            // Top bar with centered logo and notification bell
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Logo only
-                  Row(
-                    children: [
-                      Image.asset(
-                        'assets/logo.png',
-                        width: 24,
-                        height: 24,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(
-                            Icons.star_outline,
-                            size: 24,
-                            color: Colors.black,
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'SmartSys',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
+                  // Empty container for spacing
+                  const SizedBox(width: 24),
+                  // Centered logo only
+                  Image.asset(
+                    'assets/logo.png',
+                    width: 130,
+                    height: 130,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(
+                        Icons.star_outline,
+                        size: 130,
+                        color: Color(0xFF41277A),
+                      );
+                    },
                   ),
                   // Notification bell with red dot
                   Stack(
@@ -185,7 +174,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Search bar
+            // Search bar with rounded corners like mockup
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Container(
@@ -248,7 +237,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
       // Floating action button
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        backgroundColor: Colors.grey[400],
+        backgroundColor: const Color(0xFF41277A),
         child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
 

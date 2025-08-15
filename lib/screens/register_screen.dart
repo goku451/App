@@ -18,6 +18,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
+  bool _obscurePassword = true; // Variable para controlar visibilidad de contraseña
 
   @override
   void dispose() {
@@ -220,11 +221,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Password field
+                        // Password field con toggle de visibilidad
                         TextFormField(
                           controller: _passwordController,
                           enabled: !_isLoading,
-                          obscureText: true,
+                          obscureText: _obscurePassword,
                           decoration: InputDecoration(
                             hintText: 'Contraseña',
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -240,6 +241,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(color: Color(0xFF41277A)),
                             ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                                color: const Color(0xFF7B7B8A),
+                              ),
+                              onPressed: _isLoading
+                                  ? null
+                                  : () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                            ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) return 'Por favor ingrese una contraseña';
@@ -249,7 +263,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         const SizedBox(height: 32),
 
-                        // Botón Crear cuenta (texto blanco sin sombra)
+
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(

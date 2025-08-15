@@ -67,6 +67,38 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void _showInstitutionOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.report),
+                title: const Text('Reportar institución'),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Agregar lógica para reportar institución
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.info),
+                title: const Text('Información'),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Agregar lógica para mostrar información
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,74 +109,68 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Image.asset(
-                        'assets/logo.png',
-                        width: 24,
-                        height: 24,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(
-                            Icons.star_outline,
-                            size: 24,
-                            color: Color(0xFF41277A),
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'SmartSys',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
+              // Header with centered logo and notification bell
+              Padding(
+                padding: const EdgeInsets.only(left: 0, right: 0, top: 8.0, bottom: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Empty container for spacing
+                    const SizedBox(width: 24),
+                    // Centered logo only
+                    Image.asset(
+                      'assets/logo.png',
+                      width: 130,
+                      height: 130,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.star_outline,
+                          size: 130,
+                          color: Color(0xFF41277A),
+                        );
+                      },
+                    ),
+                    // Notification bell with red dot
+                    Stack(
+                      children: [
+                        const Icon(
+                          Icons.notifications_outlined,
+                          size: 24,
+                          color: Colors.black54,
                         ),
-                      ),
-                    ],
-                  ),
-                  Stack(
-                    children: [
-                      const Icon(
-                        Icons.notifications_outlined,
-                        size: 24,
-                        color: Colors.black54,
-                      ),
-                      Positioned(
-                        right: 3,
-                        top: 3,
-                        child: Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
+                        Positioned(
+                          right: 3,
+                          top: 3,
+                          child: Container(
+                            width: 6,
+                            height: 6,
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
               Text(
                 "Bienvenido",
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.grey[600],
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF41277A),
                 ),
               ),
               _isLoadingUser
                   ? Row(
                 children: [
                   Container(
-                    width: 150,
-                    height: 24,
+                    width: 180,
+                    height: 28,
                     decoration: BoxDecoration(
                       color: Colors.grey[300],
                       borderRadius: BorderRadius.circular(4),
@@ -164,20 +190,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   : Text(
                 userName ?? "Usuario",
                 style: const TextStyle(
-                  fontSize: 24,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 16),
-              // Search box
+              // Search box with rounded corners like mockup
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(25),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
-                      blurRadius: 2,
+                      blurRadius: 4,
                       spreadRadius: 1,
                     ),
                   ],
@@ -185,10 +211,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: "Buscar en SmartSys",
-                    prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
+                    hintStyle: TextStyle(color: Colors.grey[400]),
+                    prefixIcon: Container(
+                      padding: const EdgeInsets.all(12),
+                      child: Icon(Icons.search, color: Colors.grey[400], size: 20),
+                    ),
                     border: InputBorder.none,
-                    contentPadding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 16),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   ),
                 ),
               ),
@@ -197,47 +226,59 @@ class _MyHomePageState extends State<MyHomePage> {
               Text("Institución actual",
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
               const SizedBox(height: 12),
-              _buildInstitutionCard(
+              _buildInstitutionBannerCard(
                 title: "Cloud Sweet",
-                description:
-                "Un rincón mágico donde los sueños se hornean, la dulzura no es la meta",
+                description: "Un rincón mágico donde los sueños se hornean, la dulzura no es la meta",
+                bannerImagePath: 'assets/images/banners/cloud_banner.jpg',
+                avatarImagePath: 'assets/images/avatars/dulceN.png',
+                showOptions: true,
+              ),
+              const SizedBox(height: 12),
+              _buildTaskCard(
                 tasks: [
                   "Manejo de los registradores y puntos de venta.",
                   "Limpieza y desinfección de áreas de trabajo y exhibición",
                   "Reposición de inventario",
                 ],
-                backgroundColor: Colors.pink.shade100,
-                imagePath: 'assets/images/avatars/dulceN.png',
+                backgroundColor: Colors.white,
               ),
               const SizedBox(height: 16),
-              _buildInstitutionCard(
+              _buildInstitutionBannerCard(
                 title: "Totopia",
-                description:
-                "Seguimiento de ventas y gestión de donaciones ortográficas.",
+                description: "Seguimiento de ventas y gestión de donaciones ortográficas.",
+                bannerImagePath: 'assets/images/banners/totopia_banner.jpg',
+                avatarImagePath: 'assets/images/avatars/totopia.jpg',
+                showOptions: true,
+              ),
+              const SizedBox(height: 12),
+              _buildTaskCard(
                 tasks: [
                   "Control de productos.",
                   "Atención al cliente.",
                   "Organización del almacén."
                 ],
-                backgroundColor: Colors.lightBlue.shade100,
-                imagePath: 'assets/images/avatars/totopia.jpg',
+                backgroundColor: Colors.white,
               ),
               const SizedBox(height: 24),
               // Tus grupos
               Text("Tus grupos",
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
               const SizedBox(height: 12),
-              _buildInstitutionCard(
+              _buildInstitutionBannerCard(
                 title: "Aprendizaje de idiomas",
-                description:
-                "Mejora tu escritura y aprende nuevos idiomas con ejercicios interactivos.",
+                description: "Mejora tu escritura y aprende nuevos idiomas con ejercicios interactivos.",
+                bannerImagePath: 'assets/images/banners/aprendizaje_banner.jpg',
+                avatarImagePath: 'assets/images/avatars/idiomas.jpg',
+                showOptions: true,
+              ),
+              const SizedBox(height: 12),
+              _buildTaskCard(
                 tasks: [
                   "Práctica de escritura.",
                   "Traducción de textos.",
                   "Conversaciones guiadas."
                 ],
-                backgroundColor: Colors.lightGreen.shade100,
-                imagePath: 'assets/images/avatars/idiomas.jpg',
+                backgroundColor: Colors.white,
               ),
             ],
           ),
@@ -271,12 +312,136 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _buildInstitutionCard({
+  // Widget para el banner con imagen de fondo y overlay oscuro
+  Widget _buildInstitutionBannerCard({
     required String title,
     required String description,
+    required String bannerImagePath,
+    required String avatarImagePath,
+    bool showOptions = false,
+  }) {
+    return Container(
+      height: 120,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Stack(
+          children: [
+            // Imagen de fondo
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              child: Image.asset(
+                bannerImagePath,
+                fit: BoxFit.cover,
+                // Fallback en caso de que la imagen no se encuentre
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.pink.shade200,
+                    child: Icon(
+                      Icons.image_not_supported,
+                      color: Colors.white.withOpacity(0.5),
+                      size: 40,
+                    ),
+                  );
+                },
+              ),
+            ),
+            // Overlay oscuro semitransparente
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.3),
+                    Colors.black.withOpacity(0.7),
+                  ],
+                ),
+              ),
+            ),
+            // Contenido del banner
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          description,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Avatar del lado derecho
+                  CircleAvatar(
+                    backgroundColor: Colors.white,
+                    radius: 25,
+                    backgroundImage: AssetImage(avatarImagePath),
+                  ),
+                ],
+              ),
+            ),
+            // Botón de opciones (3 puntos) más pequeño y mejor posicionado
+            if (showOptions)
+              Positioned(
+                top: 8,
+                right: 8,
+                child: GestureDetector(
+                  onTap: () => _showInstitutionOptions(context),
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.more_vert,
+                      color: Colors.white,
+                      size: 12,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Widget separado para las tareas/bullets
+  Widget _buildTaskCard({
     required List<String> tasks,
     required Color backgroundColor,
-    required String imagePath,
+    Color textColor = Colors.black87,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -292,65 +457,35 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: tasks
+              .map((task) => Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Row(
+              children: [
+                Container(
+                  width: 4,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: textColor,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    task,
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 10,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: const TextStyle(
-                      color: Colors.black87,
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: tasks
-                        .map((task) => Row(
-                      children: [
-                        Container(
-                          width: 4,
-                          height: 4,
-                          decoration: const BoxDecoration(
-                            color: Colors.black87,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            task,
-                            style: const TextStyle(
-                              color: Colors.black87,
-                              fontSize: 10,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ))
-                        .toList(),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 25,
-              backgroundImage: AssetImage(imagePath),
-            ),
-          ],
+          ))
+              .toList(),
         ),
       ),
     );
