@@ -38,6 +38,7 @@ flutter:
   assets:
     - assets/
     - assets/images/avatars/
+    - assets/images/banners/
 
 # ✅ Configuración para cambiar el ícono de la app
 flutter_launcher_icons:
