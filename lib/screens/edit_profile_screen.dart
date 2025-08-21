@@ -14,12 +14,12 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   int _selectedIndex = 4; // Profile tab selected
-  
+
   // Datos dinámicos del usuario
   User? currentUser;
   bool _isLoadingUser = true;
   bool _isSaving = false;
-  
+
   // Valores editables
   String userLastName = "";
   String userName = "Usuario";
@@ -100,9 +100,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
 
       // Llamar a la API
-      final response = await ApiService.updateProfileWithPhoto(
+      final response = await ApiService.updateProfile(
         idUsuario: currentUser!.idUsuario,
+        nombre: nombre,
+        apellido: apellido,
+        telefono: telefono,
+        biografia: biografia,
       );
+
+      
 
       if (response.success && response.data != null) {
         // Actualizar datos locales
@@ -123,7 +129,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           textColor: Colors.white,
         );
 
-        print('✅ Perfil actualizado: ${response.data!.nombreCompleto}');
+        print('✅ Perfil actualizado Goku: ${response.data!.nombreCompleto}');
       } else {
         // Mostrar error
         Fluttertoast.showToast(
@@ -151,30 +157,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-void _onItemTapped(int index) {
-  setState(() {
-    _selectedIndex = index;
-  });
-  
-  // Navigate based on selected index
-  switch (index) {
-    case 0:
-      Navigator.pushReplacementNamed(context, '/home');
-      break;
-    case 1:
-      Navigator.pushReplacementNamed(context, '/chats'); // Navega a chats
-      break;
-    case 2:
-      Navigator.pushNamed(context, '/institutions'); // ✅ NUEVO - Navega a instituciones
-      break;
-    case 3:
-      Navigator.pushNamed(context, '/calendar'); // Navega a calendario
-      break;
-    case 4:
-      // Already on profile screen
-      break;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    // Navigate based on selected index
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/chats'); // Navega a chats
+        break;
+      case 2:
+        Navigator.pushNamed(
+          context,
+          '/institutions',
+        ); // ✅ NUEVO - Navega a instituciones
+        break;
+      case 3:
+        Navigator.pushNamed(context, '/calendar'); // Navega a calendario
+        break;
+      case 4:
+        // Already on profile screen
+        break;
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +196,7 @@ void _onItemTapped(int index) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Top bar with notifications
-                            Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Stack(
@@ -219,10 +228,7 @@ void _onItemTapped(int index) {
               // Title
               Text(
                 "Editar Perfil",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
 
@@ -241,90 +247,117 @@ void _onItemTapped(int index) {
                     ],
                   ),
                   padding: EdgeInsets.all(20),
-                  child: _isLoadingUser 
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircularProgressIndicator(
-                              color: Color(0xFF41277A),
-                            ),
-                            SizedBox(height: 16),
-                            Text(
-                              'Cargando datos del perfil...',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Column(
-                        children: [
-                          // Profile picture section
-                          Center(
+                  child:
+                      _isLoadingUser
+                          ? Center(
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                CircleAvatar(
-                                  radius: 40,
-                                  backgroundImage: currentUser?.fotoBytes != null
-                                      ? MemoryImage(currentUser!.fotoBytes!)
-                                      : const AssetImage('assets/plat.png'),
+                                CircularProgressIndicator(
+                                  color: Color(0xFF41277A),
                                 ),
-                                const SizedBox(height: 12),
-                                TextButton(
-                                  onPressed: () {
-                                    // Handle change picture
-                                    _showImagePicker();
-                                  },
-                                  child: Text(
-                                    "Cambiar Foto",
-                                    style: TextStyle(
-                                      color: const Color(0xFF41277A), // Color SmartSys
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                    ),
+                                SizedBox(height: 16),
+                                Text(
+                                  'Cargando datos del perfil...',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 16,
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                          
-                          const SizedBox(height: 30),
-
-                          // Acerca de ti section
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Acerca de ti",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[700],
+                          )
+                          : Column(
+                            children: [
+                              // Profile picture section
+                              Center(
+                                child: Column(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 40,
+                                      backgroundImage:
+                                          currentUser?.fotoBytes != null
+                                              ? MemoryImage(
+                                                currentUser!.fotoBytes!,
+                                              )
+                                              : const AssetImage(
+                                                'assets/plat.png',
+                                              ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    TextButton(
+                                      onPressed: () {
+                                        // Handle change picture
+                                        _showImagePicker();
+                                      },
+                                      child: Text(
+                                        "Cambiar Foto",
+                                        style: TextStyle(
+                                          color: const Color(
+                                            0xFF41277A,
+                                          ), // Color SmartSys
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
 
-                          // Form fields
-                          Expanded(
-                            child: ListView(
-                              children: [
-                                _buildEditableProfileField("Nombre", userName),
-                                const SizedBox(height: 16),
-                                _buildEditableProfileField("Apellido", userLastName),
-                                const SizedBox(height: 16),
-                                _buildNonEditableProfileField("Correo electrónico", userEmail),
-                                const SizedBox(height: 16),
-                                _buildEditableProfileField("Teléfono", userPhone.isEmpty ? "Sin teléfono" : userPhone),
-                                const SizedBox(height: 16),
-                                _buildEditableProfileField("Descripción", userBio.isEmpty ? "Sin biografía aún" : userBio),
-                              ],
-                            ),
+                              const SizedBox(height: 30),
+
+                              // Acerca de ti section
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Acerca de ti",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Form fields
+                              Expanded(
+                                child: ListView(
+                                  children: [
+                                    _buildEditableProfileField(
+                                      "Nombre",
+                                      userName,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    _buildEditableProfileField(
+                                      "Apellido",
+                                      userLastName,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    _buildNonEditableProfileField(
+                                      "Correo electrónico",
+                                      userEmail,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    _buildEditableProfileField(
+                                      "Teléfono",
+                                      userPhone.isEmpty
+                                          ? "Sin teléfono"
+                                          : userPhone,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    _buildEditableProfileField(
+                                      "Descripción",
+                                      userBio.isEmpty
+                                          ? "Sin biografía aún"
+                                          : userBio,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
                 ),
               ),
             ],
@@ -333,16 +366,17 @@ void _onItemTapped(int index) {
       ),
 
       // Loading overlay cuando está guardando
-      floatingActionButton: _isSaving 
-        ? FloatingActionButton(
-            onPressed: null,
-            backgroundColor: Colors.grey,
-            child: CircularProgressIndicator(
-              color: Colors.white,
-              strokeWidth: 2,
-            ),
-          )
-        : null,
+      floatingActionButton:
+          _isSaving
+              ? FloatingActionButton(
+                onPressed: null,
+                backgroundColor: Colors.grey,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+              : null,
 
       // Bottom navigation bar - CORREGIDO
       bottomNavigationBar: BottomNavigationBar(
@@ -351,11 +385,11 @@ void _onItemTapped(int index) {
         backgroundColor: Colors.white,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),        // Consistente
+            icon: Icon(Icons.home_outlined), // Consistente
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_outline),  // Consistente
+            icon: Icon(Icons.chat_bubble_outline), // Consistente
             label: '',
           ),
           BottomNavigationBarItem(
@@ -363,17 +397,17 @@ void _onItemTapped(int index) {
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.work_outline),         // Consistente
+            icon: Icon(Icons.work_outline), // Consistente
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),       // Consistente
+            icon: Icon(Icons.person_outline), // Consistente
             label: '',
           ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: const Color(0xFF41277A), // Color SmartSys
-        unselectedItemColor: Colors.grey[400],      // Consistente
+        unselectedItemColor: Colors.grey[400], // Consistente
         onTap: _onItemTapped,
         showSelectedLabels: false,
         showUnselectedLabels: false,
@@ -384,12 +418,7 @@ void _onItemTapped(int index) {
   Widget _buildEditableProfileField(String label, String value) {
     return Container(
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey[300]!,
-            width: 1,
-          ),
-        ),
+        border: Border(bottom: BorderSide(color: Colors.grey[300]!, width: 1)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -420,9 +449,12 @@ void _onItemTapped(int index) {
             ),
           ),
           GestureDetector(
-            onTap: _isSaving ? null : () {
-              _editField(label, value);
-            },
+            onTap:
+                _isSaving
+                    ? null
+                    : () {
+                      _editField(label, value);
+                    },
             child: Icon(
               Icons.chevron_right,
               color: _isSaving ? Colors.grey[300] : Colors.grey[400],
@@ -437,12 +469,7 @@ void _onItemTapped(int index) {
   Widget _buildNonEditableProfileField(String label, String value) {
     return Container(
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey[300]!,
-            width: 1,
-          ),
-        ),
+        border: Border(bottom: BorderSide(color: Colors.grey[300]!, width: 1)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -465,18 +492,16 @@ void _onItemTapped(int index) {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: Colors.grey[500], // Más claro para indicar que no es editable
+                    color:
+                        Colors
+                            .grey[500], // Más claro para indicar que no es editable
                   ),
                 ),
                 const SizedBox(height: 12),
               ],
             ),
           ),
-          Icon(
-            Icons.lock_outline,
-            color: Colors.grey[300],
-            size: 20,
-          ),
+          Icon(Icons.lock_outline, color: Colors.grey[300], size: 20),
         ],
       ),
     );
@@ -498,10 +523,7 @@ void _onItemTapped(int index) {
             children: [
               Text(
                 "Cambiar foto de perfil",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               ListTile(
@@ -523,19 +545,23 @@ void _onItemTapped(int index) {
                   Navigator.pop(context); // Cierra el modal
 
                   final picker = ImagePicker();
-                  final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+                  final pickedFile = await picker.pickImage(
+                    source: ImageSource.gallery,
+                  );
 
                   if (pickedFile != null && currentUser != null) {
                     final response = await ApiService.updateProfileWithPhoto(
                       idUsuario: currentUser!.idUsuario,
-                        pickedFile: pickedFile,
+                      pickedFile: pickedFile,
                     );
 
                     if (response.success) {
                       setState(() {
                         currentUser = response.data;
                       });
-                      Fluttertoast.showToast(msg: 'Perfil actualizado con éxito');
+                      Fluttertoast.showToast(
+                        msg: 'Perfil actualizado con éxito',
+                      );
                     } else {
                       Fluttertoast.showToast(msg: response.message);
                     }
@@ -556,8 +582,10 @@ void _onItemTapped(int index) {
       initialValue = "";
     }
 
-    TextEditingController controller = TextEditingController(text: initialValue);
-    
+    TextEditingController controller = TextEditingController(
+      text: initialValue,
+    );
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -583,7 +611,7 @@ void _onItemTapped(int index) {
               onPressed: () {
                 final newValue = controller.text.trim();
                 Navigator.pop(context);
-                
+
                 // Validaciones específicas por campo
                 if (_validateField(label, newValue)) {
                   _updateProfile(campo: label, nuevoValor: newValue);
