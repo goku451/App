@@ -29,7 +29,6 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
       _isLoading = true;
       _errorMessage = null;
     });
-
     try {
       final response = await ApiService.plataformasActivas();
 
@@ -57,26 +56,24 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
       });
     }
   }
-
   void _filtrarPlataformas(String query) {
     setState(() {
       _searchQuery = query.toLowerCase();
       if (_searchQuery.isEmpty) {
         _plataformasFiltradas = _plataformas;
       } else {
-        _plataformasFiltradas =
-            _plataformas
-                .where(
-                  (plataforma) =>
-                      plataforma.nombrePlataforma.toLowerCase().contains(
+        _plataformasFiltradas = _plataformas
+            .where(
+              (plataforma) =>
+                  plataforma.nombrePlataforma.toLowerCase().contains(
+                    _searchQuery,
+                  ) ||
+                  (plataforma.descripcionPlataforma?.toLowerCase().contains(
                         _searchQuery,
-                      ) ||
-                      (plataforma.descripcionPlataforma?.toLowerCase().contains(
-                            _searchQuery,
-                          ) ??
-                          false),
-                )
-                .toList();
+                      ) ??
+                      false),
+            )
+            .toList();
       }
     });
   }
@@ -97,10 +94,9 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
       );
 
       if (response.success && response.data != null) {
-        final List<Plataforma> plataformas =
-            response.data!
-                .map<Plataforma>((json) => Plataforma.fromJson(json))
-                .toList();
+        final List<Plataforma> plataformas = response.data!
+            .map<Plataforma>((json) => Plataforma.fromJson(json))
+            .toList();
 
         setState(() {
           _plataformasFiltradas = plataformas;
@@ -223,9 +219,140 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
     );
   }
 
-  void _unirseAPlataforma(Plataforma plataforma) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Uniéndose a ${plataforma.nombrePlataforma}...')),
+  // Funcionalidad mejorada de unirse a plataforma del segundo código
+  Future<void> _unirseAPlataforma(Plataforma plataforma) async {
+    try {
+      final user = await ApiService.getCurrentUser();
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error: Usuario no encontrado')),
+        );
+        return;
+      }
+
+      if (plataforma.privacidadPlataforma.toLowerCase() == "publica" || 
+          plataforma.privacidadPlataforma.toLowerCase() == "público") {
+        // Unirse a plataforma pública directamente
+        final response = await ApiService.joinPublicPlatform(
+          idUsuario: user.idUsuario,
+          idPlataforma: plataforma.idPlataforma,
+        );
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message ?? "Te has unido a ${plataforma.nombrePlataforma}"),
+            backgroundColor: response.success ? Colors.green : Colors.red,
+          ),
+        );
+      } else {
+        // Mostrar diálogo para código de plataforma privada
+        _mostrarDialogoCodigoPrivado(plataforma, user.idUsuario);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al unirse: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _mostrarDialogoCodigoPrivado(Plataforma plataforma, int idUsuario) {
+    String codigo = "";
+    final TextEditingController codigoController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Text("Unirse a ${plataforma.nombrePlataforma}"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Esta plataforma es privada. Ingresa el código de acceso:",
+                style: TextStyle(fontSize: 14),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: codigoController,
+                onChanged: (value) => codigo = value,
+                decoration: const InputDecoration(
+                  labelText: "Código de ingreso",
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock),
+                ),
+                obscureText: false,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text("Cancelar"),
+              onPressed: () => Navigator.pop(ctx),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF41277A),
+              ),
+              child: const Text(
+                "Unirse",
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () async {
+                Navigator.pop(ctx); // Cerrar diálogo
+                
+                if (codigo.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Por favor ingresa un código válido'),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                  return;
+                }
+
+                // Mostrar indicador de carga
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (ctx) => const Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF41277A),
+                    ),
+                  ),
+                );
+
+                try {
+                  final response = await ApiService.joinPrivatePlatform(
+                    idUsuario: idUsuario,
+                    idPlataforma: plataforma.idPlataforma,
+                    codigo: codigo.trim(),
+                  );
+
+                  Navigator.pop(context); // Cerrar indicador de carga
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(response.message ?? "Error al unirse"),
+                      backgroundColor: response.success ? Colors.green : Colors.red,
+                    ),
+                  );
+                } catch (e) {
+                  Navigator.pop(context); // Cerrar indicador de carga
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error al unirse: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -325,16 +452,15 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
                         size: 20,
                       ),
                     ),
-                    suffixIcon:
-                        _searchQuery.isNotEmpty
-                            ? IconButton(
-                              icon: const Icon(Icons.clear, size: 20),
-                              onPressed: () {
-                                _searchController.clear();
-                                _filtrarPlataformas('');
-                              },
-                            )
-                            : null,
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 20),
+                            onPressed: () {
+                              _searchController.clear();
+                              _filtrarPlataformas('');
+                            },
+                          )
+                        : null,
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(
                       vertical: 16,
@@ -376,85 +502,84 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
 
             // Content area
             Expanded(
-              child:
-                  _isLoading
-                      ? const Center(
-                        child: CircularProgressIndicator(
-                          color: Color(0xFF41277A),
-                        ),
-                      )
-                      : _errorMessage != null
+              child: _isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF41277A),
+                      ),
+                    )
+                  : _errorMessage != null
                       ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.error_outline,
-                              size: 64,
-                              color: Colors.red,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              _errorMessage!,
-                              style: const TextStyle(
-                                fontSize: 16,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                size: 64,
                                 color: Colors.red,
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: _cargarPlataformas,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF41277A),
+                              const SizedBox(height: 16),
+                              Text(
+                                _errorMessage!,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.red,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              child: const Text(
-                                'Reintentar',
-                                style: TextStyle(color: Colors.white),
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: _cargarPlataformas,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF41277A),
+                                ),
+                                child: const Text(
+                                  'Reintentar',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
+                            ],
+                          ),
+                        )
                       : _plataformasFiltradas.isEmpty
-                      ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.search_off,
-                              size: 64,
-                              color: Colors.grey,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              _searchQuery.isEmpty
-                                  ? 'No hay plataformas disponibles'
-                                  : 'No se encontraron resultados para "$_searchQuery"',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.search_off,
+                                    size: 64,
+                                    color: Colors.grey,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    _searchQuery.isEmpty
+                                        ? 'No hay plataformas disponibles'
+                                        : 'No se encontraron resultados para "$_searchQuery"',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                               ),
-                              textAlign: TextAlign.center,
+                            )
+                          : RefreshIndicator(
+                              onRefresh: _cargarPlataformas,
+                              color: const Color(0xFF41277A),
+                              child: ListView.builder(
+                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                itemCount: _plataformasFiltradas.length,
+                                itemBuilder: (context, index) {
+                                  final plataforma = _plataformasFiltradas[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 16.0),
+                                    child: _buildPlataformaBannerCard(plataforma),
+                                  );
+                                },
+                              ),
                             ),
-                          ],
-                        ),
-                      )
-                      : RefreshIndicator(
-                        onRefresh: _cargarPlataformas,
-                        color: const Color(0xFF41277A),
-                        child: ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          itemCount: _plataformasFiltradas.length,
-                          itemBuilder: (context, index) {
-                            final plataforma = _plataformasFiltradas[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 16.0),
-                              child: _buildPlataformaBannerCard(plataforma),
-                            );
-                          },
-                        ),
-                      ),
             ),
           ],
         ),
@@ -526,16 +651,15 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
               Container(
                 width: double.infinity,
                 height: double.infinity,
-                child:
-                    plataforma.fondoBytes != null
-                        ? Image.memory(
-                          plataforma.fondoBytes!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return _buildDefaultBackground();
-                          },
-                        )
-                        : _buildDefaultBackground(),
+                child: plataforma.fondoBytes != null
+                    ? Image.memory(
+                        plataforma.fondoBytes!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return _buildDefaultBackground();
+                        },
+                      )
+                    : _buildDefaultBackground(),
               ),
               // Overlay oscuro semitransparente
               Container(
@@ -590,21 +714,20 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
                     CircleAvatar(
                       backgroundColor: Colors.white,
                       radius: 25,
-                      child:
-                          plataforma.iconoBytes != null
-                              ? ClipRRect(
-                                borderRadius: BorderRadius.circular(25),
-                                child: Image.memory(
-                                  plataforma.iconoBytes!,
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return _buildDefaultIcon();
-                                  },
-                                ),
-                              )
-                              : _buildDefaultIcon(),
+                      child: plataforma.iconoBytes != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(25),
+                              child: Image.memory(
+                                plataforma.iconoBytes!,
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return _buildDefaultIcon();
+                                },
+                              ),
+                            )
+                          : _buildDefaultIcon(),
                     ),
                   ],
                 ),
@@ -620,10 +743,9 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color:
-                          plataforma.estadoPlataforma == 'Inactivo'
-                              ? Colors.red.withOpacity(0.8)
-                              : Colors.orange.withOpacity(0.8),
+                      color: plataforma.estadoPlataforma == 'Inactivo'
+                          ? Colors.red.withOpacity(0.8)
+                          : Colors.orange.withOpacity(0.8),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -647,10 +769,9 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
-                    plataforma.privacidadPlataforma.toLowerCase() ==
-                                'público' ||
-                            plataforma.privacidadPlataforma.toLowerCase() ==
-                                'public'
+                    plataforma.privacidadPlataforma.toLowerCase() == 'público' ||
+                            plataforma.privacidadPlataforma.toLowerCase() == 'public' ||
+                            plataforma.privacidadPlataforma.toLowerCase() == 'publica'
                         ? Icons.public
                         : Icons.lock,
                     color: Colors.white,

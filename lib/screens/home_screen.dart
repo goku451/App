@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 import '../services/api_service.dart';
 import '../models/user.dart';
 
@@ -15,6 +17,10 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   String? userName;
   bool _isLoadingUser = true;
+  bool _isLoadingPlatforms = true;
+  List<dynamic> _userPlatforms = [];
+  String? _errorMessage;
+  User? _currentUser;
 
   @override
   void initState() {
@@ -27,20 +33,56 @@ class _MyHomePageState extends State<MyHomePage> {
       final user = await ApiService.getCurrentUser();
       if (user != null && mounted) {
         setState(() {
+          _currentUser = user;
           userName = user.nombreCompleto;
           _isLoadingUser = false;
         });
+        await _loadUserPlatforms();
       } else {
         setState(() {
           userName = "Usuario";
           _isLoadingUser = false;
+          _isLoadingPlatforms = false;
         });
       }
     } catch (e) {
       setState(() {
         userName = "Usuario";
         _isLoadingUser = false;
+        _isLoadingPlatforms = false;
+        _errorMessage = 'Error cargando datos del usuario';
       });
+    }
+  }
+
+  Future<void> _loadUserPlatforms() async {
+    if (_currentUser == null) return;
+
+    try {
+      final result = await ApiService.misPlataformas(
+        idUsuario: _currentUser!.idUsuario,
+      );
+
+      if (mounted) {
+        setState(() {
+          if (result.success) {
+            _userPlatforms = result.data ?? [];
+            _errorMessage = null;
+          } else {
+            _errorMessage = result.message;
+            _userPlatforms = [];
+          }
+          _isLoadingPlatforms = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Error cargando plataformas';
+          _userPlatforms = [];
+          _isLoadingPlatforms = false;
+        });
+      }
     }
   }
 
@@ -67,7 +109,10 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _showInstitutionOptions(BuildContext context) {
+  void _showInstitutionOptions(
+    BuildContext context,
+    Map<String, dynamic> platform,
+  ) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -77,23 +122,115 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.report),
-                title: const Text('Reportar institución'),
+                leading: const Icon(Icons.info),
+                title: const Text('Ver detalles'),
                 onTap: () {
                   Navigator.pop(context);
-                  // Agregar lógica para reportar institución
+                  _showPlatformDetails(platform);
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.info),
-                title: const Text('Información'),
+                leading: const Icon(Icons.report),
+                title: const Text('Reportar plataforma'),
                 onTap: () {
                   Navigator.pop(context);
-                  // Agregar lógica para mostrar información
+                  // Lógica para reportar plataforma
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.exit_to_app),
+                title: const Text('Salir de la plataforma'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showLeavePlatformDialog(platform);
                 },
               ),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  void _showPlatformDetails(Map<String, dynamic> platform) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(platform['nombrePlataforma'] ?? 'Plataforma'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Descripción:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(platform['descripcionPlataforma'] ?? 'Sin descripción'),
+                SizedBox(height: 8),
+                Text('Tu rol:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(platform['rolUsuarioPlataforma'] ?? 'Sin rol'),
+                SizedBox(height: 8),
+                Text(
+                  'Privacidad:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(platform['privacidadPlataforma'] ?? 'No definida'),
+                SizedBox(height: 8),
+                Text('Estado:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(platform['estadoPlataforma'] ?? 'No definido'),
+                if (platform['fechaUnion'] != null) ...[
+                  SizedBox(height: 8),
+                  Text(
+                    'Fecha de unión:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(platform['fechaUnion'].toString().split('T')[0]),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cerrar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showLeavePlatformDialog(Map<String, dynamic> platform) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Salir de la plataforma'),
+          content: Text(
+            '¿Estás seguro de que quieres salir de ${platform['nombrePlataforma']}?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // Aquí implementarías la lógica para salir de la plataforma
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Has salido de ${platform['nombrePlataforma']}',
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Salir', style: TextStyle(color: Colors.red)),
+            ),
+          ],
         );
       },
     );
@@ -104,188 +241,251 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with centered logo and notification bell
-              Padding(
-                padding: const EdgeInsets.only(left: 0, right: 0, top: 8.0, bottom: 8.0),
-                child: Row(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await _loadUserData();
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header with centered logo and notification bell
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 0,
+                    right: 0,
+                    top: 8.0,
+                    bottom: 8.0,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(width: 24),
+                      Image.asset(
+                        'assets/logo.png',
+                        width: 130,
+                        height: 130,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.star_outline,
+                            size: 130,
+                            color: Color(0xFF41277A),
+                          );
+                        },
+                      ),
+                      Stack(
+                        children: [
+                          const Icon(
+                            Icons.notifications_outlined,
+                            size: 24,
+                            color: Colors.black54,
+                          ),
+                          Positioned(
+                            right: 3,
+                            top: 3,
+                            child: Container(
+                              width: 6,
+                              height: 6,
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  "Bienvenido",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF41277A),
+                  ),
+                ),
+                _isLoadingUser
+                    ? Row(
+                      children: [
+                        Container(
+                          width: 180,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                      ],
+                    )
+                    : Text(
+                      userName ?? "Usuario",
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                const SizedBox(height: 16),
+                // Search box
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 4,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Buscar en SmartSys",
+                      hintStyle: TextStyle(color: Colors.grey[400]),
+                      prefixIcon: Container(
+                        padding: const EdgeInsets.all(12),
+                        child: Icon(
+                          Icons.search,
+                          color: Colors.grey[400],
+                          size: 20,
+                        ),
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 20,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Mis Plataformas
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Empty container for spacing
-                    const SizedBox(width: 24),
-                    // Centered logo only
-                    Image.asset(
-                      'assets/logo.png',
-                      width: 130,
-                      height: 130,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(
-                          Icons.star_outline,
-                          size: 130,
-                          color: Color(0xFF41277A),
-                        );
-                      },
+                    Text(
+                      "Mis plataformas",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
                     ),
-                    // Notification bell with red dot
-                    Stack(
-                      children: [
-                        const Icon(
-                          Icons.notifications_outlined,
-                          size: 24,
-                          color: Colors.black54,
+                    if (_isLoadingPlatforms)
+                      SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.grey[400],
                         ),
-                        Positioned(
-                          right: 3,
-                          top: 3,
-                          child: Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // Error message
+                if (_errorMessage != null)
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.red[50],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.red[200]!),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.error_outline, color: Colors.red[700]),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _errorMessage!,
+                            style: TextStyle(color: Colors.red[700]),
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                "Bienvenido",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF41277A),
-                ),
-              ),
-              _isLoadingUser
-                  ? Row(
-                children: [
+                  ),
+
+                // Platform list or empty state
+                if (_userPlatforms.isEmpty &&
+                    !_isLoadingPlatforms &&
+                    _errorMessage == null)
                   Container(
-                    width: 180,
-                    height: 28,
+                    padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(4),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 4,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.account_balance_outlined,
+                          size: 64,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No tienes plataformas',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Únete a una plataforma para comenzar',
+                          style: TextStyle(color: Colors.grey[500]),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.grey[400],
+
+                // Platform cards
+                if (_userPlatforms.isNotEmpty)
+                  ..._userPlatforms.map(
+                    (platform) => Column(
+                      children: [
+                        _buildPlatformCard(platform),
+                        const SizedBox(height: 16),
+                      ],
                     ),
                   ),
-                ],
-              )
-                  : Text(
-                userName ?? "Usuario",
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Search box with rounded corners like mockup
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(25),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 4,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: "Buscar en SmartSys",
-                    hintStyle: TextStyle(color: Colors.grey[400]),
-                    prefixIcon: Container(
-                      padding: const EdgeInsets.all(12),
-                      child: Icon(Icons.search, color: Colors.grey[400], size: 20),
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              // Institutions
-              Text("Institución actual",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
-              const SizedBox(height: 12),
-              _buildInstitutionBannerCard(
-                title: "Cloud Sweet",
-                description: "Un rincón mágico donde los sueños se hornean, la dulzura no es la meta",
-                bannerImagePath: 'assets/images/banners/cloud_banner.jpg',
-                avatarImagePath: 'assets/images/avatars/dulceN.png',
-                showOptions: true,
-              ),
-              const SizedBox(height: 12),
-              _buildTaskCard(
-                tasks: [
-                  "Manejo de los registradores y puntos de venta.",
-                  "Limpieza y desinfección de áreas de trabajo y exhibición",
-                  "Reposición de inventario",
-                ],
-                backgroundColor: Colors.white,
-              ),
-              const SizedBox(height: 16),
-              _buildInstitutionBannerCard(
-                title: "Totopia",
-                description: "Seguimiento de ventas y gestión de donaciones ortográficas.",
-                bannerImagePath: 'assets/images/banners/totopia_banner.jpg',
-                avatarImagePath: 'assets/images/avatars/totopia.jpg',
-                showOptions: true,
-              ),
-              const SizedBox(height: 12),
-              _buildTaskCard(
-                tasks: [
-                  "Control de productos.",
-                  "Atención al cliente.",
-                  "Organización del almacén."
-                ],
-                backgroundColor: Colors.white,
-              ),
-              const SizedBox(height: 24),
-              // Tus grupos
-              Text("Tus grupos",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
-              const SizedBox(height: 12),
-              _buildInstitutionBannerCard(
-                title: "Aprendizaje de idiomas",
-                description: "Mejora tu escritura y aprende nuevos idiomas con ejercicios interactivos.",
-                bannerImagePath: 'assets/images/banners/aprendizaje_banner.jpg',
-                avatarImagePath: 'assets/images/avatars/idiomas.jpg',
-                showOptions: true,
-              ),
-              const SizedBox(height: 12),
-              _buildTaskCard(
-                tasks: [
-                  "Práctica de escritura.",
-                  "Traducción de textos.",
-                  "Conversaciones guiadas."
-                ],
-                backgroundColor: Colors.white,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          // Navegar a explorar plataformas
+          Navigator.pushNamed(context, '/institutions');
+        },
         backgroundColor: const Color(0xFF41277A),
         child: const Icon(Icons.add, color: Colors.white),
       ),
@@ -296,9 +496,13 @@ class _MyHomePageState extends State<MyHomePage> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
           BottomNavigationBarItem(
-              icon: Icon(Icons.chat_bubble_outline), label: ''),
+            icon: Icon(Icons.chat_bubble_outline),
+            label: '',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.account_balance_outlined), label: ''),
+            icon: Icon(Icons.account_balance_outlined),
+            label: '',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.work_outline), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
         ],
@@ -312,17 +516,25 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // Widget para el banner con imagen de fondo y overlay oscuro
-  Widget _buildInstitutionBannerCard({
-    required String title,
-    required String description,
-    required String bannerImagePath,
-    required String avatarImagePath,
-    bool showOptions = false,
-  }) {
+  Widget _buildPlatformCard(Map<String, dynamic> platform) {
+    // Determinar el color según la privacidad y estado
+    Color backgroundColor = Colors.blue[100]!;
+    Color accentColor = Colors.blue;
+
+    if (platform['privacidadPlataforma'] == 'Privado' ||
+        platform['privacidadPlataforma'] == 'Private') {
+      backgroundColor = Colors.purple[100]!;
+      accentColor = Colors.purple;
+    }
+
+    if (platform['estadoPlataforma'] != 'Activo') {
+      backgroundColor = Colors.grey[200]!;
+      accentColor = Colors.grey;
+    }
+
     return Container(
-      height: 120,
       decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -332,66 +544,56 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Stack(
-          children: [
-            // Imagen de fondo
-            Container(
-              width: double.infinity,
-              height: double.infinity,
-              child: Image.asset(
-                bannerImagePath,
-                fit: BoxFit.cover,
-                // Fallback en caso de que la imagen no se encuentre
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.pink.shade200,
-                    child: Icon(
-                      Icons.image_not_supported,
-                      color: Colors.white.withOpacity(0.5),
-                      size: 40,
-                    ),
-                  );
-                },
+      child: Column(
+        children: [
+          // Header con gradient
+          Container(
+            height: 80,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [accentColor.withOpacity(0.7), accentColor],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
               ),
             ),
-            // Overlay oscuro semitransparente
-            Container(
-              width: double.infinity,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.3),
-                    Colors.black.withOpacity(0.7),
-                  ],
-                ),
-              ),
-            ),
-            // Contenido del banner
-            Padding(
+            child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
+                  // Icono de la plataforma
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: _buildPlatformIcon(platform, accentColor),
+                  ),
+                  const SizedBox(width: 12),
+                  // Información de la plataforma
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          title,
+                          platform['nombrePlataforma'] ?? 'Sin nombre',
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                            fontSize: 16,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 2),
                         Text(
-                          description,
+                          platform['rolUsuarioPlataforma'] ?? 'Sin rol',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -400,93 +602,143 @@ class _MyHomePageState extends State<MyHomePage> {
                       ],
                     ),
                   ),
-                  // Avatar del lado derecho
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 25,
-                    backgroundImage: AssetImage(avatarImagePath),
+                  // Botón de opciones
+                  GestureDetector(
+                    onTap: () => _showInstitutionOptions(context, platform),
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Icon(
+                        Icons.more_vert,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
-            // Botón de opciones (3 puntos) más pequeño y mejor posicionado
-            if (showOptions)
-              Positioned(
-                top: 8,
-                right: 8,
-                child: GestureDetector(
-                  onTap: () => _showInstitutionOptions(context),
-                  child: Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.4),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      Icons.more_vert,
-                      color: Colors.white,
-                      size: 12,
-                    ),
+          ),
+          // Contenido
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (platform['descripcionPlataforma'] != null &&
+                    platform['descripcionPlataforma'].toString().isNotEmpty)
+                  Text(
+                    platform['descripcionPlataforma'],
+                    style: const TextStyle(fontSize: 12, color: Colors.black87),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    _buildInfoChip(
+                      platform['privacidadPlataforma'] ?? 'Sin definir',
+                      platform['privacidadPlataforma'] == 'Privado' ||
+                              platform['privacidadPlataforma'] == 'Private'
+                          ? Icons.lock
+                          : Icons.public,
+                      accentColor,
+                    ),
+                    const SizedBox(width: 8),
+                    _buildInfoChip(
+                      platform['estadoPlataforma'] ?? 'Sin estado',
+                      platform['estadoPlataforma'] == 'Activo'
+                          ? Icons.check_circle
+                          : Icons.pause_circle,
+                      platform['estadoPlataforma'] == 'Activo'
+                          ? Colors.green
+                          : Colors.grey,
+                    ),
+                  ],
                 ),
-              ),
-          ],
-        ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // Widget separado para las tareas/bullets
-  Widget _buildTaskCard({
-    required List<String> tasks,
-    required Color backgroundColor,
-    Color textColor = Colors.black87,
-  }) {
+  Widget _buildPlatformIcon(Map<String, dynamic> platform, Color accentColor) {
+    try {
+      final iconoData = platform['iconoPlataforma'];
+
+      if (iconoData != null) {
+        // Si es una cadena base64, convertirla
+        if (iconoData is String) {
+          final bytes = base64.decode(iconoData);
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.memory(
+              bytes,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Icon(
+                  Icons.account_balance,
+                  color: accentColor,
+                  size: 24,
+                );
+              },
+            ),
+          );
+        }
+        // Si ya es Uint8List
+        else if (iconoData is Uint8List) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.memory(
+              iconoData,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Icon(
+                  Icons.account_balance,
+                  color: accentColor,
+                  size: 24,
+                );
+              },
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('Error loading platform icon: $e');
+    }
+
+    // Fallback icon
+    return Icon(Icons.account_balance, color: accentColor, size: 24);
+  }
+
+  Widget _buildInfoChip(String text, IconData icon, Color color) {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            spreadRadius: 2,
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: color),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 10,
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: tasks
-              .map((task) => Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Row(
-              children: [
-                Container(
-                  width: 4,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: textColor,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    task,
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 10,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ))
-              .toList(),
-        ),
       ),
     );
   }

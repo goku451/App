@@ -199,7 +199,7 @@ class ApiService {
     }
   }
 
-  // Listar plataformas activas - RUTA CORREGIDA
+  // Listar plataformas activas 
   static Future<ApiResponse<List<dynamic>>> plataformasActivas() async {
     try {
       // CORREGIDO: Ruta actualizada para coincidir con el router
@@ -230,6 +230,39 @@ class ApiService {
     }
   }
 
+  // Obtener las plataformas de un usuario específico
+  static Future<ApiResponse<List<dynamic>>> misPlataformas({
+    required int idUsuario,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/misPlataformas?idUsuario=$idUsuario');
+
+      print('Llamando a URL: $url'); // Debug
+
+      final response = await http.get(url, headers: defaultHeaders);
+      
+      print('Status Code: ${response.statusCode}'); // Debug
+      print('Response Body: ${response.body}'); // Debug
+
+      final responseData = json.decode(response.body);
+
+      if (response.statusCode == 200 && responseData['ok'] == true) {
+        return ApiResponse.success(
+            data: responseData['data'],
+            message: responseData['mensaje'] ?? 'Plataformas del usuario obtenidas');
+      } else {
+        return ApiResponse.error(
+            message: responseData['mensaje'] ?? 'Error al obtener las plataformas del usuario');
+      }
+    } catch (e) {
+      print('Error en misPlataformas: $e'); // Debug
+      return ApiResponse.error(
+          message:
+              'Error de conexión. Verifica tu internet y que la API esté funcionando.');
+    }
+  }
+
+
   // Test específico para rutas de plataformas
   static Future<Map<String, bool>> testPlatformRoutes() async {
     final results = <String, bool>{};
@@ -251,6 +284,76 @@ class ApiService {
     
     return results;
   }
+
+  // ------------------ UNIRSE A PLATAFORMAS ------------------ //
+
+// Unirse a una plataforma pública
+static Future<ApiResponse<bool>> joinPublicPlatform({
+  required int idUsuario,
+  required int idPlataforma,
+}) async {
+  try {
+    final url = Uri.parse('$baseUrl/unirsePublico');
+    final body = json.encode({
+      'idUsuario': idUsuario,
+      'idPlataforma': idPlataforma,
+    });
+
+    final response = await http.post(url, headers: defaultHeaders, body: body);
+    final responseData = json.decode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return ApiResponse.success(
+        data: true,
+        message: responseData['mensaje'] ?? 'Unido a la plataforma pública',
+      );
+    } else {
+      return ApiResponse.error(
+        message: responseData['mensaje'] ?? 'Error al unirse a la plataforma pública',
+      );
+    }
+  } catch (e) {
+    return ApiResponse.error(
+      message: 'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+    );
+  }
+}
+
+// Unirse a una plataforma privada (requiere código)
+static Future<ApiResponse<bool>> joinPrivatePlatform({
+  required int idUsuario,
+  required int idPlataforma,
+  required String codigo,
+}) async {
+  try {
+    final url = Uri.parse('$baseUrl/unirsePrivado');
+    final body = json.encode({
+      'idUsuario': idUsuario,
+      'idPlataforma': idPlataforma,
+      'codigo': codigo,
+    });
+
+    final response = await http.post(url, headers: defaultHeaders, body: body);
+    final responseData = json.decode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return ApiResponse.success(
+        data: true,
+        message: responseData['mensaje'] ?? 'Unido a la plataforma privada',
+      );
+    } else {
+      return ApiResponse.error(
+        message: responseData['mensaje'] ?? 'Error al unirse a la plataforma privada',
+      );
+    }
+  } catch (e) {
+    return ApiResponse.error(
+      message: 'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+    );
+  }
+}
+
+
 
   // ------------------ LOCAL STORAGE ------------------ //
 
