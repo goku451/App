@@ -3,10 +3,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../services/api_service.dart';
 import '../models/user.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_application_1/generated/l10n.dart';
 import 'package:http/http.dart' as http;
 
+
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({super.key});
+  const EditProfileScreen({
+    super.key,
+    required void Function(Locale locale) onLocaleChange,
+    required void Function() onThemeToggle,
+  });
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -108,8 +114,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         biografia: biografia,
       );
 
-      
-
       if (response.success && response.data != null) {
         // Actualizar datos locales
         setState(() {
@@ -188,7 +192,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -227,7 +231,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               // Title
               Text(
-                "Editar Perfil",
+                S.of(context).Edit,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
@@ -258,7 +262,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ),
                                 SizedBox(height: 16),
                                 Text(
-                                  'Cargando datos del perfil...',
+                                  S.of(context).Message_Load,
                                   style: TextStyle(
                                     color: Colors.grey[600],
                                     fontSize: 16,
@@ -291,7 +295,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         _showImagePicker();
                                       },
                                       child: Text(
-                                        "Cambiar Foto",
+                                        S.of(context).Change_Photo,
                                         style: TextStyle(
                                           color: const Color(
                                             0xFF41277A,
@@ -311,7 +315,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  "Acerca de ti",
+                                  S.of(context).About_me,
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -326,31 +330,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 child: ListView(
                                   children: [
                                     _buildEditableProfileField(
-                                      "Nombre",
+                                      S.of(context).Name,
                                       userName,
                                     ),
                                     const SizedBox(height: 16),
                                     _buildEditableProfileField(
-                                      "Apellido",
+                                      S.of(context).Last_Name,
                                       userLastName,
                                     ),
                                     const SizedBox(height: 16),
                                     _buildNonEditableProfileField(
-                                      "Correo electrónico",
+                                      S.of(context).Email,
                                       userEmail,
                                     ),
                                     const SizedBox(height: 16),
                                     _buildEditableProfileField(
-                                      "Teléfono",
+                                      S.of(context).Phone,
                                       userPhone.isEmpty
-                                          ? "Sin teléfono"
+                                          ? S.of(context).OutPhone
                                           : userPhone,
                                     ),
                                     const SizedBox(height: 16),
                                     _buildEditableProfileField(
-                                      "Descripción",
+                                      S.of(context).Description,
+
                                       userBio.isEmpty
-                                          ? "Sin biografía aún"
+                                          ? S.of(context).Message_Bio
                                           : userBio,
                                     ),
                                   ],
@@ -522,17 +527,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Cambiar foto de perfil",
+                S.of(context).Change_Photo_Message,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               ListTile(
                 leading: Icon(Icons.camera_alt, color: Color(0xFF41277A)),
-                title: Text("Tomar foto"),
+                title: Text(S.of(context).Take_a_Pictura),
                 onTap: () {
                   Navigator.pop(context);
                   Fluttertoast.showToast(
-                    msg: 'Funcionalidad de cámara próximamente disponible',
+                    msg: S.of(context).Message_Future,
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
                   );
@@ -540,7 +545,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               ListTile(
                 leading: Icon(Icons.photo_library, color: Color(0xFF41277A)),
-                title: Text("Elegir de galería"),
+                title: Text(S.of(context).Chose_galery),
                 onTap: () async {
                   Navigator.pop(context); // Cierra el modal
 
@@ -560,7 +565,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         currentUser = response.data;
                       });
                       Fluttertoast.showToast(
-                        msg: 'Perfil actualizado con éxito',
+                        msg: S.of(context).Message_Edit_Photo,
                       );
                     } else {
                       Fluttertoast.showToast(msg: response.message);
@@ -590,7 +595,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Editar $label"),
+          title: Text("${S.of(context).Edit} $label"),
           content: TextField(
             controller: controller,
             decoration: InputDecoration(
@@ -599,13 +604,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            maxLines: label == "Descripción" ? 3 : 1,
+            maxLines: label == S.of(context).Description ? 3 : 1,
             keyboardType: _getKeyboardTypeForField(label),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text("Cancelar"),
+              child: Text(S.of(context).Cancel),
             ),
             ElevatedButton(
               onPressed: () {
@@ -621,7 +626,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 backgroundColor: const Color(0xFF41277A), // Color SmartSys
                 foregroundColor: Colors.white,
               ),
-              child: Text("Guardar"),
+              child: Text(S.of(context).Save),
             ),
           ],
         );
@@ -632,13 +637,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String _getHintForField(String label) {
     switch (label) {
       case 'Nombre':
-        return 'Ingresa tu nombre completo';
+        return S.of(context).IntoName;
       case 'Teléfono':
         return 'Ej: +503 1234-5678';
       case 'Descripción':
-        return 'Cuéntanos un poco sobre ti...';
+        return S.of(context).Message_Bio;
       default:
-        return 'Ingresa tu $label';
+        return '${S.of(context).Insert_to} $label';
     }
   }
 
@@ -658,7 +663,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       case 'Nombre':
         if (value.isEmpty) {
           Fluttertoast.showToast(
-            msg: 'El nombre no puede estar vacío',
+            msg: S.of(context).Error_Name,
             backgroundColor: Colors.red,
             textColor: Colors.white,
           );
@@ -666,7 +671,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         }
         if (value.length < 2) {
           Fluttertoast.showToast(
-            msg: 'El nombre debe tener al menos 2 caracteres',
+            msg: S.of(context).Error_Name2,
             backgroundColor: Colors.red,
             textColor: Colors.white,
           );
@@ -676,7 +681,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       case 'Teléfono':
         if (value.isNotEmpty && value.length < 8) {
           Fluttertoast.showToast(
-            msg: 'Ingresa un número de teléfono válido',
+            msg: S.of(context).Error_Phone,
             backgroundColor: Colors.red,
             textColor: Colors.white,
           );

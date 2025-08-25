@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../models/user.dart';
+import 'package:flutter_application_1/generated/l10n.dart';
 
 class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key});
+  final void Function(Locale locale) onLocaleChange;
+  final void Function() onThemeToggle;
+
+  const AccountScreen({
+    super.key,
+    required this.onLocaleChange,
+    required this.onThemeToggle,
+  });
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
@@ -25,7 +33,7 @@ class _AccountScreenState extends State<AccountScreen> {
   Future<void> _loadUserData() async {
     try {
       final user = await ApiService.getCurrentUser();
-      
+
       if (user != null && mounted) {
         setState(() {
           currentUser = user;
@@ -50,35 +58,38 @@ class _AccountScreenState extends State<AccountScreen> {
     }
   }
 
-void _onItemTapped(int index) {
-  setState(() {
-    _selectedIndex = index;
-  });
-  
-  // Navigate based on selected index
-  switch (index) {
-    case 0:
-      Navigator.pushReplacementNamed(context, '/home');
-      break;
-    case 1:
-      Navigator.pushReplacementNamed(context, '/chats'); // Navega a chats
-      break;
-    case 2:
-      Navigator.pushNamed(context, '/institutions'); // ✅ NUEVO - Navega a instituciones
-      break;
-    case 3:
-      Navigator.pushNamed(context, '/calendar'); // Navega a calendario
-      break;
-    case 4:
-      // Already on account screen
-      break;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    // Navigate based on selected index
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/chats'); // Navega a chats
+        break;
+      case 2:
+        Navigator.pushNamed(
+          context,
+          '/institutions',
+        ); // ✅ NUEVO - Navega a instituciones
+        break;
+      case 3:
+        Navigator.pushNamed(context, '/calendar'); // Navega a calendario
+        break;
+      case 4:
+        // Already on account screen
+        break;
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -86,15 +97,18 @@ void _onItemTapped(int index) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Top bar with notifications
-                            Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Stack(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.notifications_outlined,
                         size: 24,
-                        color: Colors.black54,
+                        color:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white // color en modo oscuro
+                                : Colors.black54, // color en modo claro
                       ),
                       Positioned(
                         right: 3,
@@ -118,7 +132,9 @@ void _onItemTapped(int index) {
               // Welcome section with profile picture
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).brightness == Brightness.dark
+                ? const Color.fromARGB(255, 65, 65, 65) // gris oscuro en modo oscuro
+                : Colors.white, // blanco en modo claro
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
@@ -134,9 +150,10 @@ void _onItemTapped(int index) {
                     CircleAvatar(
                       radius: 35,
                       backgroundColor: Colors.grey[300],
-                      backgroundImage: currentUser?.fotoBytes != null
-                          ? MemoryImage(currentUser!.fotoBytes!)
-                          : const AssetImage('assets/plat.png'),
+                      backgroundImage:
+                          currentUser?.fotoBytes != null
+                              ? MemoryImage(currentUser!.fotoBytes!)
+                              : const AssetImage('assets/plat.png'),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -144,16 +161,16 @@ void _onItemTapped(int index) {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Bienvenido",
+                            S.of(context).Only_Welcome,
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.grey[600],
                             ),
                           ),
-                          
+
                           // ✅ NOMBRE DINÁMICO DEL USUARIO
-                          _isLoadingUser 
-                            ? Row(
+                          _isLoadingUser
+                              ? Row(
                                 children: [
                                   Container(
                                     width: 140,
@@ -174,14 +191,14 @@ void _onItemTapped(int index) {
                                   ),
                                 ],
                               )
-                            : Text(
+                              : Text(
                                 userName,
                                 style: const TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                          
+
                           const SizedBox(height: 8),
                         ],
                       ),
@@ -198,44 +215,52 @@ void _onItemTapped(int index) {
                   children: [
                     _buildAccountOption(
                       icon: Icons.settings,
-                      title: "Configuración y privacidad",
+                      title: S.of(context).Settings,
                       onTap: () => Navigator.pushNamed(context, '/settings'),
                     ),
                     const SizedBox(height: 12),
                     _buildAccountOption(
                       icon: Icons.edit,
-                      title: "Editar perfil",
-                      onTap: () => Navigator.pushNamed(context, '/edit-profile'),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildAccountOption(
-                      icon: Icons.notifications,
-                      title: "Notificaciones",
-                      onTap: () {},
-                    ),
-                    const SizedBox(height: 12),
-                    _buildAccountOption(
-                      icon: Icons.bookmark,
-                      title: "Elementos guardados",
-                      onTap: () {},
-                    ),
-                    const SizedBox(height: 12),
-                    _buildAccountOption(
-                      icon: Icons.history,
-                      title: "Historial",
-                      onTap: () {},
+                      title: S.of(context).Edit,
+                      onTap:
+                          () => Navigator.pushNamed(context, '/edit-profile'),
                     ),
                     const SizedBox(height: 12),
                     _buildAccountOption(
                       icon: Icons.language,
-                      title: "Idioma",
-                      onTap: () {},
+                      title:
+                          Localizations.localeOf(context).languageCode == 'es'
+                              ? S
+                                  .of(context)
+                                  .En // Si está español, mostrar "Inglés"
+                              : S
+                                  .of(context)
+                                  .Es, // Si está inglés, mostrar "Español"
+                      onTap: () {
+                        final newLocale =
+                            Localizations.localeOf(context).languageCode == 'es'
+                                ? const Locale('en')
+                                : const Locale('es');
+                        widget.onLocaleChange(newLocale);
+                      },
                     ),
                     const SizedBox(height: 12),
                     _buildAccountOption(
-                      icon: Icons.dark_mode,
-                      title: "Modo oscuro",
-                      onTap: () {},
+                      icon:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Icons.light_mode
+                              : Icons.dark_mode,
+                      title:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? S
+                                  .of(context)
+                                  .Light_Mode // Si está dark, mostrar modo claro
+                              : S
+                                  .of(context)
+                                  .Dark_Mode, // Si está light, mostrar modo oscuro
+                      onTap: () {
+                        widget.onThemeToggle();
+                      },
                     ),
                   ],
                 ),
@@ -264,10 +289,7 @@ void _onItemTapped(int index) {
         elevation: 0,
         backgroundColor: Colors.white,
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: '',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat_bubble_outline),
             label: '',
@@ -276,14 +298,8 @@ void _onItemTapped(int index) {
             icon: Icon(Icons.account_balance_outlined),
             label: '',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.work_outline),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: '',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.work_outline), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: const Color(0xFF41277A),
@@ -302,7 +318,9 @@ void _onItemTapped(int index) {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color:Theme.of(context).brightness == Brightness.dark
+                ? const Color.fromARGB(255, 65, 65, 65) // gris oscuro en modo oscuro
+                : Colors.white, // blanco en modo claro
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -316,10 +334,7 @@ void _onItemTapped(int index) {
         leading: Icon(icon, color: Colors.grey[700], size: 22),
         title: Text(
           title,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         trailing: Icon(Icons.chevron_right, color: Colors.grey[400]),
         onTap: onTap,

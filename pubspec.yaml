@@ -10,21 +10,24 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+
   # Para peticiones HTTP a la API
   http: ^1.1.0
-  
+
   # Para almacenamiento local (tokens de sesión)
   shared_preferences: ^2.2.2
-  
+
   # Para mostrar mensajes toast
   fluttertoast: ^8.2.4
-  
+
   # Para seleccionar imágenes de cámara/galería
-  image_picker: ^1.0.7  # ← NUEVA LÍNEA AGREGADA
-  
+  image_picker: ^1.0.7 # ← NUEVA LÍNEA AGREGADA
+
   # Iconos de Material Design
   cupertino_icons: ^1.0.8
+
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -34,7 +37,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  
+  generate: true
   assets:
     - assets/
     - assets/images/avatars/
@@ -52,3 +55,5 @@ flutter_launcher_icons:
   windows:
     generate: true
     image_path: "assets/icono.png"
+flutter_intl:
+  enabled: true

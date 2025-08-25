@@ -3,7 +3,7 @@ import '../services/api_service.dart';
 import '../models/platform.dart';
 
 class InstitutionsScreen extends StatefulWidget {
-  const InstitutionsScreen({super.key});
+  const InstitutionsScreen({super.key, required void Function(Locale locale) onLocaleChange, required void Function() onThemeToggle});
 
   @override
   State<InstitutionsScreen> createState() => _InstitutionsScreenState();

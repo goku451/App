@@ -2,9 +2,14 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../services/api_service.dart';
+import 'package:flutter_application_1/generated/l10n.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  const RegisterScreen({
+    super.key,
+    required void Function(Locale locale) onLocaleChange,
+    required void Function() onThemeToggle,
+  });
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -18,7 +23,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
-  bool _obscurePassword = true; // Variable para controlar visibilidad de contraseña
+  bool _obscurePassword =
+      true; // Variable para controlar visibilidad de contraseña
 
   @override
   void dispose() {
@@ -55,7 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/login',
-                (route) => false,
+            (route) => false,
           );
         }
       } else {
@@ -83,7 +89,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // fondo blanco como en el mockup
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -93,24 +99,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 20),
 
               // Logo
-              Image.asset('assets/logo.png', height: 40),
+              Image.asset(
+                Theme.of(context).brightness == Brightness.dark
+                    ? 'assets/logo_dark.png'
+                    : 'assets/logo.png',
+                height: 40,
+              ),
               const SizedBox(height: 32),
 
               // Título principal
-              const Text(
-                'Crear una cuenta\nen SmartSys',
+              Text(
+                S.of(context).Create_Acoount,
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2E2E3A),
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
               ),
               const SizedBox(height: 16),
 
               // Subtítulo "Registro"
-              const Text(
-                'Registro',
-                style: TextStyle(
+              Text(
+                S.of(context).Register,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF41277A),
@@ -119,11 +130,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 8),
 
               // Descripción
-              const Text(
-                'Regístrate con nosotros para descubrir todas nuestras plataformas',
+              Text(
+                S.of(context).Register_text,
                 style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF7B7B8A),
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
               ),
               const SizedBox(height: 24),
@@ -140,24 +150,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           controller: _nameController,
                           enabled: !_isLoading,
                           decoration: InputDecoration(
-                            hintText: 'Nombres',
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            hintText: S.of(context).Name,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFDDDDE3),
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFDDDDE3),
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFF41277A)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF41277A),
+                              ),
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty) return 'Por favor ingrese su nombre';
-                            if (value.trim().length < 2) return 'El nombre debe tener al menos 2 caracteres';
+                            if (value == null || value.trim().isEmpty)
+                              return S.of(context).Error_Name;
+                            if (value.trim().length < 2)
+                              return S.of(context).Error_Name2;
                             return null;
                           },
                         ),
@@ -168,24 +189,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           controller: _lastNameController,
                           enabled: !_isLoading,
                           decoration: InputDecoration(
-                            hintText: 'Apellidos',
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            hintText: S.of(context).Last_Name,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFDDDDE3),
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFDDDDE3),
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFF41277A)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF41277A),
+                              ),
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty) return 'Por favor ingrese su apellido';
-                            if (value.trim().length < 2) return 'El apellido debe tener al menos 2 caracteres';
+                            if (value == null || value.trim().isEmpty)
+                              return S.of(context).Error_Last_Name;
+                            if (value.trim().length < 2)
+                              return S.of(context).Error_Last_Name2;
                             return null;
                           },
                         ),
@@ -197,25 +229,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           enabled: !_isLoading,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
-                            hintText: 'Correo electrónico',
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            hintText: S.of(context).Email,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFDDDDE3),
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFDDDDE3),
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFF41277A)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF41277A),
+                              ),
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty) return 'Por favor ingrese su correo';
-                            final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
-                            if (!emailRegex.hasMatch(value.trim())) return 'Por favor ingrese un correo válido';
+                            if (value == null || value.trim().isEmpty)
+                              return S.of(context).Error_Email;
+                            final emailRegex = RegExp(
+                              r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
+                            );
+                            if (!emailRegex.hasMatch(value.trim()))
+                              return S.of(context).Error_Email2;
                             return null;
                           },
                         ),
@@ -227,42 +272,55 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           enabled: !_isLoading,
                           obscureText: _obscurePassword,
                           decoration: InputDecoration(
-                            hintText: 'Contraseña',
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            hintText: S.of(context).Password,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFDDDDE3),
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFDDDDE3),
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFF41277A)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF41277A),
+                              ),
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                                _obscurePassword
+                                    ? Icons.visibility_outlined
+                                    : Icons.visibility_off_outlined,
                                 color: const Color(0xFF7B7B8A),
                               ),
-                              onPressed: _isLoading
-                                  ? null
-                                  : () {
-                                setState(() {
-                                  _obscurePassword = !_obscurePassword;
-                                });
-                              },
+                              onPressed:
+                                  _isLoading
+                                      ? null
+                                      : () {
+                                        setState(() {
+                                          _obscurePassword = !_obscurePassword;
+                                        });
+                                      },
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty) return 'Por favor ingrese una contraseña';
-                            if (value.length < 6) return 'La contraseña debe tener al menos 6 caracteres';
+                            if (value == null || value.isEmpty)
+                              return S.of(context).Error_Password;
+                            if (value.length < 8)
+                              return S.of(context).Error_Password2;
                             return null;
                           },
                         ),
                         const SizedBox(height: 32),
-
 
                         SizedBox(
                           width: double.infinity,
@@ -271,7 +329,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF41277A),
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                               foregroundColor: Colors.white, // texto blanco
                               textStyle: const TextStyle(
                                 fontSize: 16,
@@ -279,27 +339,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 shadows: [], // sin sombra
                               ),
                             ),
-                            child: _isLoading
-                                ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                            )
-                                : const Text('Crear cuenta'),
+                            child:
+                                _isLoading
+                                    ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                    : Text(S.of(context).Create_Account_Buttom),
                           ),
                         ),
                         const SizedBox(height: 16),
 
                         // Login link
                         TextButton(
-                          onPressed: _isLoading
-                              ? null
-                              : () {
-                            Navigator.pushNamed(context, '/login');
-                          },
-                          child: const Text(
-                            '¿Ya tienes una cuenta?',
-                            style: TextStyle(color: Color(0xFF7B7B8A)),
+                          onPressed:
+                              _isLoading
+                                  ? null
+                                  : () {
+                                    Navigator.pushNamed(context, '/login');
+                                  },
+                          child: Text(
+                            S.of(context).Have_Account,
+                            style: const TextStyle(color: Color(0xFF7B7B8A)),
                           ),
                         ),
                       ],
@@ -311,7 +376,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // Icono ayuda
               const Align(
                 alignment: Alignment.centerLeft,
-                child: Icon(Icons.help_outline, color: Color(0xFFB0B0B8), size: 24),
+                child: Icon(
+                  Icons.help_outline,
+                  color: Color(0xFFB0B0B8),
+                  size: 24,
+                ),
               ),
             ],
           ),

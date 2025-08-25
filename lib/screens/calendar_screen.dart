@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CalendarScreen extends StatefulWidget {
-  const CalendarScreen({super.key});
+  const CalendarScreen({super.key, required void Function(Locale locale) onLocaleChange, required void Function() onThemeToggle});
 
   @override
   State<CalendarScreen> createState() => _CalendarScreenState();

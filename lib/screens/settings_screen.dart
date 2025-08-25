@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../services/api_service.dart';
+import 'package:flutter_application_1/generated/l10n.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  const SettingsScreen({
+    super.key,
+    required void Function(Locale locale) onLocaleChange,
+    required void Function() onThemeToggle,
+  });
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -12,37 +17,40 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   int _selectedIndex = 4; // Profile tab selected
 
-void _onItemTapped(int index) {
-  setState(() {
-    _selectedIndex = index;
-  });
-  
-  // Navigate based on selected index
-  switch (index) {
-    case 0:
-      Navigator.pushReplacementNamed(context, '/home');
-      break;
-    case 1:
-      Navigator.pushReplacementNamed(context, '/chats'); // Navega a chats
-      break;
-    case 2:
-      Navigator.pushNamed(context, '/institutions'); // ✅ NUEVO - Navega a instituciones
-      break;
-    case 3:
-      Navigator.pushNamed(context, '/calendar'); // Navega a calendario
-      break;
-    case 4:
-      // Already on settings screen
-      break;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    // Navigate based on selected index
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/chats'); // Navega a chats
+        break;
+      case 2:
+        Navigator.pushNamed(
+          context,
+          '/institutions',
+        ); // ✅ NUEVO - Navega a instituciones
+        break;
+      case 3:
+        Navigator.pushNamed(context, '/calendar'); // Navega a calendario
+        break;
+      case 4:
+        // Already on settings screen
+        break;
+    }
   }
-}
 
   // Función para cerrar sesión
   Future<void> _logout() async {
     try {
       // Limpiar token guardado
       await ApiService.logout();
-      
+
       // ✅ INMEDIATAMENTE navegar a Welcome y limpiar todo el stack
       if (mounted) {
         Navigator.pushNamedAndRemoveUntil(
@@ -51,16 +59,15 @@ void _onItemTapped(int index) {
           (route) => false, // Limpiar todo el stack de navegación
         );
       }
-      
+
       // Mostrar mensaje después de navegar
       Fluttertoast.showToast(
-        msg: 'Sesión cerrada correctamente',
+        msg: S.of(context).Message_Correct_Out_Sesion,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.green,
         textColor: Colors.white,
       );
-      
     } catch (e) {
       // Mostrar error si algo sale mal
       Fluttertoast.showToast(
@@ -79,14 +86,14 @@ void _onItemTapped(int index) {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Cerrar Sesión'),
-          content: const Text('¿Estás seguro de que quieres cerrar sesión?'),
+          title: Text(S.of(context).Close_Session),
+          content: Text(S.of(context).Message_Close_Session),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Cerrar diálogo
               },
-              child: const Text('Cancelar'),
+              child: Text(S.of(context).Cancel),
             ),
             TextButton(
               onPressed: () {
@@ -96,7 +103,7 @@ void _onItemTapped(int index) {
               style: TextButton.styleFrom(
                 foregroundColor: const Color(0xFF41277A),
               ),
-              child: const Text('Cerrar Sesión'),
+              child: Text(S.of(context).Close_Session),
             ),
           ],
         );
@@ -107,7 +114,7 @@ void _onItemTapped(int index) {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -120,10 +127,14 @@ void _onItemTapped(int index) {
                 children: [
                   Stack(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.notifications_outlined,
                         size: 24,
-                        color: Colors.black54,
+                        color:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors
+                                    .white // color en modo oscuro
+                                : Colors.black54, // color en modo claro
                       ),
                       Positioned(
                         right: 3,
@@ -146,18 +157,12 @@ void _onItemTapped(int index) {
 
               // Title
               Text(
-                "Configuración y privacidad",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                S.of(context).Settings,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               Text(
-                "Configuración y configuraciones",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
+                S.of(context).Setting_Privacy,
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
               ),
               const SizedBox(height: 24),
 
@@ -166,22 +171,17 @@ void _onItemTapped(int index) {
                 child: ListView(
                   children: [
                     // Account section
-                    _buildSectionTitle("Cuenta"),
+                    _buildSectionTitle(S.of(context).Account),
                     const SizedBox(height: 12),
                     _buildSettingsCard([
                       _buildSettingsItem(
                         icon: Icons.person,
-                        title: "Mi Cuenta",
+                        title: S.of(context).My_Account,
                         onTap: () => Navigator.pushNamed(context, '/account'),
                       ),
                       _buildSettingsItem(
                         icon: Icons.lock,
-                        title: "Privacidad",
-                        onTap: () {},
-                      ),
-                      _buildSettingsItem(
-                        icon: Icons.security,
-                        title: "Seguridad y Privacidad",
+                        title: S.of(context).Setting_Privacy,
                         onTap: () {},
                       ),
                     ]),
@@ -189,32 +189,17 @@ void _onItemTapped(int index) {
                     const SizedBox(height: 24),
 
                     // Main content section
-                    _buildSectionTitle("Contenido principal"),
+                    _buildSectionTitle(S.of(context).Main_Content),
                     const SizedBox(height: 12),
                     _buildSettingsCard([
                       _buildSettingsItem(
-                        icon: Icons.report_problem,
-                        title: "Reportar un problema",
-                        onTap: () {},
-                      ),
-                      _buildSettingsItem(
-                        icon: Icons.help,
-                        title: "Ayuda",
-                        onTap: () {},
-                      ),
-                      _buildSettingsItem(
                         icon: Icons.description,
-                        title: "Términos y políticas",
+                        title: S.of(context).Terms_and_Policies,
                         onTap: () {},
                       ),
                       _buildSettingsItem(
                         icon: Icons.info,
-                        title: "Acerca de",
-                        onTap: () {},
-                      ),
-                      _buildSettingsItem(
-                        icon: Icons.policy,
-                        title: "Términos y políticas",
+                        title: S.of(context).About,
                         onTap: () {},
                       ),
                     ]),
@@ -222,29 +207,19 @@ void _onItemTapped(int index) {
                     const SizedBox(height: 24),
 
                     // Help and information section
-                    _buildSectionTitle("Ayuda e información"),
+                    _buildSectionTitle(S.of(context).Help_Info),
                     const SizedBox(height: 12),
                     _buildSettingsCard([
                       _buildSettingsItem(
-                        icon: Icons.support,
-                        title: "Centro de ayuda",
-                        onTap: () {},
-                      ),
-                      _buildSettingsItem(
                         icon: Icons.help_outline,
-                        title: "Ayuda",
-                        onTap: () {},
-                      ),
-                      _buildSettingsItem(
-                        icon: Icons.bug_report,
-                        title: "Reportar un problema",
+                        title: S.of(context).Help,
                         onTap: () {},
                       ),
                     ]),
 
                     const SizedBox(height: 24),
 
-                    // ✅ BOTÓN DE CERRAR SESIÓN - ACTUALIZADO
+                    //BOTÓN DE CERRAR SESIÓN
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -258,15 +233,21 @@ void _onItemTapped(int index) {
                         ],
                       ),
                       child: ListTile(
-                        leading: Icon(Icons.logout, color: const Color(0xFF41277A)),
+                        leading: Icon(
+                          Icons.logout,
+                          color: const Color(0xFF41277A),
+                        ),
                         title: Text(
-                          "Cerrar sesión",
+                          S.of(context).Close_Session,
                           style: TextStyle(
                             color: const Color(0xFF41277A),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        trailing: Icon(Icons.chevron_right, color: const Color(0xFF41277A)),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: const Color(0xFF41277A),
+                        ),
                         onTap: _showLogoutDialog, // ← Función de logout
                       ),
                     ),
@@ -280,18 +261,18 @@ void _onItemTapped(int index) {
         ),
       ),
 
-      // Bottom navigation bar - CORREGIDO
+      // Bottom navigation bar
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         elevation: 0,
         backgroundColor: Colors.white,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),        // Consistente
+            icon: Icon(Icons.home_outlined), // Consistente
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_outline),  // Consistente
+            icon: Icon(Icons.chat_bubble_outline), // Consistente
             label: '',
           ),
           BottomNavigationBarItem(
@@ -299,17 +280,17 @@ void _onItemTapped(int index) {
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.work_outline),         // Consistente
+            icon: Icon(Icons.work_outline), // Consistente
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),       // Consistente
+            icon: Icon(Icons.person_outline), // Consistente
             label: '',
           ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: const Color(0xFF41277A), // Color SmartSys
-        unselectedItemColor: Colors.grey[400],      // Consistente
+        unselectedItemColor: Colors.grey[400], // Consistente
         onTap: _onItemTapped,
         showSelectedLabels: false,
         showUnselectedLabels: false,
@@ -331,19 +312,22 @@ void _onItemTapped(int index) {
   Widget _buildSettingsCard(List<Widget> children) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color:
+            Theme.of(context).brightness == Brightness.dark
+                ? const Color.fromARGB(255, 65, 65, 65) // gris oscuro en modo oscuro
+                : Colors.white, // blanco en modo claro
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.black.withOpacity(0.3) // sombra más fuerte en modo oscuro
+                : Colors.grey.withOpacity(0.1), // sombra más suave en modo claro
             blurRadius: 2,
             spreadRadius: 1,
           ),
         ],
       ),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 
@@ -356,10 +340,7 @@ void _onItemTapped(int index) {
       leading: Icon(icon, color: Colors.grey[700], size: 22),
       title: Text(
         title,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       ),
       trailing: Icon(Icons.chevron_right, color: Colors.grey[400]),
       onTap: onTap,

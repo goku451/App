@@ -3,10 +3,16 @@ import 'dart:convert';
 import 'dart:typed_data';
 import '../services/api_service.dart';
 import '../models/user.dart';
+import 'package:flutter_application_1/generated/l10n.dart';
 
 // Home Screen - Dashboard after login
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({
+    super.key,
+    required this.title,
+    required void Function(Locale locale) onLocaleChange,
+    required void Function() onThemeToggle,
+  });
   final String title;
 
   @override
@@ -123,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               ListTile(
                 leading: const Icon(Icons.info),
-                title: const Text('Ver detalles'),
+                title: Text(S.of(context).Details),
                 onTap: () {
                   Navigator.pop(context);
                   _showPlatformDetails(platform);
@@ -131,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ListTile(
                 leading: const Icon(Icons.report),
-                title: const Text('Reportar plataforma'),
+                title:  Text(S.of(context).Report),
                 onTap: () {
                   Navigator.pop(context);
                   // Lógica para reportar plataforma
@@ -139,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ListTile(
                 leading: const Icon(Icons.exit_to_app),
-                title: const Text('Salir de la plataforma'),
+                title:  Text(S.of(context).Out_Plataform),
                 onTap: () {
                   Navigator.pop(context);
                   _showLeavePlatformDialog(platform);
@@ -164,26 +170,26 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Descripción:',
+                  S.of(context).Description,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(platform['descripcionPlataforma'] ?? 'Sin descripción'),
                 SizedBox(height: 8),
-                Text('Tu rol:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(S.of(context).Rol, style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(platform['rolUsuarioPlataforma'] ?? 'Sin rol'),
                 SizedBox(height: 8),
                 Text(
-                  'Privacidad:',
+                  S.of(context).Privacy,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(platform['privacidadPlataforma'] ?? 'No definida'),
                 SizedBox(height: 8),
-                Text('Estado:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(S.of(context).State, style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(platform['estadoPlataforma'] ?? 'No definido'),
                 if (platform['fechaUnion'] != null) ...[
                   SizedBox(height: 8),
                   Text(
-                    'Fecha de unión:',
+                    S.of(context).Date,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(platform['fechaUnion'].toString().split('T')[0]),
@@ -194,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cerrar'),
+              child:  Text(S.of(context).Close),
             ),
           ],
         );
@@ -207,14 +213,14 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Salir de la plataforma'),
+          title:  Text(S.of(context).Out_Plataform),
           content: Text(
-            '¿Estás seguro de que quieres salir de ${platform['nombrePlataforma']}?',
+            '${S.of(context).Message_Out} ${platform['nombrePlataforma']}?',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar'),
+              child:  Text(S.of(context).Cancel),
             ),
             TextButton(
               onPressed: () {
@@ -223,12 +229,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      'Has salido de ${platform['nombrePlataforma']}',
+                     '${S.of(context).Out_Success} ${platform['nombrePlataforma']}',
                     ),
                   ),
                 );
               },
-              child: const Text('Salir', style: TextStyle(color: Colors.red)),
+              child:  Text( S.of(context).Out , style: TextStyle(color: Colors.red)),
             ),
           ],
         );
@@ -239,7 +245,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
@@ -267,7 +273,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: [
                       const SizedBox(width: 24),
                       Image.asset(
-                        'assets/logo.png',
+                        Theme.of(context).brightness == Brightness.dark
+                            ? 'assets/logo_dark.png'
+                            : 'assets/logo.png',
                         width: 130,
                         height: 130,
                         fit: BoxFit.contain,
@@ -281,10 +289,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       Stack(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.notifications_outlined,
                             size: 24,
-                            color: Colors.black54,
+                            color: Theme.of(context).colorScheme.onBackground,
                           ),
                           Positioned(
                             right: 3,
@@ -305,7 +313,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  "Bienvenido",
+                  S.of(context).Welcome,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
@@ -357,7 +365,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   child: TextField(
                     decoration: InputDecoration(
-                      hintText: "Buscar en SmartSys",
+                      hintText: S.of(context).Search,
                       hintStyle: TextStyle(color: Colors.grey[400]),
                       prefixIcon: Container(
                         padding: const EdgeInsets.all(12),
@@ -382,7 +390,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Mis plataformas",
+                      S.of(context).MyPlataform,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 18,
@@ -450,7 +458,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'No tienes plataformas',
+                          S.of(context).NotPlataform,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -459,7 +467,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Únete a una plataforma para comenzar',
+                          S.of(context).MessageInto,
                           style: TextStyle(color: Colors.grey[500]),
                         ),
                       ],

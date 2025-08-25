@@ -1,10 +1,17 @@
-// lib/screens/welcome_screen.dart
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import 'package:flutter_application_1/generated/l10n.dart';
 
 // Welcome Screen - First screen shown to users
 class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({super.key});
+  final void Function(Locale locale) onLocaleChange;
+  final VoidCallback onThemeToggle; 
+
+  const WelcomeScreen({
+    super.key,
+    required this.onLocaleChange,
+    required this.onThemeToggle,
+  });
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
@@ -21,38 +28,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   Future<void> _checkSession() async {
     try {
-      // Verificar si ya hay una sesión activa
       final isLoggedIn = await ApiService.isLoggedIn();
 
       if (isLoggedIn && mounted) {
-        // Si hay sesión, ir directamente a Home
-        print('✅ Sesión activa encontrada, navegando a Home...');
         Navigator.pushReplacementNamed(context, '/home');
         return;
       }
-
-      // Si no hay sesión, mostrar Welcome
-      print('ℹ️ No hay sesión activa, mostrando Welcome...');
-      setState(() {
-        _isLoading = false;
-      });
-
+      setState(() => _isLoading = false);
     } catch (e) {
-      print('❌ Error verificando sesión: $e');
-      // En caso de error, mostrar Welcome
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Mientras verifica la sesión, mostrar splash simple
     if (_isLoading) {
       return Scaffold(
         body: Container(
-          color: Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           child: const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -73,10 +66,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 SizedBox(height: 10),
                 Text(
                   'Verificando sesión...',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
               ],
             ),
@@ -85,17 +75,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       );
     }
 
-    // Nuevo diseño que imita tu mockup de Figma
     return Scaffold(
       body: Column(
         children: [
-          // Imagen superior que ocupa más espacio y tiene esquinas cortadas
+          // Imagen superior con esquinas cortadas
           Expanded(
-            flex: 5, // Más espacio para la imagen
+            flex: 5,
             child: ClipPath(
-              clipper: CustomImageClipper(), // Clip personalizado para esquinas cortadas
+              clipper: CustomImageClipper(),
               child: Container(
-                width: double.infinity, // Ocupa todo el ancho
+                width: double.infinity,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/fondo.jpg'),
@@ -104,9 +93,38 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
                 child: Stack(
                   children: [
-                    // Logo en la esquina superior
+                    // Botón de idioma 🌐
                     Positioned(
-                      top: 50, // Más abajo para evitar el notch
+                      top: 50,
+                      right: 70,
+                      child: IconButton(
+                        icon: const Icon(Icons.language, color: Colors.white),
+                        onPressed: () {
+                          final newLocale =
+                              Localizations.localeOf(context).languageCode == 'es'
+                                  ? const Locale('en')
+                                  : const Locale('es');
+                          widget.onLocaleChange(newLocale);
+                        },
+                      ),
+                    ),
+                    // Botón de tema DARK/LIGHT
+                    Positioned(
+                      top: 50,
+                      right: 20,
+                      child: IconButton(
+                        icon: Icon(
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Icons.wb_sunny // 
+                              : Icons.nightlight_round, // 
+                          color: Colors.white,
+                        ),
+                        onPressed: widget.onThemeToggle,
+                      ),
+                    ),
+                    // Logo superior izquierdo
+                    Positioned(
+                      top: 50,
                       left: 20,
                       child: Row(
                         children: [
@@ -129,42 +147,41 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
           ),
 
-          // Sección inferior con contenido
+          // Contenido inferior
           Expanded(
-            flex: 4, // Menos espacio para el contenido
+            flex: 4,
             child: Container(
               width: double.infinity,
-              color: Colors.white,
+              color: Theme.of(context).scaffoldBackgroundColor,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Welcome text
-                  const Text(
-                    'Bienvenido a\nSmartSys',
+                  Text(
+                    S.of(context).welcome,
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1a1a1a),
+                      color: Theme.of(context).colorScheme.onBackground,
                       height: 1.2,
                     ),
                   ),
                   const SizedBox(height: 16),
 
                   // Description text
-                  const Text(
-                    'SmartSys es tu app de confia para unirte a nuestra de comunidad de plataformas descubre todas las increibles plataformas que tenemos para ti!.',
+                  Text(
+                    S.of(context).description,
                     style: TextStyle(
                       fontSize: 16,
-                      color: Color(0xFF666666),
+                      color: Theme.of(context).colorScheme.onBackground.withOpacity(0.7),
                       height: 1.5,
                     ),
                   ),
 
-                  const Spacer(), // Empuja el botón hacia abajo
-
+                  const Spacer(),
                   // Start button
-                  Container(
+                  SizedBox(
                     width: double.infinity,
                     height: 54,
                     child: ElevatedButton(
@@ -179,9 +196,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Iniciar',
-                        style: TextStyle(
+                      child: Text(
+                        S.of(context).Star,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -190,13 +207,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Help icon at bottom
-                  const Align(
+                  // Help icon
+                  Align(
                     alignment: Alignment.centerLeft,
                     child: Icon(
-                        Icons.help_outline,
-                        color: Color(0xFF999999),
-                        size: 24
+                      Icons.help_outline,
+                      color: Theme.of(context).iconTheme.color?.withOpacity(0.6),
+                      size: 24,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -210,33 +227,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 }
 
-// Clipper personalizado para crear el efecto de esquinas cortadas
+// Clipper personalizado para efecto esquinas cortadas
 class CustomImageClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
-    const double cornerRadius = 24.0; // Radio de las esquinas cortadas
+    const double cornerRadius = 24.0;
 
-    // Comenzar desde la esquina superior izquierda
     path.lineTo(0, 0);
     path.lineTo(size.width, 0);
     path.lineTo(size.width, size.height - cornerRadius);
-
-    // Esquina inferior derecha cortada
-    path.quadraticBezierTo(
-        size.width,
-        size.height,
-        size.width - cornerRadius,
-        size.height
-    );
-
-    // Línea inferior
+    path.quadraticBezierTo(size.width, size.height,
+        size.width - cornerRadius, size.height);
     path.lineTo(cornerRadius, size.height);
-
-    // Esquina inferior izquierda cortada
     path.quadraticBezierTo(0, size.height, 0, size.height - cornerRadius);
-
-    // Cerrar el path
     path.close();
 
     return path;

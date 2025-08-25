@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ChatsScreen extends StatefulWidget {
-  const ChatsScreen({super.key});
+  const ChatsScreen({super.key, required void Function(Locale locale) onLocaleChange, required void Function() onThemeToggle});
 
   @override
   State<ChatsScreen> createState() => _ChatsScreenState();

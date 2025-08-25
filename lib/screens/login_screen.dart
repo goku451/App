@@ -1,10 +1,10 @@
-// lib/screens/login_screen.dart
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../services/api_service.dart';
+import 'package:flutter_application_1/generated/l10n.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, required void Function(Locale locale) onLocaleChange, required void Function() onThemeToggle});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.success && response.data != null) {
         Fluttertoast.showToast(
-          msg: '¡Bienvenido ${response.data!.nombreCompleto}!',
+          msg: '${S.of(context).Login_Success} ${[' nombreUsuario']}',
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.green,
@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor:Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -87,23 +87,28 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 20),
 
               // Logo
-              Image.asset('assets/logo.png', height: 40),
+             Image.asset(
+                Theme.of(context).brightness == Brightness.dark
+                    ? 'assets/logo_dark.png'
+                    : 'assets/logo.png',
+                height: 40,
+              ),
               const SizedBox(height: 32),
 
               // Título principal
-              const Text(
-                '¡Bienvenido de nuevo!',
+               Text(
+                S.of(context).Messages_login,
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2E2E3A),
+                  color: Theme.of(context).colorScheme.onBackground
                 ),
               ),
               const SizedBox(height: 16),
 
               // Subtítulo
-              const Text(
-                'Iniciar sesión',
+               Text(
+                S.of(context).Login,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -113,11 +118,11 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 8),
 
               // Descripción
-              const Text(
-                'Inicia sesión para descubrir el nuevo contenido que te ofrecemos.',
+               Text(
+                S.of(context).Login_text,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Color(0xFF7B7B8A),
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
               ),
               const SizedBox(height: 24),
@@ -135,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           enabled: !_isLoading,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
-                            hintText: 'Correo electrónico',
+                            hintText: S.of(context).Email,
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -151,9 +156,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty) return 'Por favor ingrese su correo';
+                            if (value == null || value.trim().isEmpty) return S.of(context).Error_Email;
                             final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
-                            if (!emailRegex.hasMatch(value.trim())) return 'Por favor ingrese un correo válido';
+                            if (!emailRegex.hasMatch(value.trim())) return S.of(context).Error_Email2;
                             return null;
                           },
                         ),
@@ -165,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           enabled: !_isLoading,
                           obscureText: _obscurePassword,
                           decoration: InputDecoration(
-                            hintText: 'Contraseña',
+                            hintText: S.of(context).Password,
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -194,7 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty) return 'Por favor ingrese su contraseña';
+                            if (value == null || value.isEmpty) return S.of(context).Error_Password;
                             return null;
                           },
                         ),
@@ -216,7 +221,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     });
                                   },
                                 ),
-                                const Text('Recordarme'),
+                                 Text(S.of(context).Remember_me),
                               ],
                             ),
                             TextButton(
@@ -224,13 +229,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ? null
                                   : () {
                                 Fluttertoast.showToast(
-                                  msg: 'Función próximamente disponible',
+                                  msg: S.of(context).Message_Future,
                                   toastLength: Toast.LENGTH_SHORT,
                                   gravity: ToastGravity.BOTTOM,
                                 );
                               },
-                              child: const Text(
-                                '¿Olvidaste tu contraseña?',
+                              child:  Text(
+                                S.of(context).Forgot_Password,
                                 style: TextStyle(color: Color(0xFF7B7B8A)),
                               ),
                             ),
@@ -260,7 +265,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: 20,
                               child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                             )
-                                : const Text('Iniciar sesión'),
+                                :  Text(S.of(context).Login),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -272,8 +277,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               : () {
                             Navigator.pushNamed(context, '/register');
                           },
-                          child: const Text(
-                            '¿No tienes una cuenta?',
+                          child:  Text(
+                            S.of(context).Not_Have_Account,
                             style: TextStyle(color: Color(0xFF7B7B8A)),
                           ),
                         ),
