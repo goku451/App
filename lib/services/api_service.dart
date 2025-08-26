@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 import '../models/platform.dart';
+import '../models/publications.dart';
 import '../models/chat.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -553,6 +554,67 @@ class ApiService {
       );
     }
   }
+  // ------------------ PUBLICACIONES ------------------ //
+
+  // Obtener todas las publicaciones de una plataforma
+  static Future<ApiResponse<List<Publicacion>>> publicacionesPorPlataforma({
+    required int idPlataforma,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/publicacionesPorPlataforma/$idPlataforma');
+      final response = await http.get(url, headers: defaultHeaders);
+
+      final responseData = json.decode(response.body);
+
+      if (response.statusCode == 200 && responseData['ok'] == true) {
+        List<Publicacion> publicaciones = List<Map<String, dynamic>>.from(responseData['data'])
+            .map((json) => Publicacion.fromJson(json))
+            .toList();
+
+        return ApiResponse.success(
+          data: publicaciones,
+          message: responseData['mensaje'] ?? 'Publicaciones cargadas',
+        );
+      } else {
+        return ApiResponse.error(
+          message: responseData['mensaje'] ?? 'Error al cargar publicaciones',
+        );
+      }
+    } catch (e) {
+      return ApiResponse.error(
+        message: 'Error de conexión: $e',
+      );
+    }
+  }
+
+  // Obtener detalle de una publicación
+  static Future<ApiResponse<Publicacion>> verPublicacion({
+    required int idPublicacion,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/verPublicacion/$idPublicacion');
+      final response = await http.get(url, headers: defaultHeaders);
+
+      final responseData = json.decode(response.body);
+
+      if (response.statusCode == 200 && responseData['ok'] == true) {
+        final publicacion = Publicacion.fromJson(responseData['data']);
+        return ApiResponse.success(
+          data: publicacion,
+          message: responseData['mensaje'] ?? 'Detalle cargado',
+        );
+      } else {
+        return ApiResponse.error(
+          message: responseData['mensaje'] ?? 'Error al cargar detalle',
+        );
+      }
+    } catch (e) {
+      return ApiResponse.error(
+        message: 'Error de conexión: $e',
+      );
+    }
+  }
+
 
   // ------------------ LOCAL STORAGE ------------------ //
 

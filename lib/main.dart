@@ -12,6 +12,7 @@ import 'screens/account_screen.dart';
 import 'screens/edit_profile_screen.dart';
 import 'screens/calendar_screen.dart';
 import 'screens/institutions_screen.dart';
+import 'screens/publications.dart';
 
 void main() {
   runApp(const MyApp());
@@ -121,6 +122,9 @@ class _MyAppState extends State<MyApp> {
             CalendarScreen(onLocaleChange: setLocale, onThemeToggle: toggleTheme),
         '/institutions': (context) =>
             InstitutionsScreen(onLocaleChange: setLocale, onThemeToggle: toggleTheme),
+        '/publications': (context) =>
+            PublicationsScreen(
+              onLocaleChange: setLocale, onThemeToggle: toggleTheme),
       },
     );
   }

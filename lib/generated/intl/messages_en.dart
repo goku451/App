@@ -127,6 +127,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "MyPlataform": MessageLookupByLibrary.simpleMessage("My Platforms"),
         "My_Account": MessageLookupByLibrary.simpleMessage("My Account"),
         "Name": MessageLookupByLibrary.simpleMessage("Name"),
+        "NoPublications":
+            MessageLookupByLibrary.simpleMessage("No publications available"),
+        "NoPublicationsMessage": MessageLookupByLibrary.simpleMessage(
+            "There are no publications available at the moment. Please check back later."),
         "No_Chats": MessageLookupByLibrary.simpleMessage("No chats available"),
         "No_Description":
             MessageLookupByLibrary.simpleMessage("No description"),
@@ -153,6 +157,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "Privacy": MessageLookupByLibrary.simpleMessage("Privacy:"),
         "Private_Platform_Message": MessageLookupByLibrary.simpleMessage(
             "This platform is private. Enter the access code:"),
+        "Publications": MessageLookupByLibrary.simpleMessage("Publications"),
         "Register": MessageLookupByLibrary.simpleMessage("Register"),
         "Register_text": MessageLookupByLibrary.simpleMessage(
             "Sign up with us to discover all our platforms"),

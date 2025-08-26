@@ -117,5 +117,8 @@
   "Create_Chat": "Crear nuevo chat",
   "Chat_Name": "Nombre del chat",
   "Codigo_User": "Código de usuario",
-  "Write_Message": "Escribe un mensaje..."
+  "Write_Message": "Escribe un mensaje...",
+  "Publications": "Publicaciones",
+  "NoPublications": "No hay publicaciones",
+  "NoPublicationsMessage": "Aún no hay publicaciones disponibles"
 }

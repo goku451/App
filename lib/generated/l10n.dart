@@ -1249,6 +1249,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Publications`
+  String get Publications {
+    return Intl.message(
+      'Publications',
+      name: 'Publications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No publications available`
+  String get NoPublications {
+    return Intl.message(
+      'No publications available',
+      name: 'NoPublications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `There are no publications available at the moment. Please check back later.`
+  String get NoPublicationsMessage {
+    return Intl.message(
+      'There are no publications available at the moment. Please check back later.',
+      name: 'NoPublicationsMessage',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

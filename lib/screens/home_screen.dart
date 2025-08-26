@@ -165,6 +165,22 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ListTile(
                 leading: Icon(
+                  Icons.article_outlined,
+                  color: Theme.of(context).colorScheme.onBackground,
+                ),
+                title: Text(
+                  'Publicaciones',
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.titleLarge?.color,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/publications');
+                },
+              ),
+              ListTile(
+                leading: Icon(
                   Icons.report,
                   color: Theme.of(context).colorScheme.onBackground,
                 ),

@@ -118,5 +118,8 @@
   "Create_Chat": "Create new chat",
   "Chat_Name": "Chat Name",
   "Codigo_User": "User Code",
-  "Write_Message": "Write a message..."
+  "Write_Message": "Write a message...",
+  "Publications": "Publications",
+  "NoPublications": "No publications available",
+  "NoPublicationsMessage": "There are no publications available at the moment. Please check back later."
 }
