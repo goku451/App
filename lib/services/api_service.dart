@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 
 class ApiService {
   // RECORDAR CAMBIAR SOLO LA IP A LA IP LOCAL DE LA COMPUTADORA
-  static const String baseUrl = 'http://192.168.1.6:3000';
+  static const String baseUrl = 'http://192.168.137.238:3000';
 
   // Headers por defecto
   static Map<String, String> get defaultHeaders => {
@@ -197,6 +197,7 @@ class ApiService {
       );
     }
   }
+
   // -------------------- CHAT ---------------------------------
   static Future<ApiResponse<ChatData>> nuevochat({
     required int idUsuario,
@@ -211,7 +212,11 @@ class ApiService {
         'codigoUnico': codigoUnico,
       });
 
-      final response = await http.post(url, headers: defaultHeaders, body: body);
+      final response = await http.post(
+        url,
+        headers: defaultHeaders,
+        body: body,
+      );
       final responseData = json.decode(response.body);
 
       print('Response body: ${response.body}');
@@ -230,8 +235,8 @@ class ApiService {
       }
     } catch (e) {
       return ApiResponse.error(
-
-        message: 'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
       );
     }
   }
@@ -239,17 +244,26 @@ class ApiService {
 
   // <--------------------- VER MENSAJES ------------------------------------>
   // api_service.dart
-  static Future<ApiResponse<List<Map<String, dynamic>>>> fetchUserChats(int idUsuario) async {
+  static Future<ApiResponse<List<Map<String, dynamic>>>> fetchUserChats(
+    int idUsuario,
+  ) async {
     try {
-      final url = Uri.parse('$baseUrl/cargarchats/$idUsuario'); // Endpoint que devuelva los chats del usuario
+      final url = Uri.parse(
+        '$baseUrl/cargarchats/$idUsuario',
+      ); // Endpoint que devuelva los chats del usuario
       final response = await http.get(url, headers: defaultHeaders);
 
       final responseData = json.decode(response.body);
       print('Response body: ${response.body}');
 
       if (response.statusCode == 200 && responseData['ok'] == true) {
-        List<Map<String, dynamic>> chats = List<Map<String, dynamic>>.from(responseData['data']);
-        return ApiResponse.success(data: chats, message: responseData['mensaje']);
+        List<Map<String, dynamic>> chats = List<Map<String, dynamic>>.from(
+          responseData['data'],
+        );
+        return ApiResponse.success(
+          data: chats,
+          message: responseData['mensaje'],
+        );
       } else {
         return ApiResponse.error(
           message: responseData['mensaje'] ?? responseData['message'],
@@ -257,7 +271,8 @@ class ApiService {
       }
     } catch (e) {
       return ApiResponse.error(
-        message: 'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
       );
     }
   }
@@ -279,7 +294,11 @@ class ApiService {
         'mensaje': mensaje,
       });
 
-      final response = await http.post(url, headers: defaultHeaders, body: body);
+      final response = await http.post(
+        url,
+        headers: defaultHeaders,
+        body: body,
+      );
       final responseData = json.decode(response.body);
 
       print('Response sendMessage: ${response.body}'); // Debug
@@ -295,17 +314,17 @@ class ApiService {
         );
       }
     } catch (e) {
-      return ApiResponse.error(
-        message: 'Error de conexión en sendMessage: $e',
-      );
+      return ApiResponse.error(message: 'Error de conexión en sendMessage: $e');
     }
   }
   // <------------------------- fin mandar cosos -------------------------------->
 
   // <---------------------- Mostrar mensajes del chat ------------------------>
-// Obtener historial de mensajes entre dos usuarios
+  // Obtener historial de mensajes entre dos usuarios
   static Future<ApiResponse<List<Map<String, dynamic>>>> fetchChatMessages(
-      int idEmisor, int idReceptor) async {
+    int idEmisor,
+    int idReceptor,
+  ) async {
     try {
       final url = Uri.parse('$baseUrl/chats/$idEmisor/$idReceptor');
       final response = await http.get(url, headers: defaultHeaders);
@@ -314,8 +333,9 @@ class ApiService {
       print('Response fetchChatMessages: ${response.body}'); // Debug
 
       if (response.statusCode == 200 && responseData['ok'] == true) {
-        List<Map<String, dynamic>> mensajes =
-        List<Map<String, dynamic>>.from(responseData['data']);
+        List<Map<String, dynamic>> mensajes = List<Map<String, dynamic>>.from(
+          responseData['data'],
+        );
         return ApiResponse.success(
           data: mensajes,
           message: responseData['mensaje'] ?? 'Mensajes cargados',
@@ -332,7 +352,6 @@ class ApiService {
     }
   }
   // <---------------------- Fin mandar mensajitos monos -------------->
-
 
   // ------------------ PLATAFORMAS ------------------ //
 
@@ -557,35 +576,38 @@ class ApiService {
   // ------------------ PUBLICACIONES ------------------ //
 
   // Obtener todas las publicaciones de una plataforma
-  static Future<ApiResponse<List<Publicacion>>> publicacionesPorPlataforma({
-    required int idPlataforma,
-  }) async {
-    try {
-      final url = Uri.parse('$baseUrl/publicacionesPorPlataforma/$idPlataforma');
-      final response = await http.get(url, headers: defaultHeaders);
+ static Future<ApiResponse<List<Publicacion>>> getPublicaciones({
+  required int idPlataforma,
+}) async {
+  try {
+    final url = Uri.parse(
+      '$baseUrl/publicacionesPorPlataforma/$idPlataforma',
+    );
+    print(idPlataforma);
+    final response = await http.get(url, headers: defaultHeaders);
 
-      final responseData = json.decode(response.body);
+    final responseData = json.decode(response.body);
 
-      if (response.statusCode == 200 && responseData['ok'] == true) {
-        List<Publicacion> publicaciones = List<Map<String, dynamic>>.from(responseData['data'])
-            .map((json) => Publicacion.fromJson(json))
-            .toList();
+    if (response.statusCode == 200 && responseData['ok'] == true) {
+      List<Publicacion> publicaciones =
+          List<dynamic>.from(responseData['data'])
+              .map((json) => Publicacion.fromJson(json))
+              .toList();
 
-        return ApiResponse.success(
-          data: publicaciones,
-          message: responseData['mensaje'] ?? 'Publicaciones cargadas',
-        );
-      } else {
-        return ApiResponse.error(
-          message: responseData['mensaje'] ?? 'Error al cargar publicaciones',
-        );
-      }
-    } catch (e) {
+      return ApiResponse.success(
+        data: publicaciones,
+        message: responseData['mensaje'] ?? 'Publicaciones cargadas',
+      );
+    } else {
       return ApiResponse.error(
-        message: 'Error de conexión: $e',
+        message: responseData['mensaje'] ?? 'Error al cargar publicaciones',
       );
     }
+  } catch (e) {
+    return ApiResponse.error(message: 'Error de conexión: $e');
   }
+}
+
 
   // Obtener detalle de una publicación
   static Future<ApiResponse<Publicacion>> verPublicacion({
@@ -609,12 +631,9 @@ class ApiService {
         );
       }
     } catch (e) {
-      return ApiResponse.error(
-        message: 'Error de conexión: $e',
-      );
+      return ApiResponse.error(message: 'Error de conexión: $e');
     }
   }
-
 
   // ------------------ LOCAL STORAGE ------------------ //
 

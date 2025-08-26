@@ -65,7 +65,11 @@ class Plataforma {
     }
 
     return Plataforma(
-      idPlataforma: int.tryParse(json['idPlataforma']?.toString() ?? '') ?? 0,
+      idPlataforma: int.tryParse(
+        json['idPlataforma']?.toString() ??
+        json['id']?.toString() ??
+        ''
+      ) ?? 0,
       nombrePlataforma: json['nombrePlataforma'] ?? '',
       descripcionPlataforma: json['descripcionPlataforma'],
       privacidadPlataforma: json['privacidadPlataforma'] ?? 'Privado',

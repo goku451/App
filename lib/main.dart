@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: const Color(0xFFFFFFFF), // Blanco puro
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF41277A),
-          brightness: Brightness.light, // 
+          brightness: Brightness.light, //
         ),
         useMaterial3: true,
         fontFamily: 'Roboto',
@@ -64,20 +64,16 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: const Color(0xFF121212), // Fondo oscuro
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF41277A),
-          brightness: Brightness.dark, // 
+          brightness: Brightness.dark, //
         ),
         useMaterial3: true,
         fontFamily: 'Roboto',
       ),
 
       themeMode: _themeMode, // controla si es claro/oscuro
-
       // Localización
       locale: _locale,
-      supportedLocales: const [
-        Locale('es'),
-        Locale('en'),
-      ],
+      supportedLocales: const [Locale('es'), Locale('en')],
       localizationsDelegates: const [
         S.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -88,43 +84,73 @@ class _MyAppState extends State<MyApp> {
       // Rutas
       initialRoute: '/',
       routes: {
-        '/': (context) => WelcomeScreen(
+        '/':
+            (context) => WelcomeScreen(
               onLocaleChange: setLocale,
-              onThemeToggle: toggleTheme, 
+              onThemeToggle: toggleTheme,
             ),
-        '/register': (context) =>
-            RegisterScreen(onLocaleChange: setLocale, onThemeToggle: toggleTheme),
-        '/login': (context) =>
-            LoginScreen(onLocaleChange: setLocale, onThemeToggle: toggleTheme),
-        '/home': (context) => MyHomePage(
+        '/register':
+            (context) => RegisterScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/login':
+            (context) => LoginScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/home':
+            (context) => MyHomePage(
               title: 'SmartSys Dashboard',
               onLocaleChange: setLocale,
               onThemeToggle: toggleTheme,
             ),
-        '/settings': (context) =>
-            SettingsScreen(onLocaleChange: setLocale, onThemeToggle: toggleTheme),
-        '/account': (context) =>
-            AccountScreen(onLocaleChange: setLocale, onThemeToggle: toggleTheme),
-        '/edit-profile': (context) =>
-            EditProfileScreen(onLocaleChange: setLocale, onThemeToggle: toggleTheme),
-        '/chats': (context) =>
-            ChatsScreen(onLocaleChange: setLocale, onThemeToggle: toggleTheme),
-        '/chat_user': (context) =>
-            ChatUser(
+        '/settings':
+            (context) => SettingsScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/account':
+            (context) => AccountScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/edit-profile':
+            (context) => EditProfileScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/chats':
+            (context) => ChatsScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/chat_user':
+            (context) => ChatUser(
               onLocaleChange: setLocale,
               onThemeToggle: toggleTheme,
               idChat: 0, // TODO: Provide actual chat ID
               idUsuarioEmisor: 0, // TODO: Provide actual sender user ID
               idUsuarioReceptor: 0, // TODO: Provide actual receiver user ID
-              nombreUsuarioReceptor: '', // TODO: Provide actual receiver user name
+              nombreUsuarioReceptor:
+                  '', // TODO: Provide actual receiver user name
             ),
-        '/calendar': (context) =>
-            CalendarScreen(onLocaleChange: setLocale, onThemeToggle: toggleTheme),
-        '/institutions': (context) =>
-            InstitutionsScreen(onLocaleChange: setLocale, onThemeToggle: toggleTheme),
-        '/publications': (context) =>
-            PublicationsScreen(
-              onLocaleChange: setLocale, onThemeToggle: toggleTheme),
+        '/calendar':
+            (context) => CalendarScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/institutions':
+            (context) => InstitutionsScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/publications':
+            (context) => PublicationsScreen(
+              idPlataforma: 3, // o el ID que quieras mostrar
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
       },
     );
   }
