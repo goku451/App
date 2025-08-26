@@ -27,11 +27,19 @@ class _MyHomePageState extends State<MyHomePage> {
   List<dynamic> _userPlatforms = [];
   String? _errorMessage;
   User? _currentUser;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = "";
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadUserData() async {
@@ -61,12 +69,13 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<void> _loadUserPlatforms() async {
+  Future<void> _loadUserPlatforms({String busqueda = ""}) async {
     if (_currentUser == null) return;
 
     try {
       final result = await ApiService.misPlataformas(
         idUsuario: _currentUser!.idUsuario,
+        busqueda: busqueda, // <-- se envía al backend
       );
 
       if (mounted) {
@@ -116,16 +125,22 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _showInstitutionOptions(
-      BuildContext context,
-      Map<String, dynamic> platform,
-      ) {
+    BuildContext context,
+    Map<String, dynamic> platform,
+  ) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDarkMode
-          ? const Color.fromARGB(255, 65, 65, 65) // gris oscuro en modo oscuro
-          : Colors.white, // blanco en modo claro
+      backgroundColor:
+          isDarkMode
+              ? const Color.fromARGB(
+                255,
+                65,
+                65,
+                65,
+              ) // gris oscuro en modo oscuro
+              : Colors.white, // blanco en modo claro
       builder: (BuildContext context) {
         return Container(
           padding: const EdgeInsets.all(20),
@@ -194,9 +209,15 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: isDarkMode
-              ? const Color.fromARGB(255, 65, 65, 65) // gris oscuro en modo oscuro
-              : Colors.white, // blanco en modo claro
+          backgroundColor:
+              isDarkMode
+                  ? const Color.fromARGB(
+                    255,
+                    65,
+                    65,
+                    65,
+                  ) // gris oscuro en modo oscuro
+                  : Colors.white, // blanco en modo claro
           title: Text(
             platform['nombrePlataforma'] ?? 'Plataforma',
             style: TextStyle(
@@ -287,9 +308,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () => Navigator.pop(context),
               child: Text(
                 S.of(context).Close,
-                style: TextStyle(
-                  color: Colors.grey[isDarkMode ? 400 : 600],
-                ),
+                style: TextStyle(color: Colors.grey[isDarkMode ? 400 : 600]),
               ),
             ),
           ],
@@ -305,9 +324,15 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: isDarkMode
-              ? const Color.fromARGB(255, 65, 65, 65) // gris oscuro en modo oscuro
-              : Colors.white, // blanco en modo claro
+          backgroundColor:
+              isDarkMode
+                  ? const Color.fromARGB(
+                    255,
+                    65,
+                    65,
+                    65,
+                  ) // gris oscuro en modo oscuro
+                  : Colors.white, // blanco en modo claro
           title: Text(
             S.of(context).Out_Plataform,
             style: TextStyle(
@@ -325,9 +350,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () => Navigator.pop(context),
               child: Text(
                 S.of(context).Cancel,
-                style: TextStyle(
-                  color: Colors.grey[isDarkMode ? 400 : 600],
-                ),
+                style: TextStyle(color: Colors.grey[isDarkMode ? 400 : 600]),
               ),
             ),
             TextButton(
@@ -435,53 +458,65 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 _isLoadingUser
                     ? Row(
-                  children: [
-                    Container(
-                      width: 180,
-                      height: 28,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[isDarkMode ? 600 : 300],
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.grey[isDarkMode ? 500 : 400],
-                      ),
-                    ),
-                  ],
-                )
+                      children: [
+                        Container(
+                          width: 180,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[isDarkMode ? 600 : 300],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.grey[isDarkMode ? 500 : 400],
+                          ),
+                        ),
+                      ],
+                    )
                     : Text(
-                  userName ?? "Usuario",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.titleLarge?.color,
-                  ),
-                ),
+                      userName ?? "Usuario",
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleLarge?.color,
+                      ),
+                    ),
                 const SizedBox(height: 16),
                 // Search box
                 Container(
                   decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? const Color.fromARGB(255, 65, 65, 65) // gris oscuro en modo oscuro
-                        : Colors.white, // blanco en modo claro
+                    color:
+                        isDarkMode
+                            ? const Color.fromARGB(
+                              255,
+                              65,
+                              65,
+                              65,
+                            ) // gris oscuro en modo oscuro
+                            : Colors.white, // blanco en modo claro
                     borderRadius: BorderRadius.circular(25),
                     boxShadow: [
                       BoxShadow(
-                        color: isDarkMode
-                            ? Colors.black.withOpacity(0.3) // sombra más fuerte en modo oscuro
-                            : Colors.black.withOpacity(0.05), // sombra más suave en modo claro
+                        color:
+                            isDarkMode
+                                ? Colors.black.withOpacity(
+                                  0.3,
+                                ) // sombra más fuerte en modo oscuro
+                                : Colors.black.withOpacity(
+                                  0.05,
+                                ), // sombra más suave en modo claro
                         blurRadius: 4,
                         spreadRadius: 1,
                       ),
                     ],
                   ),
                   child: TextField(
+                    controller: _searchController,
                     style: TextStyle(
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
@@ -504,6 +539,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         horizontal: 20,
                       ),
                     ),
+                    onChanged: (value) {
+                      setState(() {
+                        _searchQuery = value;
+                        _isLoadingPlatforms = true;
+                      });
+                      _loadUserPlatforms(busqueda: value); // 🔑 filtra en vivo
+                    },
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -532,38 +574,35 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
                 const SizedBox(height: 12),
-
                 // Error message
                 if (_errorMessage != null)
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? Colors.red[900]!.withOpacity(0.3)
-                          : Colors.red[50],
+                      color:
+                          isDarkMode
+                              ? Colors.red[900]!.withOpacity(0.3)
+                              : Colors.red[50],
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: isDarkMode
-                            ? Colors.red[400]!
-                            : Colors.red[200]!,
+                        color: isDarkMode ? Colors.red[400]! : Colors.red[200]!,
                       ),
                     ),
                     child: Row(
                       children: [
                         Icon(
                           Icons.error_outline,
-                          color: isDarkMode
-                              ? Colors.red[400]
-                              : Colors.red[700],
+                          color: isDarkMode ? Colors.red[400] : Colors.red[700],
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             _errorMessage!,
                             style: TextStyle(
-                              color: isDarkMode
-                                  ? Colors.red[400]
-                                  : Colors.red[700],
+                              color:
+                                  isDarkMode
+                                      ? Colors.red[400]
+                                      : Colors.red[700],
                             ),
                           ),
                         ),
@@ -578,15 +617,26 @@ class _MyHomePageState extends State<MyHomePage> {
                   Container(
                     padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? const Color.fromARGB(255, 65, 65, 65) // gris oscuro en modo oscuro
-                          : Colors.white, // blanco en modo claro
+                      color:
+                          isDarkMode
+                              ? const Color.fromARGB(
+                                255,
+                                65,
+                                65,
+                                65,
+                              ) // gris oscuro en modo oscuro
+                              : Colors.white, // blanco en modo claro
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: isDarkMode
-                              ? Colors.black.withOpacity(0.3) // sombra más fuerte en modo oscuro
-                              : Colors.black.withOpacity(0.05), // sombra más suave en modo claro
+                          color:
+                              isDarkMode
+                                  ? Colors.black.withOpacity(
+                                    0.3,
+                                  ) // sombra más fuerte en modo oscuro
+                                  : Colors.black.withOpacity(
+                                    0.05,
+                                  ), // sombra más suave en modo claro
                           blurRadius: 4,
                           spreadRadius: 1,
                         ),
@@ -622,7 +672,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 // Platform cards
                 if (_userPlatforms.isNotEmpty)
                   ..._userPlatforms.map(
-                        (platform) => Column(
+                    (platform) => Column(
                       children: [
                         _buildPlatformCard(platform),
                         const SizedBox(height: 16),
@@ -645,9 +695,15 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         elevation: 0,
-        backgroundColor: isDarkMode
-            ? const Color.fromARGB(255, 65, 65, 65) // gris oscuro en modo oscuro
-            : Colors.white, // blanco en modo claro
+        backgroundColor:
+            isDarkMode
+                ? const Color.fromARGB(
+                  255,
+                  65,
+                  65,
+                  65,
+                ) // gris oscuro en modo oscuro
+                : Colors.white, // blanco en modo claro
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
           BottomNavigationBarItem(
@@ -691,15 +747,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDarkMode
-            ? const Color.fromARGB(255, 65, 65, 65) // gris oscuro en modo oscuro
-            : Colors.white, // blanco en modo claro
+        color:
+            isDarkMode
+                ? const Color.fromARGB(
+                  255,
+                  65,
+                  65,
+                  65,
+                ) // gris oscuro en modo oscuro
+                : Colors.white, // blanco en modo claro
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: isDarkMode
-                ? Colors.black.withOpacity(0.3) // sombra más fuerte en modo oscuro
-                : Colors.black.withOpacity(0.1), // sombra más suave en modo claro
+            color:
+                isDarkMode
+                    ? Colors.black.withOpacity(
+                      0.3,
+                    ) // sombra más fuerte en modo oscuro
+                    : Colors.black.withOpacity(
+                      0.1,
+                    ), // sombra más suave en modo claro
             blurRadius: 8,
             spreadRadius: 2,
           ),
@@ -796,9 +863,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     platform['descripcionPlataforma'],
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDarkMode
-                          ? Colors.white.withOpacity(0.87)
-                          : Colors.black87,
+                      color:
+                          isDarkMode
+                              ? Colors.white.withOpacity(0.87)
+                              : Colors.black87,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -809,7 +877,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     _buildInfoChip(
                       platform['privacidadPlataforma'] ?? 'Sin definir',
                       platform['privacidadPlataforma'] == 'Privado' ||
-                          platform['privacidadPlataforma'] == 'Private'
+                              platform['privacidadPlataforma'] == 'Private'
                           ? Icons.lock
                           : Icons.public,
                       accentColor,

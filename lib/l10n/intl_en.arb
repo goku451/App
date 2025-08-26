@@ -21,7 +21,7 @@
 "Error_Last_Name2": "Last name must be at least 2 characters",
 "Error_Email2": "Please enter a valid email",
 "Error_Password2": "Password must be at least 8 characters",
-"Login_Success": "Welcome ",
+"Login_Success": "Welcome",
 "Messages_login": "Welcome back!",
 "Login": "Log In",
 "Login_text": "Log in to discover the new content we offer you.",

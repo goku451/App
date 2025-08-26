@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.success && response.data != null) {
         Fluttertoast.showToast(
-          msg: '${S.of(context).Login_Success} ${[' nombreUsuario']}',
+          msg: '${S.of(context).Login_Success}',
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.green,

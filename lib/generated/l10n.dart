@@ -270,10 +270,10 @@ class S {
     );
   }
 
-  /// `Welcome `
+  /// `Welcome`
   String get Login_Success {
     return Intl.message(
-      'Welcome ',
+      'Welcome',
       name: 'Login_Success',
       desc: '',
       args: [],

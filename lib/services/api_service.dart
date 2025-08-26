@@ -8,13 +8,13 @@ import 'package:image_picker/image_picker.dart';
 
 class ApiService {
   // RECORDAR CAMBIAR SOLO LA IP A LA IP LOCAL DE LA COMPUTADORA
-  static const String baseUrl = 'http://10.0.2.2:3000';
+  static const String baseUrl = 'http://192.168.1.6:3000';
 
   // Headers por defecto
   static Map<String, String> get defaultHeaders => {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      };
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
 
   // ------------------ USUARIOS ------------------ //
 
@@ -34,7 +34,11 @@ class ApiService {
         'contrasena': contrasena,
       });
 
-      final response = await http.post(url, headers: defaultHeaders, body: body);
+      final response = await http.post(
+        url,
+        headers: defaultHeaders,
+        body: body,
+      );
 
       final responseData = json.decode(response.body);
 
@@ -42,15 +46,19 @@ class ApiService {
         final user = User.fromJson(responseData['data']);
         await _saveUserData(user);
         return ApiResponse.success(
-            data: user, message: responseData['mensaje'] ?? 'Registro exitoso');
+          data: user,
+          message: responseData['mensaje'] ?? 'Registro exitoso',
+        );
       } else {
         return ApiResponse.error(
-            message: responseData['mensaje'] ?? 'Error en el registro');
+          message: responseData['mensaje'] ?? 'Error en el registro',
+        );
       }
     } catch (e) {
       return ApiResponse.error(
-          message:
-              'Error de conexión. Verifica tu internet y que la API esté funcionando.');
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+      );
     }
   }
 
@@ -61,10 +69,16 @@ class ApiService {
   }) async {
     try {
       final url = Uri.parse('$baseUrl/login');
-      final body =
-          json.encode({'correoElectronico': correoElectronico, 'contrasena': contrasena});
+      final body = json.encode({
+        'correoElectronico': correoElectronico,
+        'contrasena': contrasena,
+      });
 
-      final response = await http.post(url, headers: defaultHeaders, body: body);
+      final response = await http.post(
+        url,
+        headers: defaultHeaders,
+        body: body,
+      );
 
       final responseData = json.decode(response.body);
 
@@ -72,15 +86,19 @@ class ApiService {
         final user = User.fromJson(responseData['data']);
         await _saveUserData(user);
         return ApiResponse.success(
-            data: user, message: responseData['mensaje'] ?? 'Login exitoso');
+          data: user,
+          message: responseData['mensaje'] ?? 'Login exitoso',
+        );
       } else {
         return ApiResponse.error(
-            message: responseData['mensaje'] ?? 'Credenciales inválidas');
+          message: responseData['mensaje'] ?? 'Credenciales inválidas',
+        );
       }
     } catch (e) {
       return ApiResponse.error(
-          message:
-              'Error de conexión. Verifica tu internet y que la API esté funcionando.');
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+      );
     }
   }
 
@@ -102,7 +120,11 @@ class ApiService {
         'biografia': biografia,
       });
 
-      final response = await http.post(url, headers: defaultHeaders, body: body);
+      final response = await http.post(
+        url,
+        headers: defaultHeaders,
+        body: body,
+      );
 
       final responseData = json.decode(response.body);
 
@@ -112,16 +134,19 @@ class ApiService {
         final updatedUser = User.fromJson(responseData['data']);
         await _saveUserData(updatedUser);
         return ApiResponse.success(
-            data: updatedUser,
-            message: responseData['message'] ?? 'Perfil actualizado exitosamente');
+          data: updatedUser,
+          message: responseData['message'] ?? 'Perfil actualizado exitosamente',
+        );
       } else {
         return ApiResponse.error(
-            message: responseData['message'] ?? 'Error actualizando perfil');
+          message: responseData['message'] ?? 'Error actualizando perfil',
+        );
       }
     } catch (e) {
       return ApiResponse.error(
-          message:
-              'Error de conexión. Verifica tu internet y que la API esté funcionando.');
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+      );
     }
   }
 
@@ -138,8 +163,11 @@ class ApiService {
 
       if (pickedFile != null) {
         final bytes = await pickedFile.readAsBytes();
-        final multipartFile =
-            http.MultipartFile.fromBytes('fotoPerfil', bytes, filename: pickedFile.name);
+        final multipartFile = http.MultipartFile.fromBytes(
+          'fotoPerfil',
+          bytes,
+          filename: pickedFile.name,
+        );
         request.files.add(multipartFile);
       }
 
@@ -152,24 +180,28 @@ class ApiService {
         final updatedUser = User.fromJson(responseData['data']);
         await _saveUserData(updatedUser);
         return ApiResponse.success(
-            data: updatedUser,
-            message: responseData['message'] ?? 'Perfil actualizado con éxito');
+          data: updatedUser,
+          message: responseData['message'] ?? 'Perfil actualizado con éxito',
+        );
       } else {
         return ApiResponse.error(
-            message: responseData['message'] ?? 'Error actualizando perfil');
+          message: responseData['message'] ?? 'Error actualizando perfil',
+        );
       }
     } catch (e) {
       return ApiResponse.error(
-          message:
-              'Error de conexión. Verifica tu internet y que la API esté funcionando.');
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+      );
     }
   }
 
- // ------------------ PLATAFORMAS ------------------ //
+  // ------------------ PLATAFORMAS ------------------ //
 
   // Buscar plataformas - RUTA CORREGIDA
-  static Future<ApiResponse<List<dynamic>>> explorarPlataformas(
-      {String busqueda = ""}) async {
+  static Future<ApiResponse<List<dynamic>>> explorarPlataformas({
+    String busqueda = "",
+  }) async {
     try {
       // CORREGIDO: Ruta actualizada para coincidir con el router
       final url = Uri.parse('$baseUrl/explorar?busqueda=$busqueda');
@@ -177,7 +209,7 @@ class ApiService {
       print('Llamando a URL: $url'); // Debug
 
       final response = await http.get(url, headers: defaultHeaders);
-      
+
       print('Status Code: ${response.statusCode}'); // Debug
       print('Response Body: ${response.body}'); // Debug
 
@@ -185,21 +217,24 @@ class ApiService {
 
       if (response.statusCode == 200 && responseData['ok'] == true) {
         return ApiResponse.success(
-            data: responseData['data'],
-            message: responseData['mensaje'] ?? 'Plataformas encontradas');
+          data: responseData['data'],
+          message: responseData['mensaje'] ?? 'Plataformas encontradas',
+        );
       } else {
         return ApiResponse.error(
-            message: responseData['mensaje'] ?? 'Error al buscar plataformas');
+          message: responseData['mensaje'] ?? 'Error al buscar plataformas',
+        );
       }
     } catch (e) {
       print('Error en explorarPlataformas: $e'); // Debug
       return ApiResponse.error(
-          message:
-              'Error de conexión. Verifica tu internet y que la API esté funcionando.');
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+      );
     }
   }
 
-  // Listar plataformas activas 
+  // Listar plataformas activas
   static Future<ApiResponse<List<dynamic>>> plataformasActivas() async {
     try {
       // CORREGIDO: Ruta actualizada para coincidir con el router
@@ -208,7 +243,7 @@ class ApiService {
       print('Llamando a URL: $url'); // Debug
 
       final response = await http.get(url, headers: defaultHeaders);
-      
+
       print('Status Code: ${response.statusCode}'); // Debug
       print('Response Body: ${response.body}'); // Debug
 
@@ -216,31 +251,38 @@ class ApiService {
 
       if (response.statusCode == 200 && responseData['ok'] == true) {
         return ApiResponse.success(
-            data: responseData['data'],
-            message: responseData['mensaje'] ?? 'Plataformas activas');
+          data: responseData['data'],
+          message: responseData['mensaje'] ?? 'Plataformas activas',
+        );
       } else {
         return ApiResponse.error(
-            message: responseData['mensaje'] ?? 'Error al cargar plataformas');
+          message: responseData['mensaje'] ?? 'Error al cargar plataformas',
+        );
       }
     } catch (e) {
       print('Error en plataformasActivas: $e'); // Debug
       return ApiResponse.error(
-          message:
-              'Error de conexión. Verifica tu internet y que la API esté funcionando.');
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+      );
     }
   }
 
   // Obtener las plataformas de un usuario específico
   static Future<ApiResponse<List<dynamic>>> misPlataformas({
     required int idUsuario,
+    String busqueda = "", // ✅ parámetro opcional
   }) async {
     try {
-      final url = Uri.parse('$baseUrl/misPlataformas?idUsuario=$idUsuario');
+      // ✅ Construcción dinámica de la URL con búsqueda
+      final url = Uri.parse(
+        '$baseUrl/misPlataformas?idUsuario=$idUsuario&busqueda=$busqueda',
+      );
 
       print('Llamando a URL: $url'); // Debug
 
       final response = await http.get(url, headers: defaultHeaders);
-      
+
       print('Status Code: ${response.statusCode}'); // Debug
       print('Response Body: ${response.body}'); // Debug
 
@@ -248,112 +290,132 @@ class ApiService {
 
       if (response.statusCode == 200 && responseData['ok'] == true) {
         return ApiResponse.success(
-            data: responseData['data'],
-            message: responseData['mensaje'] ?? 'Plataformas del usuario obtenidas');
+          data: responseData['data'],
+          message:
+              responseData['mensaje'] ?? 'Plataformas del usuario obtenidas',
+        );
       } else {
         return ApiResponse.error(
-            message: responseData['mensaje'] ?? 'Error al obtener las plataformas del usuario');
+          message:
+              responseData['mensaje'] ??
+              'Error al obtener las plataformas del usuario',
+        );
       }
     } catch (e) {
       print('Error en misPlataformas: $e'); // Debug
       return ApiResponse.error(
-          message:
-              'Error de conexión. Verifica tu internet y que la API esté funcionando.');
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+      );
     }
   }
-
 
   // Test específico para rutas de plataformas
   static Future<Map<String, bool>> testPlatformRoutes() async {
     final results = <String, bool>{};
-    
+
     try {
       // Test ruta de plataformas activas
       final activasUrl = Uri.parse('$baseUrl/explorarActivas');
-      final activasResponse = await http.get(activasUrl).timeout(const Duration(seconds: 5));
+      final activasResponse = await http
+          .get(activasUrl)
+          .timeout(const Duration(seconds: 5));
       results['activas'] = activasResponse.statusCode == 200;
-      
+
       // Test ruta de explorar
       final explorarUrl = Uri.parse('$baseUrl/explorar');
-      final explorarResponse = await http.get(explorarUrl).timeout(const Duration(seconds: 5));
+      final explorarResponse = await http
+          .get(explorarUrl)
+          .timeout(const Duration(seconds: 5));
       results['explorar'] = explorarResponse.statusCode == 200;
-      
     } catch (e) {
       print('Error testing platform routes: $e');
     }
-    
+
     return results;
   }
 
   // ------------------ UNIRSE A PLATAFORMAS ------------------ //
 
-// Unirse a una plataforma pública
-static Future<ApiResponse<bool>> joinPublicPlatform({
-  required int idUsuario,
-  required int idPlataforma,
-}) async {
-  try {
-    final url = Uri.parse('$baseUrl/unirsePublico');
-    final body = json.encode({
-      'idUsuario': idUsuario,
-      'idPlataforma': idPlataforma,
-    });
+  // Unirse a una plataforma pública
+  static Future<ApiResponse<bool>> joinPublicPlatform({
+    required int idUsuario,
+    required int idPlataforma,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/unirsePublico');
+      final body = json.encode({
+        'idUsuario': idUsuario,
+        'idPlataforma': idPlataforma,
+      });
 
-    final response = await http.post(url, headers: defaultHeaders, body: body);
-    final responseData = json.decode(response.body);
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return ApiResponse.success(
-        data: true,
-        message: responseData['mensaje'] ?? 'Unido a la plataforma pública',
+      final response = await http.post(
+        url,
+        headers: defaultHeaders,
+        body: body,
       );
-    } else {
+      final responseData = json.decode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return ApiResponse.success(
+          data: true,
+          message: responseData['mensaje'] ?? 'Unido a la plataforma pública',
+        );
+      } else {
+        return ApiResponse.error(
+          message:
+              responseData['mensaje'] ??
+              'Error al unirse a la plataforma pública',
+        );
+      }
+    } catch (e) {
       return ApiResponse.error(
-        message: responseData['mensaje'] ?? 'Error al unirse a la plataforma pública',
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
       );
     }
-  } catch (e) {
-    return ApiResponse.error(
-      message: 'Error de conexión. Verifica tu internet y que la API esté funcionando.',
-    );
   }
-}
 
-// Unirse a una plataforma privada (requiere código)
-static Future<ApiResponse<bool>> joinPrivatePlatform({
-  required int idUsuario,
-  required int idPlataforma,
-  required String codigo,
-}) async {
-  try {
-    final url = Uri.parse('$baseUrl/unirsePrivado');
-    final body = json.encode({
-      'idUsuario': idUsuario,
-      'idPlataforma': idPlataforma,
-      'codigo': codigo,
-    });
+  // Unirse a una plataforma privada (requiere código)
+  static Future<ApiResponse<bool>> joinPrivatePlatform({
+    required int idUsuario,
+    required int idPlataforma,
+    required String codigo,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/unirsePrivado');
+      final body = json.encode({
+        'idUsuario': idUsuario,
+        'idPlataforma': idPlataforma,
+        'codigo': codigo,
+      });
 
-    final response = await http.post(url, headers: defaultHeaders, body: body);
-    final responseData = json.decode(response.body);
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return ApiResponse.success(
-        data: true,
-        message: responseData['mensaje'] ?? 'Unido a la plataforma privada',
+      final response = await http.post(
+        url,
+        headers: defaultHeaders,
+        body: body,
       );
-    } else {
+      final responseData = json.decode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return ApiResponse.success(
+          data: true,
+          message: responseData['mensaje'] ?? 'Unido a la plataforma privada',
+        );
+      } else {
+        return ApiResponse.error(
+          message:
+              responseData['mensaje'] ??
+              'Error al unirse a la plataforma privada',
+        );
+      }
+    } catch (e) {
       return ApiResponse.error(
-        message: responseData['mensaje'] ?? 'Error al unirse a la plataforma privada',
+        message:
+            'Error de conexión. Verifica tu internet y que la API esté funcionando.',
       );
     }
-  } catch (e) {
-    return ApiResponse.error(
-      message: 'Error de conexión. Verifica tu internet y que la API esté funcionando.',
-    );
   }
-}
-
-
 
   // ------------------ LOCAL STORAGE ------------------ //
 

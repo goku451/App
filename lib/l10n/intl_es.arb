@@ -21,7 +21,7 @@
 "Error_Last_Name2": "El apellido debe tener al menos 2 caracteres",
 "Error_Email2": "Por favor ingrese un correo electrónico válido",
 "Error_Password2": "La contraseña debe tener al menos 8 caracteres",
-"Login_Success": "Bienvenido ",
+"Login_Success": "Bienvenido",
 "Messages_login": "¡Bienvenido de nuevo!",
 "Login": "Iniciar Sesión",
 "Login_text": "Inicia sesión para descubrir el nuevo contenido que te ofrecemos.",

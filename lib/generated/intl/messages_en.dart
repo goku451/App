@@ -98,7 +98,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "Last_Name": MessageLookupByLibrary.simpleMessage("Last Name"),
         "Light_Mode": MessageLookupByLibrary.simpleMessage("Light Mode"),
         "Login": MessageLookupByLibrary.simpleMessage("Log In"),
-        "Login_Success": MessageLookupByLibrary.simpleMessage("Welcome "),
+        "Login_Success": MessageLookupByLibrary.simpleMessage("Welcome"),
         "Login_text": MessageLookupByLibrary.simpleMessage(
             "Log in to discover the new content we offer you."),
         "Main_Content": MessageLookupByLibrary.simpleMessage("Main Content"),
