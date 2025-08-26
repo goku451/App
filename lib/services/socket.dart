@@ -5,7 +5,7 @@ class SocketService {
 
   static IO.Socket getSocket() {
     if (_socket == null) {
-      _socket = IO.io('http://192.168.137.238', {
+      _socket = IO.io('http://192.168.137.238:3000', {
         'transports': ['websocket'],
         'autoConnect': true,
         'reconnection': true,

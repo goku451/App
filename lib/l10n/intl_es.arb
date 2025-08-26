@@ -120,5 +120,6 @@
   "Write_Message": "Escribe un mensaje...",
   "Publications": "Publicaciones",
   "NoPublications": "No hay publicaciones",
-  "NoPublicationsMessage": "Aún no hay publicaciones disponibles"
+  "NoPublicationsMessage": "Aún no hay publicaciones disponibles",
+  "Codigo": "Código"
 }

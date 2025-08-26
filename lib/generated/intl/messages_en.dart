@@ -42,6 +42,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Choose from Gallery"),
         "Close": MessageLookupByLibrary.simpleMessage("Close"),
         "Close_Session": MessageLookupByLibrary.simpleMessage("Log Out"),
+        "Codigo": MessageLookupByLibrary.simpleMessage("Code"),
         "Codigo_User": MessageLookupByLibrary.simpleMessage("User Code"),
         "Connection_Error":
             MessageLookupByLibrary.simpleMessage("Connection error"),
