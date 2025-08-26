@@ -31,22 +31,27 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Plataformas Activas"),
         "Add": MessageLookupByLibrary.simpleMessage("Agregar"),
         "Add_Event": MessageLookupByLibrary.simpleMessage("Agregar Evento"),
+        "All_Chats": MessageLookupByLibrary.simpleMessage("Todos los chats"),
         "Calendar": MessageLookupByLibrary.simpleMessage("Calendario"),
         "Cancel": MessageLookupByLibrary.simpleMessage("Cancelar"),
         "Capacity": MessageLookupByLibrary.simpleMessage("Capacidad:"),
         "Change_Photo": MessageLookupByLibrary.simpleMessage("Cambiar Foto"),
         "Change_Photo_Message":
             MessageLookupByLibrary.simpleMessage("Cambiar foto de perfil"),
+        "Chat_Name": MessageLookupByLibrary.simpleMessage("Nombre del chat"),
         "Chose_galery":
             MessageLookupByLibrary.simpleMessage("Elegir de la galería"),
         "Close": MessageLookupByLibrary.simpleMessage("Cerrar"),
         "Close_Session": MessageLookupByLibrary.simpleMessage("Cerrar sesión"),
+        "Codigo_User":
+            MessageLookupByLibrary.simpleMessage("Código de usuario"),
         "Connection_Error":
             MessageLookupByLibrary.simpleMessage("Error de conexión"),
         "Create_Account_Buttom":
             MessageLookupByLibrary.simpleMessage("Crear Cuenta"),
         "Create_Acoount": MessageLookupByLibrary.simpleMessage(
             "Crear una cuenta\nen SmarSys"),
+        "Create_Chat": MessageLookupByLibrary.simpleMessage("Crear nuevo chat"),
         "Create_Platform_Feature": MessageLookupByLibrary.simpleMessage(
             "Funcionalidad para crear plataforma"),
         "Dark_Mode": MessageLookupByLibrary.simpleMessage("Modo Oscuro"),
@@ -129,6 +134,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "MyPlataform": MessageLookupByLibrary.simpleMessage("Mis Plataformas"),
         "My_Account": MessageLookupByLibrary.simpleMessage("Mi cuenta"),
         "Name": MessageLookupByLibrary.simpleMessage("Nombre"),
+        "No_Chats":
+            MessageLookupByLibrary.simpleMessage("No hay chats disponibles"),
         "No_Description_Available":
             MessageLookupByLibrary.simpleMessage("Sin descripción disponible"),
         "No_Events_This_Day": MessageLookupByLibrary.simpleMessage(
@@ -165,6 +172,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "Rol": MessageLookupByLibrary.simpleMessage("Rol:"),
         "Save": MessageLookupByLibrary.simpleMessage("Guardar"),
         "Search": MessageLookupByLibrary.simpleMessage("Buscar en SmartSys"),
+        "Search_Chats": MessageLookupByLibrary.simpleMessage("Buscar chats"),
         "Search_Error": MessageLookupByLibrary.simpleMessage("Error al buscar"),
         "Search_Platform":
             MessageLookupByLibrary.simpleMessage("Buscar plataforma"),
@@ -184,6 +192,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "Valid_Code_Required": MessageLookupByLibrary.simpleMessage(
             "Por favor ingresa un código válido"),
         "Welcome": MessageLookupByLibrary.simpleMessage("Bienvenido"),
+        "Write_Message":
+            MessageLookupByLibrary.simpleMessage("Escribe un mensaje..."),
         "description": MessageLookupByLibrary.simpleMessage(
             "SmartSys es tu app de confia para unirte a nuestra de comunidad de plataformas descubre todas las increibles plataformas que tenemos para ti!."),
         "hello": MessageLookupByLibrary.simpleMessage("Hola"),

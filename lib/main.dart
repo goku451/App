@@ -6,6 +6,7 @@ import 'screens/register_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/chats.dart';
+import 'screens/chat_user.dart';
 import 'screens/settings_screen.dart';
 import 'screens/account_screen.dart';
 import 'screens/edit_profile_screen.dart';
@@ -107,6 +108,15 @@ class _MyAppState extends State<MyApp> {
             EditProfileScreen(onLocaleChange: setLocale, onThemeToggle: toggleTheme),
         '/chats': (context) =>
             ChatsScreen(onLocaleChange: setLocale, onThemeToggle: toggleTheme),
+        '/chat_user': (context) =>
+            ChatUser(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+              idChat: 0, // TODO: Provide actual chat ID
+              idUsuarioEmisor: 0, // TODO: Provide actual sender user ID
+              idUsuarioReceptor: 0, // TODO: Provide actual receiver user ID
+              nombreUsuarioReceptor: '', // TODO: Provide actual receiver user name
+            ),
         '/calendar': (context) =>
             CalendarScreen(onLocaleChange: setLocale, onThemeToggle: toggleTheme),
         '/institutions': (context) =>

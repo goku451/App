@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 import '../models/platform.dart';
+import '../models/chat.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ApiService {
@@ -195,6 +196,142 @@ class ApiService {
       );
     }
   }
+  // -------------------- CHAT ---------------------------------
+  static Future<ApiResponse<ChatData>> nuevochat({
+    required int idUsuario,
+    required String nombre,
+    required String codigoUnico,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/nuevochat');
+      final body = json.encode({
+        'idUsuario': idUsuario,
+        'nombre': nombre,
+        'codigoUnico': codigoUnico,
+      });
+
+      final response = await http.post(url, headers: defaultHeaders, body: body);
+      final responseData = json.decode(response.body);
+
+      print('Response body: ${response.body}');
+      print('Response data: ${responseData['data']}');
+
+      if (response.statusCode == 201 && responseData['ok'] == true) {
+        final chatCreado = ChatData.fromJson(responseData['data']);
+        return ApiResponse.success(
+          data: chatCreado,
+          message: responseData['mensaje'] ?? responseData['message'],
+        );
+      } else {
+        return ApiResponse.error(
+          message: responseData['mensaje'] ?? responseData['message'],
+        );
+      }
+    } catch (e) {
+      return ApiResponse.error(
+
+        message: 'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+      );
+    }
+  }
+  // <------------------------------------------------------------------------------->
+
+  // <--------------------- VER MENSAJES ------------------------------------>
+  // api_service.dart
+  static Future<ApiResponse<List<Map<String, dynamic>>>> fetchUserChats(int idUsuario) async {
+    try {
+      final url = Uri.parse('$baseUrl/cargarchats/$idUsuario'); // Endpoint que devuelva los chats del usuario
+      final response = await http.get(url, headers: defaultHeaders);
+
+      final responseData = json.decode(response.body);
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200 && responseData['ok'] == true) {
+        List<Map<String, dynamic>> chats = List<Map<String, dynamic>>.from(responseData['data']);
+        return ApiResponse.success(data: chats, message: responseData['mensaje']);
+      } else {
+        return ApiResponse.error(
+          message: responseData['mensaje'] ?? responseData['message'],
+        );
+      }
+    } catch (e) {
+      return ApiResponse.error(
+        message: 'Error de conexión. Verifica tu internet y que la API esté funcionando.',
+      );
+    }
+  }
+
+  // <----------------------- FIN VER MENSAJES ---------------------------------->
+
+  // <---------------------- Mandar mensajitos --------------------------------->
+  // Enviar un mensaje
+  static Future<ApiResponse<bool>> sendMessage({
+    required int idEmisor,
+    required int idReceptor,
+    required String mensaje,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/chats/enviar');
+      final body = json.encode({
+        'idUsuarioEmisor': idEmisor,
+        'idUsuarioReceptor': idReceptor,
+        'mensaje': mensaje,
+      });
+
+      final response = await http.post(url, headers: defaultHeaders, body: body);
+      final responseData = json.decode(response.body);
+
+      print('Response sendMessage: ${response.body}'); // Debug
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return ApiResponse.success(
+          data: true,
+          message: responseData['mensaje'] ?? 'Mensaje enviado',
+        );
+      } else {
+        return ApiResponse.error(
+          message: responseData['mensaje'] ?? 'Error enviando mensaje',
+        );
+      }
+    } catch (e) {
+      return ApiResponse.error(
+        message: 'Error de conexión en sendMessage: $e',
+      );
+    }
+  }
+  // <------------------------- fin mandar cosos -------------------------------->
+
+  // <---------------------- Mostrar mensajes del chat ------------------------>
+// Obtener historial de mensajes entre dos usuarios
+  static Future<ApiResponse<List<Map<String, dynamic>>>> fetchChatMessages(
+      int idEmisor, int idReceptor) async {
+    try {
+      final url = Uri.parse('$baseUrl/chats/$idEmisor/$idReceptor');
+      final response = await http.get(url, headers: defaultHeaders);
+
+      final responseData = json.decode(response.body);
+      print('Response fetchChatMessages: ${response.body}'); // Debug
+
+      if (response.statusCode == 200 && responseData['ok'] == true) {
+        List<Map<String, dynamic>> mensajes =
+        List<Map<String, dynamic>>.from(responseData['data']);
+        return ApiResponse.success(
+          data: mensajes,
+          message: responseData['mensaje'] ?? 'Mensajes cargados',
+        );
+      } else {
+        return ApiResponse.error(
+          message: responseData['mensaje'] ?? 'Error al cargar mensajes',
+        );
+      }
+    } catch (e) {
+      return ApiResponse.error(
+        message: 'Error de conexión en fetchChatMessages: $e',
+      );
+    }
+  }
+  // <---------------------- Fin mandar mensajitos monos -------------->
+
 
   // ------------------ PLATAFORMAS ------------------ //
 

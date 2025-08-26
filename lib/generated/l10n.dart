@@ -1179,6 +1179,76 @@ class S {
       args: [],
     );
   }
+
+  /// `All chats`
+  String get All_Chats {
+    return Intl.message(
+      'All chats',
+      name: 'All_Chats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search chats`
+  String get Search_Chats {
+    return Intl.message(
+      'Search chats',
+      name: 'Search_Chats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No chats available`
+  String get No_Chats {
+    return Intl.message(
+      'No chats available',
+      name: 'No_Chats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create new chat`
+  String get Create_Chat {
+    return Intl.message(
+      'Create new chat',
+      name: 'Create_Chat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chat Name`
+  String get Chat_Name {
+    return Intl.message(
+      'Chat Name',
+      name: 'Chat_Name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User Code`
+  String get Codigo_User {
+    return Intl.message(
+      'User Code',
+      name: 'Codigo_User',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Write a message...`
+  String get Write_Message {
+    return Intl.message(
+      'Write a message...',
+      name: 'Write_Message',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

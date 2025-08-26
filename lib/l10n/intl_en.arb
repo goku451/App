@@ -111,5 +111,12 @@
   "Add_Event": "Add Event",
   "Event_Title": "Event Title",
   "Event_Time": "Time (e.g: 10:00 AM)",
-  "Add": "Add"
+  "Add": "Add",
+  "All_Chats": "All chats",
+  "Search_Chats": "Search chats",
+  "No_Chats": "No chats available",
+  "Create_Chat": "Create new chat",
+  "Chat_Name": "Chat Name",
+  "Codigo_User": "User Code",
+  "Write_Message": "Write a message..."
 }
