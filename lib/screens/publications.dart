@@ -109,7 +109,7 @@ class _PublicationsScreenState extends State<PublicationsScreen>
     return const Color(0xFF1976D2); // Azul para públicas
   }
 
-  // Método para obtener los bytes de la imagen de fondo (igual que institutions)
+
   Uint8List? _getPlatformBackgroundBytes() {
     if (_platformData == null) return null;
 
@@ -135,7 +135,6 @@ class _PublicationsScreenState extends State<PublicationsScreen>
     return null;
   }
 
-  // Método para obtener los bytes del icono (igual que institutions)
   Uint8List? _getPlatformIconBytes() {
     if (_platformData == null) return null;
 
@@ -171,10 +170,10 @@ class _PublicationsScreenState extends State<PublicationsScreen>
       body: SafeArea(
         child: Column(
           children: [
-            // Header con banner de la plataforma
+            // Header
             _buildPlatformBanner(accentColor, isDarkMode),
 
-            // Contenido principal expandido
+            // Contenido principal
             Expanded(
               child: TabBarView(
                 controller: _tabController,
@@ -187,32 +186,10 @@ class _PublicationsScreenState extends State<PublicationsScreen>
               ),
             ),
 
-            // Barra de navegación inferior personalizada
+            // Barra de navegación
             _buildBottomTabBar(accentColor, isDarkMode),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          int currentTab = _tabController.index;
-          switch (currentTab) {
-            case 0:
-            // Crear nueva publicación
-              _showCreateAnnouncementDialog();
-              break;
-            case 1:
-            // Nueva asignación
-              break;
-            case 2:
-            // Nuevo elemento inventario
-              break;
-            case 3:
-            // Invitar persona
-              break;
-          }
-        },
-        backgroundColor: accentColor,
-        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -226,7 +203,7 @@ class _PublicationsScreenState extends State<PublicationsScreen>
       width: double.infinity,
       child: Stack(
         children: [
-          // Imagen de fondo o gradiente por defecto
+
           Container(
             width: double.infinity,
             height: double.infinity,
@@ -448,12 +425,7 @@ class _PublicationsScreenState extends State<PublicationsScreen>
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? accentColor.withOpacity(0.1)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-        ),
+        decoration: const BoxDecoration(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
