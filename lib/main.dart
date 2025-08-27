@@ -16,8 +16,16 @@ import 'screens/publications.dart';
 import 'screens/help_screen.dart';
 import 'screens/security_privacy.dart';
 import 'screens/account_recover.dart';
+import 'screens/ResetPasswordScreen.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -50,31 +58,25 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'SmartSys',
       debugShowCheckedModeBanner: false,
-
-      // Tema claro
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFFFFFFF), // Blanco puro
+        scaffoldBackgroundColor: const Color(0xFFFFFFFF),
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF41277A),
-          brightness: Brightness.light, //
+          brightness: Brightness.light,
         ),
         useMaterial3: true,
         fontFamily: 'Roboto',
       ),
-
-      // Tema oscuro
       darkTheme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFF121212), // Fondo oscuro
+        scaffoldBackgroundColor: const Color(0xFF121212),
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF41277A),
-          brightness: Brightness.dark, //
+          brightness: Brightness.dark,
         ),
         useMaterial3: true,
         fontFamily: 'Roboto',
       ),
-
-      themeMode: _themeMode, // controla si es claro/oscuro
-      // Localización
+      themeMode: _themeMode,
       locale: _locale,
       supportedLocales: const [Locale('es'), Locale('en')],
       localizationsDelegates: const [
@@ -83,80 +85,69 @@ class _MyAppState extends State<MyApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-
-      // Rutas
       initialRoute: '/',
       routes: {
-        '/':
-            (context) => WelcomeScreen(
+        '/': (context) => WelcomeScreen(
           onLocaleChange: setLocale,
           onThemeToggle: toggleTheme,
         ),
-        '/register':
-            (context) => RegisterScreen(
+        '/register': (context) => RegisterScreen(
           onLocaleChange: setLocale,
           onThemeToggle: toggleTheme,
         ),
-        '/login':
-            (context) => LoginScreen(
+        '/login': (context) => LoginScreen(
           onLocaleChange: setLocale,
           onThemeToggle: toggleTheme,
         ),
-        '/home':
-            (context) => MyHomePage(
+        '/home': (context) => MyHomePage(
           title: 'SmartSys Dashboard',
           onLocaleChange: setLocale,
           onThemeToggle: toggleTheme,
         ),
-        '/settings':
-            (context) => SettingsScreen(
+        '/settings': (context) => SettingsScreen(
           onLocaleChange: setLocale,
           onThemeToggle: toggleTheme,
         ),
-        '/account':
-            (context) => AccountScreen(
+        '/account': (context) => AccountScreen(
           onLocaleChange: setLocale,
           onThemeToggle: toggleTheme,
         ),
-        '/edit-profile':
-            (context) => EditProfileScreen(
+        '/edit-profile': (context) => EditProfileScreen(
           onLocaleChange: setLocale,
           onThemeToggle: toggleTheme,
         ),
-        '/chats':
-            (context) => ChatsScreen(
+        '/chats': (context) => ChatsScreen(
           onLocaleChange: setLocale,
           onThemeToggle: toggleTheme,
         ),
-        '/chat_user':
-            (context) => ChatUser(
+        '/chat_user': (context) => ChatUser(
           onLocaleChange: setLocale,
           onThemeToggle: toggleTheme,
-          idChat: 0, // TODO: Provide actual chat ID
-          idUsuarioEmisor: 0, // TODO: Provide actual sender user ID
-          idUsuarioReceptor: 0, // TODO: Provide actual receiver user ID
-          nombreUsuarioReceptor:
-          '', // TODO: Provide actual receiver user name
+          idChat: 0,
+          idUsuarioEmisor: 0,
+          idUsuarioReceptor: 0,
+          nombreUsuarioReceptor: '',
         ),
-        '/calendar':
-            (context) => CalendarScreen(
+        '/calendar': (context) => CalendarScreen(
           onLocaleChange: setLocale,
           onThemeToggle: toggleTheme,
         ),
-        '/institutions':
-            (context) => InstitutionsScreen(
+        '/institutions': (context) => InstitutionsScreen(
           onLocaleChange: setLocale,
           onThemeToggle: toggleTheme,
         ),
-        '/publications':
-            (context) => PublicationsScreen(
-          idPlataforma: 3, // o el ID que quieras mostrar
+        '/publications': (context) => PublicationsScreen(
+          idPlataforma: 3,
           onLocaleChange: setLocale,
           onThemeToggle: toggleTheme,
         ),
         '/help': (context) => const HelpScreen(),
         '/security-privacy': (context) => const SecurityPrivacyScreen(),
         '/account-recover': (context) => AccountRecoverScreen(),
+        '/reset-password': (context) {
+          final email = ModalRoute.of(context)!.settings.arguments as String;
+          return ResetPasswordScreen(correoElectronico: email);
+        },
       },
     );
   }

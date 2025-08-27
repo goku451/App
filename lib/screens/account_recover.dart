@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/generated/l10n.dart';
+import '../services/api_service.dart';
+import '../screens/ResetPasswordScreen.dart';
 
 class AccountRecoverScreen extends StatefulWidget {
   const AccountRecoverScreen({super.key});
@@ -13,6 +15,7 @@ class _AccountRecoverScreenState extends State<AccountRecoverScreen> {
   final TextEditingController _codeController = TextEditingController();
   bool _showCodeStep = false;
   bool _isLoading = false;
+  String? _recoveryCode;
 
   @override
   void dispose() {
@@ -28,17 +31,71 @@ class _AccountRecoverScreenState extends State<AccountRecoverScreen> {
           _isLoading = true;
         });
 
-        await Future.delayed(Duration(milliseconds: 1500));
+        final response = await ApiService.sendRecoveryEmail(
+          correoElectronico: _emailController.text,
+        );
 
         setState(() {
           _isLoading = false;
-          _showCodeStep = true;
         });
+
+        if (response.success) {
+          _recoveryCode = response.data!['codigo'];
+          setState(() {
+            _showCodeStep = true;
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response.message ?? 'Error enviando correo')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ingresa tu correo electrónico')),
+        );
       }
     } else {
-      // Aquí iría la lógica para verificar el código
-    }
+        if (_codeController.text.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Ingresa el código de verificación')),
+          );
+          return;
+        }
+
+        if (_codeController.text == _recoveryCode) {
+          // Código correcto
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ResetPasswordScreen(correoElectronico: _emailController.text),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Código incorrecto')),
+          );
+        }
+
+        setState(() { _isLoading = true; });
+
+        final response = await ApiService.verifyRecoveryCode(
+          correoElectronico: _emailController.text,
+          codigo: _codeController.text,
+        );
+
+        setState(() { _isLoading = false; });
+
+        if (response.success) {
+          // Código correcto, aquí puedes navegar a cambiar contraseña
+          Navigator.pushNamed(context, '/reset-password', arguments: _emailController.text);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response.message ?? 'Código incorrecto')),
+          );
+        }
+      }
   }
+
 
   @override
   Widget build(BuildContext context) {

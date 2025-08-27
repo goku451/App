@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "235729586108",
+    "project_id": "smartsys-app1",
+    "storage_bucket": "smartsys-app1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:235729586108:android:2a9135015a05d5965bcdb9",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "235729586108-kun04mob21h40b93b7r2hiq9cq096f6a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutter_application_1",
+            "certificate_hash": "b604e45d50e382fab14f5d2f6c3c87f2c1ce49f2"
+          }
+        },
+        {
+          "client_id": "235729586108-rg31io2cvrtb4bne1ooqisck4lvddpuf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCipMyU80nUvPDccU321NPQtRqFoeKrjnk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "235729586108-rg31io2cvrtb4bne1ooqisck4lvddpuf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "235729586108-lsakd1aoon1aokgqmqnc6q0ippb263do.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterApplication1"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:235729586108:android:a948a22f961369785bcdb9",
+        "android_client_info": {
+          "package_name": "com.smartsys.app1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "235729586108-9vn8rkhussmr4vvkn9ep8t20t1o00mk3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.smartsys.app1",
+            "certificate_hash": "b604e45d50e382fab14f5d2f6c3c87f2c1ce49f2"
+          }
+        },
+        {
+          "client_id": "235729586108-rg31io2cvrtb4bne1ooqisck4lvddpuf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCipMyU80nUvPDccU321NPQtRqFoeKrjnk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "235729586108-rg31io2cvrtb4bne1ooqisck4lvddpuf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "235729586108-lsakd1aoon1aokgqmqnc6q0ippb263do.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterApplication1"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../services/api_service.dart';
 import 'package:flutter_application_1/generated/l10n.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key, required void Function(Locale locale) onLocaleChange, required void Function() onThemeToggle});
@@ -75,12 +77,65 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _signInWithGoogle() async {
-    Fluttertoast.showToast(
-      msg: 'Función de Google disponible próximamente',
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-    );
+    setState(() => _isLoading = true);
+
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        Fluttertoast.showToast(msg: "Usuario canceló el login de Google");
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      final user = userCredential.user;
+
+      if (user != null) {
+        final nombre = user.displayName?.split(' ').first ?? '';
+        final apellido = user.displayName?.split(' ').skip(1).join(' ') ?? '';
+        final correo = user.email ?? '';
+
+        final response = await ApiService.saveGoogleUser(
+          nombre: nombre,
+          apellido: apellido,
+          email: correo,
+        );
+
+        if (response.success) {
+          if (mounted) {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              '/home',
+                  (route) => false,
+            );
+          }
+        } else {
+          Fluttertoast.showToast(
+            msg: "Error guardando el usuario: ${response.message}",
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+          );
+        }
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Error con Google: $e",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      print("Error Google Sign-In: $e");
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
+
+
 
   @override
   Widget build(BuildContext context) {

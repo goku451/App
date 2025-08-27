@@ -14,16 +14,21 @@ dependencies:
   # Para peticiones HTTP a la API
   http: ^1.1.0
 
-  socket_io_client: ^2.0.0
+  # Firebase - Versiones actualizadas y compatibles
+  firebase_core: ^3.4.0
+  firebase_auth: ^5.3.0
+  google_sign_in: ^6.2.1
+
+  socket_io_client: ^2.0.3+1
 
   # Para almacenamiento local (tokens de sesión)
   shared_preferences: ^2.2.2
 
   # Para mostrar mensajes toast
-  fluttertoast: ^8.2.4
+  fluttertoast: ^8.2.10
 
   # Para seleccionar imágenes de cámara/galería
-  image_picker: ^1.0.7 # ← NUEVA LÍNEA AGREGADA
+  image_picker: ^1.0.7
 
   # Iconos de Material Design
   cupertino_icons: ^1.0.8
@@ -59,5 +64,6 @@ flutter_launcher_icons:
   windows:
     generate: true
     image_path: "assets/icono.png"
+
 flutter_intl:
   enabled: true

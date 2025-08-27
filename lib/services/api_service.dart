@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 
 class ApiService {
   // RECORDAR CAMBIAR SOLO LA IP A LA IP LOCAL DE LA COMPUTADORA
-  static const String baseUrl = 'http://10.0.2.2:3000';
+  static const String baseUrl = 'http://192.168.31.29:3000';
 
   // Headers por defecto
   static Map<String, String> get defaultHeaders => {
@@ -19,6 +19,120 @@ class ApiService {
   };
 
   // ------------------ USUARIOS ------------------ //
+
+  // <--------------- Recuperar contraseña
+  // En lib/services/api_service.dart --------------------->
+  static Future<ApiResponse<Map<String, dynamic>>> sendRecoveryEmail({
+    required String correoElectronico,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/recuperar');
+      final body = json.encode({'correoElectronico': correoElectronico});
+      final response = await http.post(url, headers: defaultHeaders, body: body);
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200 && data['success'] == true) {
+        return ApiResponse.success(data: data, message: data['message']);
+      } else {
+        return ApiResponse.error(message: data['message']);
+      }
+    } catch (e) {
+      return ApiResponse.error(message: 'Error de conexión');
+    }
+  }
+
+//Recuperar contraseña
+// <--------------------------------------------------------------->
+// <---------------------- VERIFICAR CODIGO ------------------------->
+  static Future<ApiResponse<bool>> verifyRecoveryCode({
+    required String correoElectronico,
+    required String codigo,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/verificarCodigo');
+      final body = json.encode({
+        'correoElectronico': correoElectronico,
+        'codigo': codigo,
+      });
+
+      final response = await http.post(url, headers: defaultHeaders, body: body);
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200 && data['success'] == true) {
+        return ApiResponse.success(data: true, message: data['message']);
+
+      } else {
+        return ApiResponse.error(message: data['message'] ?? 'Código incorrecto');
+      }
+    } catch (e) {
+      return ApiResponse.error(message: 'Error de conexión con la API');
+    }
+  }
+// <---------------------- FIN VERIFICAR CODIGO ------------------------->
+// <---------------------- RESETEAR CONTRASEÑA -------------------------->
+  static Future<ApiResponse<void>> resetPassword({
+    required String correoElectronico,
+    required String nuevaContrasena,
+  }) async {
+    try {
+      final url = Uri.parse('$baseUrl/reset-password');
+      final body = json.encode({
+        'correoElectronico': correoElectronico,
+        'nuevaContrasena': nuevaContrasena,
+      });
+
+      final response = await http.post(url, headers: defaultHeaders, body: body);
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200 && data['success'] == true) {
+        return ApiResponse.success(data: null, message: data['message']);
+      } else {
+        return ApiResponse.error(message: data['message']);
+      }
+    } catch (e) {
+      return ApiResponse.error(message: 'Error de conexión');
+    }
+  }
+//<----------------------------------------------------------------------->
+//<----------------- REGISTRO GOOGLE ------------------------------------->
+  static Future<ApiResponse<Map<String, dynamic>>> saveGoogleUser({
+    required String nombre,
+    required String apellido,
+    required String email,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/users/google'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'nombre': nombre,
+          'apellido': apellido,
+          'email': email,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (data['success'] == true) {
+        return ApiResponse.success(
+          data: data['user'],
+          message: data['message'] ?? 'Usuario guardado correctamente'
+        );
+      } else {
+        return ApiResponse.error(
+          message: data['message'] ?? 'Error desconocido',
+        );
+      }
+    } catch (e) {
+      return ApiResponse.error(message: e.toString());
+    }
+  }
+//<----------------- REGISTRO GOOGLE ------------------------------------->
+
+
+
+
+
 
   // Registrar nuevo usuario
   static Future<ApiResponse<User>> register({
@@ -29,6 +143,7 @@ class ApiService {
   }) async {
     try {
       final url = Uri.parse('$baseUrl/registro');
+
       final body = json.encode({
         'nombre': nombre,
         'apellido': apellido,
@@ -696,6 +811,7 @@ class ApiResponse<T> {
   final String message;
 
   ApiResponse._({required this.success, this.data, required this.message});
+
 
   factory ApiResponse.success({required T data, required String message}) {
     return ApiResponse._(success: true, data: data, message: message);
