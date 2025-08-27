@@ -95,7 +95,7 @@ class ApiService {
   }
 //<----------------------------------------------------------------------->
 //<----------------- REGISTRO GOOGLE ------------------------------------->
-  static Future<ApiResponse<Map<String, dynamic>>> saveGoogleUser({
+  static Future<ApiResponse<User>> saveGoogleUser({
     required String nombre,
     required String apellido,
     required String email,
@@ -111,22 +111,31 @@ class ApiService {
         }),
       );
 
-      final data = jsonDecode(response.body);
+      final responseData = jsonDecode(response.body);
 
-      if (data['success'] == true) {
+      if (response.statusCode == 201 && responseData['success'] == true) {
+        // Convertimos a User
+        final user = User.fromJson(responseData['user']);
+
+        // Guardamos usuario localmente
+        await _saveUserData(user);
+
         return ApiResponse.success(
-          data: data['user'],
-          message: data['message'] ?? 'Usuario guardado correctamente'
+          data: user,
+          message: responseData['message'] ?? 'Usuario guardado correctamente',
         );
       } else {
         return ApiResponse.error(
-          message: data['message'] ?? 'Error desconocido',
+          message: responseData['message'] ?? 'Error desconocido',
         );
       }
     } catch (e) {
-      return ApiResponse.error(message: e.toString());
+      return ApiResponse.error(
+        message: 'Error de conexión: $e',
+      );
     }
   }
+
 //<----------------- REGISTRO GOOGLE ------------------------------------->
 
 
