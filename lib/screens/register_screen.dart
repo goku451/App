@@ -1,4 +1,3 @@
-// lib/screens/register_screen.dart
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../services/api_service.dart';
@@ -23,8 +22,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
-  bool _obscurePassword =
-      true; // Variable para controlar visibilidad de contraseña
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -61,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/login',
-            (route) => false,
+                (route) => false,
           );
         }
       } else {
@@ -86,8 +84,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  Future<void> _signInWithGoogle() async {
+    Fluttertoast.showToast(
+      msg: 'Función de Google disponible próximamente',
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -98,7 +106,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               const SizedBox(height: 20),
 
-              // Logo
               Image.asset(
                 Theme.of(context).brightness == Brightness.dark
                     ? 'assets/logo_dark.png'
@@ -107,7 +114,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 32),
 
-              // Título principal
               Text(
                 S.of(context).Create_Acoount,
                 style: TextStyle(
@@ -118,7 +124,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Subtítulo "Registro"
               Text(
                 S.of(context).Register,
                 style: const TextStyle(
@@ -129,7 +134,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 8),
 
-              // Descripción
               Text(
                 S.of(context).Register_text,
                 style: TextStyle(
@@ -138,33 +142,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Formulario
               Expanded(
                 child: Form(
                   key: _formKey,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        // Name field
                         TextFormField(
                           controller: _nameController,
                           enabled: !_isLoading,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
                           decoration: InputDecoration(
                             hintText: S.of(context).Name,
+                            hintStyle: TextStyle(
+                              color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                            ),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 16,
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFDDDDE3),
+                              borderSide: BorderSide(
+                                color: isDarkMode ? Colors.grey[600]! : Color(0xFFDDDDE3),
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFDDDDE3),
+                              borderSide: BorderSide(
+                                color: isDarkMode ? Colors.grey[600]! : Color(0xFFDDDDE3),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
@@ -173,6 +181,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: Color(0xFF41277A),
                               ),
                             ),
+                            filled: true,
+                            fillColor: isDarkMode ? Colors.grey[800] : Colors.white,
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty)
@@ -184,26 +194,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Last name field
                         TextFormField(
                           controller: _lastNameController,
                           enabled: !_isLoading,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
                           decoration: InputDecoration(
                             hintText: S.of(context).Last_Name,
+                            hintStyle: TextStyle(
+                              color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                            ),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 16,
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFDDDDE3),
+                              borderSide: BorderSide(
+                                color: isDarkMode ? Colors.grey[600]! : Color(0xFFDDDDE3),
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFDDDDE3),
+                              borderSide: BorderSide(
+                                color: isDarkMode ? Colors.grey[600]! : Color(0xFFDDDDE3),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
@@ -212,6 +227,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: Color(0xFF41277A),
                               ),
                             ),
+                            filled: true,
+                            fillColor: isDarkMode ? Colors.grey[800] : Colors.white,
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty)
@@ -223,27 +240,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Email field
                         TextFormField(
                           controller: _emailController,
                           enabled: !_isLoading,
                           keyboardType: TextInputType.emailAddress,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
                           decoration: InputDecoration(
                             hintText: S.of(context).Email,
+                            hintStyle: TextStyle(
+                              color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                            ),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 16,
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFDDDDE3),
+                              borderSide: BorderSide(
+                                color: isDarkMode ? Colors.grey[600]! : Color(0xFFDDDDE3),
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFDDDDE3),
+                              borderSide: BorderSide(
+                                color: isDarkMode ? Colors.grey[600]! : Color(0xFFDDDDE3),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
@@ -252,6 +274,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: Color(0xFF41277A),
                               ),
                             ),
+                            filled: true,
+                            fillColor: isDarkMode ? Colors.grey[800] : Colors.white,
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty)
@@ -266,27 +290,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Password field con toggle de visibilidad
                         TextFormField(
                           controller: _passwordController,
                           enabled: !_isLoading,
                           obscureText: _obscurePassword,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
                           decoration: InputDecoration(
                             hintText: S.of(context).Password,
+                            hintStyle: TextStyle(
+                              color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                            ),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 16,
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFDDDDE3),
+                              borderSide: BorderSide(
+                                color: isDarkMode ? Colors.grey[600]! : Color(0xFFDDDDE3),
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFDDDDE3),
+                              borderSide: BorderSide(
+                                color: isDarkMode ? Colors.grey[600]! : Color(0xFFDDDDE3),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
@@ -295,6 +324,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: Color(0xFF41277A),
                               ),
                             ),
+                            filled: true,
+                            fillColor: isDarkMode ? Colors.grey[800] : Colors.white,
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscurePassword
@@ -303,13 +334,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: const Color(0xFF7B7B8A),
                               ),
                               onPressed:
-                                  _isLoading
-                                      ? null
-                                      : () {
-                                        setState(() {
-                                          _obscurePassword = !_obscurePassword;
-                                        });
-                                      },
+                              _isLoading
+                                  ? null
+                                  : () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
                             ),
                           ),
                           validator: (value) {
@@ -332,36 +363,81 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              foregroundColor: Colors.white, // texto blanco
+                              foregroundColor: Colors.white,
                               textStyle: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.white,
-                                shadows: [], // sin sombra
+                                shadows: [],
                               ),
                             ),
                             child:
-                                _isLoading
-                                    ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                    : Text(S.of(context).Create_Account_Buttom),
+                            _isLoading
+                                ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                                : Text(S.of(context).Create_Account_Buttom),
                           ),
                         ),
                         const SizedBox(height: 16),
 
-                        // Login link
-                        TextButton(
-                          onPressed:
-                              _isLoading
-                                  ? null
-                                  : () {
-                                    Navigator.pushNamed(context, '/login');
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            onPressed: _isLoading ? null : _signInWithGoogle,
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              side: BorderSide(
+                                color: isDarkMode ? Colors.grey[600]! : Colors.grey[300]!,
+                                width: 1,
+                              ),
+                              backgroundColor: isDarkMode ? Colors.grey[800] : Colors.white,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/images/avatars/google.webp',
+                                  width: 20,
+                                  height: 20,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 20,
+                                      height: 20,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Text('G', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+                                    );
                                   },
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  'Registrarse con Google',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Theme.of(context).colorScheme.onBackground,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        TextButton(
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                            Navigator.pushNamed(context, '/login');
+                          },
                           child: Text(
                             S.of(context).Have_Account,
                             style: const TextStyle(color: Color(0xFF7B7B8A)),
@@ -373,7 +449,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
 
-              // Icono ayuda
               const Align(
                 alignment: Alignment.centerLeft,
                 child: Icon(

@@ -124,23 +124,25 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+// In MyHomePage, modify the _showInstitutionOptions method:
+
   void _showInstitutionOptions(
-    BuildContext context,
-    Map<String, dynamic> platform,
-  ) {
+      BuildContext context,
+      Map<String, dynamic> platform,
+      ) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     showModalBottomSheet(
       context: context,
       backgroundColor:
-          isDarkMode
-              ? const Color.fromARGB(
-                255,
-                65,
-                65,
-                65,
-              ) // gris oscuro en modo oscuro
-              : Colors.white, // blanco en modo claro
+      isDarkMode
+          ? const Color.fromARGB(
+        255,
+        65,
+        65,
+        65,
+      ) // gris oscuro en modo oscuro
+          : Colors.white, // blanco en modo claro
       builder: (BuildContext context) {
         return Container(
           padding: const EdgeInsets.all(20),
@@ -176,7 +178,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.pushNamed(context, '/publications');
+                  // FIXED: Pass platform data including icon and banner
+                  Navigator.pushNamed(
+                    context,
+                    '/publications',
+                    arguments: {
+                      'idPlataforma': platform['idPlataforma'],
+                      'platformData': platform,
+                    },
+                  );
                 },
               ),
               ListTile(

@@ -16,7 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _rememberMe = false;
   bool _isLoading = false;
-  bool _obscurePassword = true; // Variable para controlar visibilidad de contraseña
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -74,8 +74,18 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _signInWithGoogle() async {
+    Fluttertoast.showToast(
+      msg: 'Función de Google disponible próximamente',
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor:Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -86,8 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const SizedBox(height: 20),
 
-              // Logo
-             Image.asset(
+              Image.asset(
                 Theme.of(context).brightness == Brightness.dark
                     ? 'assets/logo_dark.png'
                     : 'assets/logo.png',
@@ -95,19 +104,17 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 32),
 
-              // Título principal
-               Text(
+              Text(
                 S.of(context).Messages_login,
                 style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onBackground
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onBackground
                 ),
               ),
               const SizedBox(height: 16),
 
-              // Subtítulo
-               Text(
+              Text(
                 S.of(context).Login,
                 style: TextStyle(
                   fontSize: 16,
@@ -117,8 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 8),
 
-              // Descripción
-               Text(
+              Text(
                 S.of(context).Login_text,
                 style: TextStyle(
                   fontSize: 14,
@@ -127,33 +133,39 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Formulario
               Expanded(
                 child: Form(
                   key: _formKey,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        // Campo email
                         TextFormField(
                           controller: _emailController,
                           enabled: !_isLoading,
                           keyboardType: TextInputType.emailAddress,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
                           decoration: InputDecoration(
                             hintText: S.of(context).Email,
+                            hintStyle: TextStyle(
+                              color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                            ),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                              borderSide: BorderSide(color: isDarkMode ? Colors.grey[600]! : Color(0xFFDDDDE3)),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                              borderSide: BorderSide(color: isDarkMode ? Colors.grey[600]! : Color(0xFFDDDDE3)),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(color: Color(0xFF41277A)),
                             ),
+                            filled: true,
+                            fillColor: isDarkMode ? Colors.grey[800] : Colors.white,
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) return S.of(context).Error_Email;
@@ -164,26 +176,33 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Campo contraseña con toggle de visibilidad
                         TextFormField(
                           controller: _passwordController,
                           enabled: !_isLoading,
                           obscureText: _obscurePassword,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
                           decoration: InputDecoration(
                             hintText: S.of(context).Password,
+                            hintStyle: TextStyle(
+                              color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                            ),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                              borderSide: BorderSide(color: isDarkMode ? Colors.grey[600]! : Color(0xFFDDDDE3)),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFDDDDE3)),
+                              borderSide: BorderSide(color: isDarkMode ? Colors.grey[600]! : Color(0xFFDDDDE3)),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(color: Color(0xFF41277A)),
                             ),
+                            filled: true,
+                            fillColor: isDarkMode ? Colors.grey[800] : Colors.white,
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
@@ -205,7 +224,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 8),
 
-                        // Recordarme + Olvidé contraseña
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -221,20 +239,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                     });
                                   },
                                 ),
-                                 Text(S.of(context).Remember_me),
+                                Text(
+                                  S.of(context).Remember_me,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onBackground,
+                                  ),
+                                ),
                               ],
                             ),
                             TextButton(
                               onPressed: _isLoading
                                   ? null
                                   : () {
-                                Fluttertoast.showToast(
-                                  msg: S.of(context).Message_Future,
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                );
+                                Navigator.pushNamed(context, '/account-recover');
                               },
-                              child:  Text(
+                              child: Text(
                                 S.of(context).Forgot_Password,
                                 style: TextStyle(color: Color(0xFF7B7B8A)),
                               ),
@@ -243,7 +262,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 32),
 
-                        // Botón login (texto blanco sin sombra)
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -252,11 +270,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               backgroundColor: const Color(0xFF41277A),
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              foregroundColor: Colors.white, // Texto blanco
+                              foregroundColor: Colors.white,
                               textStyle: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.white,
-                                shadows: [], // Sin sombra
+                                shadows: [],
                               ),
                             ),
                             child: _isLoading
@@ -265,20 +283,79 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: 20,
                               child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                             )
-                                :  Text(S.of(context).Login),
+                                : Text(S.of(context).Login),
                           ),
                         ),
                         const SizedBox(height: 16),
 
-                        // Link registro
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            onPressed: _isLoading ? null : _signInWithGoogle,
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              side: BorderSide(
+                                color: isDarkMode ? Colors.grey[600]! : Colors.grey[300]!,
+                                width: 1,
+                              ),
+                              backgroundColor: isDarkMode ? Colors.grey[800] : Colors.white,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/images/avatars/google.webp',
+                                  width: 20,
+                                  height: 20,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 20,
+                                      height: 20,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Text('G', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  'Iniciar sesión con Google',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Theme.of(context).colorScheme.onBackground,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
                         TextButton(
                           onPressed: _isLoading
                               ? null
                               : () {
                             Navigator.pushNamed(context, '/register');
                           },
-                          child:  Text(
+                          child: Text(
                             S.of(context).Not_Have_Account,
+                            style: TextStyle(color: Color(0xFF7B7B8A)),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        TextButton(
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                            Navigator.pushNamed(context, '/account-recover');
+                          },
+                          child: Text(
+                            '¿Olvidaste tu contraseña? Recuperar cuenta',
                             style: TextStyle(color: Color(0xFF7B7B8A)),
                           ),
                         ),
@@ -288,7 +365,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
 
-              // Icono ayuda
               const Align(
                 alignment: Alignment.centerLeft,
                 child: Icon(Icons.help_outline, color: Color(0xFFB0B0B8), size: 24),

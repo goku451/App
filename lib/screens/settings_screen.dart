@@ -207,7 +207,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _buildSettingsItem(
                         icon: Icons.lock,
                         title: S.of(context).Setting_Privacy,
-                        onTap: () {},
+                        onTap: () {
+                          print('Navegando a seguridad y privacidad...'); // ✅ Para debug
+                          Navigator.pushNamed(context, '/security-privacy');
+                        },
                       ),
                     ]),
 
@@ -238,7 +241,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _buildSettingsItem(
                         icon: Icons.help_outline,
                         title: S.of(context).Help,
-                        onTap: () {},
+                        onTap: () => Navigator.pushNamed(context, '/help'),
                       ),
                     ]),
 

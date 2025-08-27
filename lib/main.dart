@@ -13,6 +13,9 @@ import 'screens/edit_profile_screen.dart';
 import 'screens/calendar_screen.dart';
 import 'screens/institutions_screen.dart';
 import 'screens/publications.dart';
+import 'screens/help_screen.dart';
+import 'screens/security_privacy.dart';
+import 'screens/account_recover.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,7 +41,7 @@ class _MyAppState extends State<MyApp> {
   void toggleTheme() {
     setState(() {
       _themeMode =
-          _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+      _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
     });
   }
 
@@ -86,71 +89,74 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/':
             (context) => WelcomeScreen(
-              onLocaleChange: setLocale,
-              onThemeToggle: toggleTheme,
-            ),
+          onLocaleChange: setLocale,
+          onThemeToggle: toggleTheme,
+        ),
         '/register':
             (context) => RegisterScreen(
-              onLocaleChange: setLocale,
-              onThemeToggle: toggleTheme,
-            ),
+          onLocaleChange: setLocale,
+          onThemeToggle: toggleTheme,
+        ),
         '/login':
             (context) => LoginScreen(
-              onLocaleChange: setLocale,
-              onThemeToggle: toggleTheme,
-            ),
+          onLocaleChange: setLocale,
+          onThemeToggle: toggleTheme,
+        ),
         '/home':
             (context) => MyHomePage(
-              title: 'SmartSys Dashboard',
-              onLocaleChange: setLocale,
-              onThemeToggle: toggleTheme,
-            ),
+          title: 'SmartSys Dashboard',
+          onLocaleChange: setLocale,
+          onThemeToggle: toggleTheme,
+        ),
         '/settings':
             (context) => SettingsScreen(
-              onLocaleChange: setLocale,
-              onThemeToggle: toggleTheme,
-            ),
+          onLocaleChange: setLocale,
+          onThemeToggle: toggleTheme,
+        ),
         '/account':
             (context) => AccountScreen(
-              onLocaleChange: setLocale,
-              onThemeToggle: toggleTheme,
-            ),
+          onLocaleChange: setLocale,
+          onThemeToggle: toggleTheme,
+        ),
         '/edit-profile':
             (context) => EditProfileScreen(
-              onLocaleChange: setLocale,
-              onThemeToggle: toggleTheme,
-            ),
+          onLocaleChange: setLocale,
+          onThemeToggle: toggleTheme,
+        ),
         '/chats':
             (context) => ChatsScreen(
-              onLocaleChange: setLocale,
-              onThemeToggle: toggleTheme,
-            ),
+          onLocaleChange: setLocale,
+          onThemeToggle: toggleTheme,
+        ),
         '/chat_user':
             (context) => ChatUser(
-              onLocaleChange: setLocale,
-              onThemeToggle: toggleTheme,
-              idChat: 0, // TODO: Provide actual chat ID
-              idUsuarioEmisor: 0, // TODO: Provide actual sender user ID
-              idUsuarioReceptor: 0, // TODO: Provide actual receiver user ID
-              nombreUsuarioReceptor:
-                  '', // TODO: Provide actual receiver user name
-            ),
+          onLocaleChange: setLocale,
+          onThemeToggle: toggleTheme,
+          idChat: 0, // TODO: Provide actual chat ID
+          idUsuarioEmisor: 0, // TODO: Provide actual sender user ID
+          idUsuarioReceptor: 0, // TODO: Provide actual receiver user ID
+          nombreUsuarioReceptor:
+          '', // TODO: Provide actual receiver user name
+        ),
         '/calendar':
             (context) => CalendarScreen(
-              onLocaleChange: setLocale,
-              onThemeToggle: toggleTheme,
-            ),
+          onLocaleChange: setLocale,
+          onThemeToggle: toggleTheme,
+        ),
         '/institutions':
             (context) => InstitutionsScreen(
-              onLocaleChange: setLocale,
-              onThemeToggle: toggleTheme,
-            ),
+          onLocaleChange: setLocale,
+          onThemeToggle: toggleTheme,
+        ),
         '/publications':
             (context) => PublicationsScreen(
-              idPlataforma: 3, // o el ID que quieras mostrar
-              onLocaleChange: setLocale,
-              onThemeToggle: toggleTheme,
-            ),
+          idPlataforma: 3, // o el ID que quieras mostrar
+          onLocaleChange: setLocale,
+          onThemeToggle: toggleTheme,
+        ),
+        '/help': (context) => const HelpScreen(),
+        '/security-privacy': (context) => const SecurityPrivacyScreen(),
+        '/account-recover': (context) => AccountRecoverScreen(),
       },
     );
   }
