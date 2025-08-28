@@ -17,6 +17,7 @@ import 'screens/help_screen.dart';
 import 'screens/security_privacy.dart';
 import 'screens/account_recover.dart';
 import 'screens/ResetPasswordScreen.dart';
+import 'screens/admin_institution.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -141,6 +142,7 @@ class _MyAppState extends State<MyApp> {
           onLocaleChange: setLocale,
           onThemeToggle: toggleTheme,
         ),
+        '/admin_institution': (context) => const AdminInstitutionScreen(),
         '/help': (context) => const HelpScreen(),
         '/security-privacy': (context) => const SecurityPrivacyScreen(),
         '/account-recover': (context) => AccountRecoverScreen(),

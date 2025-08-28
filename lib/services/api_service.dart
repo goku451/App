@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 
 class ApiService {
   // RECORDAR CAMBIAR SOLO LA IP A LA IP LOCAL DE LA COMPUTADORA
-  static const String baseUrl = 'http://192.168.31.29:3000';
+  static const String baseUrl = 'http://192.168.0.12:3000';
 
   // Headers por defecto
   static Map<String, String> get defaultHeaders => {
