@@ -80,6 +80,10 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
+      final googleSignIn = GoogleSignIn();
+
+      // 👇 Forzamos cerrar sesión antes
+      await googleSignIn.signOut();
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
         Fluttertoast.showToast(msg: "Usuario canceló el login de Google");

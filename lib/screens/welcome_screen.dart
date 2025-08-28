@@ -5,7 +5,7 @@ import 'package:flutter_application_1/generated/l10n.dart';
 // Welcome Screen - First screen shown to users
 class WelcomeScreen extends StatefulWidget {
   final void Function(Locale locale) onLocaleChange;
-  final VoidCallback onThemeToggle; 
+  final VoidCallback onThemeToggle;
 
   const WelcomeScreen({
     super.key,
@@ -101,9 +101,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         icon: const Icon(Icons.language, color: Colors.white),
                         onPressed: () {
                           final newLocale =
-                              Localizations.localeOf(context).languageCode == 'es'
-                                  ? const Locale('en')
-                                  : const Locale('es');
+                          Localizations.localeOf(context).languageCode == 'es'
+                              ? const Locale('en')
+                              : const Locale('es');
                           widget.onLocaleChange(newLocale);
                         },
                       ),

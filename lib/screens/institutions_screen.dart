@@ -824,181 +824,181 @@ class _InstitutionsScreenState extends State<InstitutionsScreen> {
   // Widget para el banner de plataforma con datos dinámicos
   Widget _buildPlataformaBannerCard(Plataforma plataforma) {
     return GestureDetector(
-        onTap: () => _unirseAPlataforma(plataforma),
-        child: Container(
-            height: 120,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.black.withOpacity(0.3) // sombra más fuerte en modo oscuro
-                      : Colors.black.withOpacity(0.1), // sombra más suave en modo claro
-                  blurRadius: 8,
-                  spreadRadius: 2,
-                ),
-              ],
+      onTap: () => _unirseAPlataforma(plataforma),
+      child: Container(
+        height: 120,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.black.withOpacity(0.3) // sombra más fuerte en modo oscuro
+                  : Colors.black.withOpacity(0.1), // sombra más suave en modo claro
+              blurRadius: 8,
+              spreadRadius: 2,
             ),
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Stack(
-                  children: [
-                  // Imagen de fondo
-                  Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: plataforma.fondoBytes != null
-                      ? Image.memory(
-                    plataforma.fondoBytes!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return _buildDefaultBackground();
-                    },
-                  )
-                      : _buildDefaultBackground(),
-                ),
-                // Overlay oscuro semitransparente
-                Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withOpacity(0.3),
-                        Colors.black.withOpacity(0.7),
-                      ],
-                    ),
-                  ),
-                ),
-                // Contenido del banner
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              plataforma.nombrePlataforma,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              plataforma.descripcionPlataforma ?? S.of(context).No_Description_Available,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Avatar/Icono de la plataforma
-                      CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 25,
-                        child: plataforma.iconoBytes != null
-                            ? ClipRRect(
-                          borderRadius: BorderRadius.circular(25),
-                          child: Image.memory(
-                            plataforma.iconoBytes!,
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return _buildDefaultIcon();
-                            },
-                          ),
-                        )
-                            : _buildDefaultIcon(),
-                      ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
+            children: [
+              // Imagen de fondo
+              Container(
+                width: double.infinity,
+                height: double.infinity,
+                child: plataforma.fondoBytes != null
+                    ? Image.memory(
+                  plataforma.fondoBytes!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return _buildDefaultBackground();
+                  },
+                )
+                    : _buildDefaultBackground(),
+              ),
+              // Overlay oscuro semitransparente
+              Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.3),
+                      Colors.black.withOpacity(0.7),
                     ],
                   ),
                 ),
-// Estado de la plataforma
-                    if (plataforma.estadoPlataforma != 'Activo')
-                      Positioned(
-                        top: 8,
-                        left: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: plataforma.estadoPlataforma == 'Inactivo'
-                                ? Colors.red.withOpacity(0.8)
-                                : Colors.orange.withOpacity(0.8),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            plataforma.estadoPlataforma,
+              ),
+              // Contenido del banner
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            plataforma.nombrePlataforma,
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 10,
                               fontWeight: FontWeight.bold,
+                              fontSize: 18,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ),
-                    // Indicador de privacidad
-                    Positioned(
-                      top: 8,
-                      right: 40,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.4),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(
-                          plataforma.privacidadPlataforma.toLowerCase() == 'público' ||
-                              plataforma.privacidadPlataforma.toLowerCase() == 'public' ||
-                              plataforma.privacidadPlataforma.toLowerCase() == 'publica'
-                              ? Icons.public
-                              : Icons.lock,
-                          color: Colors.white,
-                          size: 12,
-                        ),
+                          const SizedBox(height: 4),
+                          Text(
+                            plataforma.descripcionPlataforma ?? S.of(context).No_Description_Available,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
                     ),
-                    // Botón de opciones (3 puntos)
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: GestureDetector(
-                        onTap: () => _showInstitutionOptions(context, plataforma),
-                        child: Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.4),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Icon(
-                            Icons.more_vert,
-                            color: Colors.white,
-                            size: 12,
-                          ),
+                    // Avatar/Icono de la plataforma
+                    CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 25,
+                      child: plataforma.iconoBytes != null
+                          ? ClipRRect(
+                        borderRadius: BorderRadius.circular(25),
+                        child: Image.memory(
+                          plataforma.iconoBytes!,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildDefaultIcon();
+                          },
                         ),
-                      ),
+                      )
+                          : _buildDefaultIcon(),
                     ),
                   ],
                 ),
-            ),
+              ),
+// Estado de la plataforma
+              if (plataforma.estadoPlataforma != 'Activo')
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: plataforma.estadoPlataforma == 'Inactivo'
+                          ? Colors.red.withOpacity(0.8)
+                          : Colors.orange.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      plataforma.estadoPlataforma,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              // Indicador de privacidad
+              Positioned(
+                top: 8,
+                right: 40,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    plataforma.privacidadPlataforma.toLowerCase() == 'público' ||
+                        plataforma.privacidadPlataforma.toLowerCase() == 'public' ||
+                        plataforma.privacidadPlataforma.toLowerCase() == 'publica'
+                        ? Icons.public
+                        : Icons.lock,
+                    color: Colors.white,
+                    size: 12,
+                  ),
+                ),
+              ),
+              // Botón de opciones (3 puntos)
+              Positioned(
+                top: 8,
+                right: 8,
+                child: GestureDetector(
+                  onTap: () => _showInstitutionOptions(context, plataforma),
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.more_vert,
+                      color: Colors.white,
+                      size: 12,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
+      ),
     );
   }
 

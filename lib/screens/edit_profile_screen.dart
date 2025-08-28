@@ -31,6 +31,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String userEmail = "email@example.com";
   String userPhone = "";
   String userBio = "";
+  String userCodigoUnico = "";
 
   @override
   void initState() {
@@ -49,6 +50,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           userName = user.nombre;
           userLastName = user.apellido;
           userEmail = user.correoElectronico;
+          userCodigoUnico = user.codigoUnico;
           userPhone = user.telefono ?? "";
           userBio = user.biografia ?? "";
           _isLoadingUser = false;
@@ -351,6 +353,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             _buildNonEditableProfileField(
                               S.of(context).Email,
                               userEmail,
+                            ),
+                            const SizedBox(height: 16),
+                            _buildNonEditableProfileField(
+                              S.of(context).Codigo,
+                              userCodigoUnico,
                             ),
                             const SizedBox(height: 16),
                             _buildEditableProfileField(
