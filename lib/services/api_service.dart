@@ -7,6 +7,7 @@ import '../models/platform.dart';
 import '../models/publications.dart';
 import '../models/chat.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ApiService {
   // RECORDAR CAMBIAR SOLO LA IP A LA IP LOCAL DE LA COMPUTADORA
@@ -680,15 +681,23 @@ class ApiService {
       final responseData = json.decode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return ApiResponse.success(
-          data: true,
-          message: responseData['mensaje'] ?? 'Unido a la plataforma privada',
-        );
+        final data = json.decode(response.body);
+
+        if (data['ok'] == true) {
+          return ApiResponse.success(
+            data: data['data'],
+            message: data['msg'] ?? 'Publicación creada exitosamente',
+          );
+        } else {
+          return ApiResponse.error(
+            message: data['msg'] ?? 'Error al crear publicación',
+          );
+        }
+
       } else {
+        final data = json.decode(response.body);
         return ApiResponse.error(
-          message:
-              responseData['mensaje'] ??
-              'Error al unirse a la plataforma privada',
+          message: data['msg'] ?? 'Error ${response.statusCode}',
         );
       }
     } catch (e) {
@@ -733,6 +742,58 @@ class ApiService {
   }
 }
 
+  static Future<ApiResponse<dynamic>> nuevaPublicacion({
+    required String titulo,
+    required String contenido,
+    required int idPlataforma,
+    required int idUsuario,
+    File? archivo,
+  }) async {
+    try {
+      var uri = Uri.parse('$baseUrl/nuevaPublicacion');
+      var request = http.MultipartRequest('POST', uri);
+
+      // Campos normales
+      request.fields['titulo'] = titulo;
+      request.fields['contenido'] = contenido;
+      request.fields['idPlataforma'] = idPlataforma.toString();
+      request.fields['idUsuario'] = idUsuario.toString();
+
+      // Archivo opcional
+      if (archivo != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'archivoAdjunto',
+            archivo.path,
+          ),
+        );
+      }
+
+      // Enviar
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // Usar el constructor success de tu ApiResponse
+        return ApiResponse.success(
+          data: data['data'], // o data completo, según lo que espere tu app
+          message: data['message'] ?? 'Publicación creada exitosamente',
+        );
+      } else {
+        // Usar el constructor error de tu ApiResponse
+        return ApiResponse.error(
+          message: 'Error ${response.statusCode}: ${response.reasonPhrase}',
+        );
+      }
+    } catch (e) {
+      // Usar el constructor error de tu ApiResponse
+      return ApiResponse.error(
+        message: e.toString(),
+      );
+    }
+  }
 
   // Obtener detalle de una publicación
   static Future<ApiResponse<Publicacion>> verPublicacion({

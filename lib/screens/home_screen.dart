@@ -771,160 +771,170 @@ class _MyHomePageState extends State<MyHomePage> {
       accentColor = Colors.grey;
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        color:
-        isDarkMode
-            ? const Color.fromARGB(
-          255,
-          65,
-          65,
-          65,
-        ) // gris oscuro en modo oscuro
-            : Colors.white, // blanco en modo claro
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color:
-            isDarkMode
-                ? Colors.black.withOpacity(
-              0.3,
-            ) // sombra más fuerte en modo oscuro
-                : Colors.black.withOpacity(
-              0.1,
-            ), // sombra más suave en modo claro
-            blurRadius: 8,
-            spreadRadius: 2,
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Header con gradient
-          Container(
-            height: 80,
+    return Stack(
+      children: [
+        // Tarjeta clickeable
+        InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.pushNamed(
+              context,
+              '/publications',
+              arguments: {
+                'idPlataforma': platform['idPlataforma'],
+                'platformData': platform,
+              },
+            );
+          },
+          child: Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [accentColor.withOpacity(0.7), accentColor],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
+              color: isDarkMode ? const Color.fromARGB(255, 65, 65, 65) : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: isDarkMode
+                      ? Colors.black.withOpacity(0.3)
+                      : Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  spreadRadius: 2,
+                ),
+              ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  // Icono de la plataforma
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
+            child: Column(
+              children: [
+                // Header con gradient
+                Container(
+                  height: 80,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [accentColor.withOpacity(0.7), accentColor],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                    child: _buildPlatformIcon(platform, accentColor),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
                   ),
-                  const SizedBox(width: 12),
-                  // Información de la plataforma
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
                       children: [
-                        Text(
-                          platform['nombrePlataforma'] ?? 'Sin nombre',
-                          style: const TextStyle(
+                        // Icono de la plataforma
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
                             color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          child: _buildPlatformIcon(platform, accentColor),
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          platform['rolUsuarioPlataforma'] ?? 'Sin rol',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
+                        const SizedBox(width: 12),
+                        // Información de la plataforma
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                platform['nombrePlataforma'] ?? 'Sin nombre',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                platform['rolUsuarioPlataforma'] ?? 'Sin rol',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+                        const SizedBox(width: 32), // espacio para el botón de opciones
                       ],
                     ),
                   ),
-                  // Botón de opciones
-                  GestureDetector(
-                    onTap: () => _showInstitutionOptions(context, platform),
-                    child: Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(16),
+                ),
+                // Contenido
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (platform['descripcionPlataforma'] != null &&
+                          platform['descripcionPlataforma'].toString().isNotEmpty)
+                        Text(
+                          platform['descripcionPlataforma'],
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDarkMode
+                                ? Colors.white.withOpacity(0.87)
+                                : Colors.black87,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          _buildInfoChip(
+                            platform['privacidadPlataforma'] ?? 'Sin definir',
+                            platform['privacidadPlataforma'] == 'Privado' ||
+                                platform['privacidadPlataforma'] == 'Private'
+                                ? Icons.lock
+                                : Icons.public,
+                            accentColor,
+                          ),
+                          const SizedBox(width: 8),
+                          _buildInfoChip(
+                            platform['estadoPlataforma'] ?? 'Sin estado',
+                            platform['estadoPlataforma'] == 'Activo'
+                                ? Icons.check_circle
+                                : Icons.pause_circle,
+                            platform['estadoPlataforma'] == 'Activo'
+                                ? Colors.green
+                                : Colors.grey,
+                          ),
+                        ],
                       ),
-                      child: const Icon(
-                        Icons.more_vert,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          ),
-          // Contenido
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (platform['descripcionPlataforma'] != null &&
-                    platform['descripcionPlataforma'].toString().isNotEmpty)
-                  Text(
-                    platform['descripcionPlataforma'],
-                    style: TextStyle(
-                      fontSize: 12,
-                      color:
-                      isDarkMode
-                          ? Colors.white.withOpacity(0.87)
-                          : Colors.black87,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    _buildInfoChip(
-                      platform['privacidadPlataforma'] ?? 'Sin definir',
-                      platform['privacidadPlataforma'] == 'Privado' ||
-                          platform['privacidadPlataforma'] == 'Private'
-                          ? Icons.lock
-                          : Icons.public,
-                      accentColor,
-                    ),
-                    const SizedBox(width: 8),
-                    _buildInfoChip(
-                      platform['estadoPlataforma'] ?? 'Sin estado',
-                      platform['estadoPlataforma'] == 'Activo'
-                          ? Icons.check_circle
-                          : Icons.pause_circle,
-                      platform['estadoPlataforma'] == 'Activo'
-                          ? Colors.green
-                          : Colors.grey,
-                    ),
-                  ],
                 ),
               ],
             ),
           ),
-        ],
-      ),
+        ),
+        // Botón de opciones encima
+        Positioned(
+          top: 16,
+          right: 16,
+          child: GestureDetector(
+            onTap: () => _showInstitutionOptions(context, platform),
+            child: Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(
+                Icons.more_vert,
+                color: Colors.white,
+                size: 16,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
