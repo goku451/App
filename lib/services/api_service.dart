@@ -210,6 +210,7 @@ class ApiService {
 
       if (response.statusCode == 200 && responseData['ok'] == true) {
         final user = User.fromJson(responseData['data']);
+        print(responseData["data"]);
         await _saveUserData(user);
         return ApiResponse.success(
           data: user,
@@ -787,7 +788,6 @@ class ApiService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final userData = prefs.getString('user_data');
-      print(userData);
       if (userData != null) {
         final userMap = json.decode(userData);
         return User.fromJson(userMap);

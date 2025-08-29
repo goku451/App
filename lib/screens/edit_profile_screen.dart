@@ -55,7 +55,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           userBio = user.biografia ?? "";
           _isLoadingUser = false;
         });
-        print('✅ Usuario cargado en EditProfile: $userName');
+        print('✅ Usuario cargado en EditProfile: $userCodigoUnico');
       } else {
         setState(() {
           _isLoadingUser = false;

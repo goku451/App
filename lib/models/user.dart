@@ -90,6 +90,7 @@ class User {
       'fechaCreacion': fechaCreacion?.toIso8601String(),
       'biografia': biografia,
       'foto_perfil': fotoPerfilBase64,
+      'codigoUnico': codigoUnico,
     };
   }
 
@@ -109,13 +110,13 @@ class User {
     String? biografia,
     String? fotoPerfilBase64,
     Uint8List? fotoBytes,
+    String? codigoUnico,
   }) {
     return User(
       idUsuario: idUsuario ?? this.idUsuario,
       nombre: nombre ?? this.nombre,
       apellido: apellido ?? this.apellido,
       correoElectronico: correoElectronico ?? this.correoElectronico,
-      codigoUnico: codigoUnico ?? this.codigoUnico,
       telefono: telefono ?? this.telefono,
       tipoUsuario: tipoUsuario ?? this.tipoUsuario,
       estadoCuenta: estadoCuenta ?? this.estadoCuenta,
@@ -123,6 +124,7 @@ class User {
       biografia: biografia ?? this.biografia,
       fotoPerfilBase64: fotoPerfilBase64 ?? this.fotoPerfilBase64,
       fotoBytes: fotoBytes ?? this.fotoBytes,
+      codigoUnico: codigoUnico ?? this.codigoUnico,
     );
   }
 
