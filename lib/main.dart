@@ -137,11 +137,24 @@ class _MyAppState extends State<MyApp> {
           onLocaleChange: setLocale,
           onThemeToggle: toggleTheme,
         ),
-        '/publications': (context) => PublicationsScreen(
-          idPlataforma: 3,
-          onLocaleChange: setLocale,
-          onThemeToggle: toggleTheme,
-        ),
+        '/publications': (context) {
+          final args =
+          ModalRoute.of(context)?.settings.arguments
+          as Map<String, dynamic>?;
+          int? idPlataforma;
+          if (args != null && args['idPlataforma'] != null) {
+            // Convierte a int si viene como String
+            idPlataforma =
+            args['idPlataforma'] is int
+                ? args['idPlataforma']
+                : int.tryParse(args['idPlataforma'].toString());
+          }
+          return PublicationsScreen(
+            idPlataforma: idPlataforma,
+            onLocaleChange: setLocale,
+            onThemeToggle: toggleTheme,
+          );
+        },
         '/admin_institution': (context) => const AdminInstitutionScreen(),
         '/help': (context) => const HelpScreen(),
         '/security-privacy': (context) => const SecurityPrivacyScreen(),
