@@ -171,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Theme.of(context).colorScheme.onBackground,
                 ),
                 title: Text(
-                  'Publicaciones',
+                  S.of(context).Publications,
                   style: TextStyle(
                     color: Theme.of(context).textTheme.titleLarge?.color,
                   ),

@@ -75,7 +75,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }
     } catch (e) {
       Fluttertoast.showToast(
-        msg: 'Error inesperado: $e',
+        msg: '${S.of(context).Unexpected_Error}: $e',
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,
@@ -92,11 +92,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     try {
       final googleSignIn = GoogleSignIn();
 
-      // 👇 Forzamos cerrar sesión antes
+      // Forzamos cerrar sesión antes
       await googleSignIn.signOut();
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
-        Fluttertoast.showToast(msg: "Usuario canceló el login de Google");
+        Fluttertoast.showToast(msg: S.of(context).Google_Login_Cancelled);
         return;
       }
 
@@ -131,7 +131,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           }
         } else {
           Fluttertoast.showToast(
-            msg: "Error guardando el usuario: ${response.message}",
+            msg: "${S.of(context).Error_Saving_User}: ${response.message}",
             backgroundColor: Colors.red,
             textColor: Colors.white,
           );
@@ -139,7 +139,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }
     } catch (e) {
       Fluttertoast.showToast(
-        msg: "Error con Google: $e",
+        msg: "${S.of(context).Google_Error}: $e",
         backgroundColor: Colors.red,
         textColor: Colors.white,
       );
@@ -148,9 +148,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (mounted) setState(() => _isLoading = false);
     }
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -448,7 +445,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: OutlinedButton(
-                            onPressed: _isLoading ? null : _signInWithGoogle, // <- Cambiado aquí
+                            onPressed: _isLoading ? null : _signInWithGoogle,
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -479,7 +476,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
-                                  'Registrarse con Google',
+                                  S.of(context).Register_With_Google,
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: Theme.of(context).colorScheme.onBackground,
@@ -489,7 +486,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ],
                             ),
                           ),
-
                         ),
                         const SizedBox(height: 16),
 

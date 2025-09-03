@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/generated/l10n.dart';
 
 class SecurityPrivacyScreen extends StatefulWidget {
   const SecurityPrivacyScreen({super.key});
@@ -39,7 +40,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Seguridad y privacidad',
+          S.of(context).Security_Privacy_Title,
           style: TextStyle(
             color: Theme.of(context).textTheme.titleLarge?.color,
             fontSize: 20,
@@ -55,17 +56,17 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Sección Privacidad
-              _buildSectionTitle('Privacidad'),
+              _buildSectionTitle(S.of(context).Privacy_Section),
               const SizedBox(height: 12),
 
               // Visibilidad
-              _buildSubSectionTitle('Visibilidad'),
+              _buildSubSectionTitle(S.of(context).Visibility_Subsection),
               const SizedBox(height: 8),
 
               _buildPrivacyCard([
                 _buildToggleItem(
-                  title: 'Cuenta privada',
-                  description: 'Los usuarios no podrán ver tu información personal, a menos que seas el administrador de la plataforma.',
+                  title: S.of(context).Private_Account,
+                  description: S.of(context).Private_Account_Description,
                   value: _cuentaPrivada,
                   onChanged: (value) {
                     setState(() {
@@ -75,8 +76,8 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                 ),
                 const Divider(height: 1),
                 _buildToggleItem(
-                  title: 'Estado de actividad',
-                  description: 'Tú y los usuarios verán su estado de actividad. Debes tener la opción activada.',
+                  title: S.of(context).Activity_Status,
+                  description: S.of(context).Activity_Status_Description,
                   value: _estadoActividad,
                   onChanged: (value) {
                     setState(() {
@@ -89,29 +90,29 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
               const SizedBox(height: 32),
 
               // Sección Seguridad
-              _buildSectionTitle('Seguridad'),
+              _buildSectionTitle(S.of(context).Security_Section),
               const SizedBox(height: 12),
 
               _buildPrivacyCard([
                 _buildNavigationItem(
-                  title: 'Alertas de seguridad',
+                  title: S.of(context).Security_Alerts,
                   onTap: () {},
                 ),
                 const Divider(height: 1),
                 _buildNavigationItem(
-                  title: 'Verificación de seguridad',
+                  title: S.of(context).Security_Verification,
                   onTap: () {},
                 ),
                 const Divider(height: 1),
                 _buildNavigationItemWithStatus(
-                  title: 'Permitir activar chats mediante mi código',
-                  status: 'Activado',
+                  title: S.of(context).Allow_Chat_Code,
+                  status: S.of(context).Activated,
                   onTap: () {},
                 ),
                 const Divider(height: 1),
                 _buildToggleItem(
-                  title: 'Guardar los datos de inicio de sesión',
-                  description: 'Inicia sesión en smartsys en este dispositivo sin necesidad de ingresar tus datos.',
+                  title: S.of(context).Save_Login_Data,
+                  description: S.of(context).Save_Login_Data_Description,
                   value: _guardarDatosSesion,
                   onChanged: (value) {
                     setState(() {
@@ -121,21 +122,20 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                 ),
                 const Divider(height: 1),
                 _buildNavigationItem(
-                  title: 'Bloquear usuarios',
+                  title: S.of(context).Block_Users,
                   onTap: () {},
                 ),
               ]),
 
-
               const SizedBox(height: 32),
 
               const SizedBox(height: 16),
-              _buildSubSectionTitle('Interacciones'),
+              _buildSubSectionTitle(S.of(context).Interactions_Subsection),
               const SizedBox(height: 8),
 
               _buildPrivacyCard([
                 _buildToggleItem(
-                  title: 'Notificaciones',
+                  title: S.of(context).Notifications_Toggle,
                   value: _meGusta,
                   onChanged: (value) {
                     setState(() {
@@ -145,7 +145,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                 ),
                 const Divider(height: 1),
                 _buildToggleItem(
-                  title: 'Comentarios',
+                  title: S.of(context).Comments_Toggle,
                   value: _comentarios,
                   onChanged: (value) {
                     setState(() {
@@ -155,7 +155,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                 ),
                 const Divider(height: 1),
                 _buildToggleItem(
-                  title: 'Chat habilitado',
+                  title: S.of(context).Chat_Enabled,
                   value: _nuevosSeguidores,
                   onChanged: (value) {
                     setState(() {
@@ -165,7 +165,7 @@ class _SecurityPrivacyScreenState extends State<SecurityPrivacyScreen> {
                 ),
                 const Divider(height: 1),
                 _buildToggleItem(
-                  title: 'Permitir descarga de archivos de publicaciones',
+                  title: S.of(context).Allow_File_Download,
                   value: _publicacionesCompartidas,
                   onChanged: (value) {
                     setState(() {

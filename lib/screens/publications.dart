@@ -7,6 +7,7 @@ import '../services/api_service.dart';
 import '../models/publications.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:flutter_application_1/generated/l10n.dart'; // IMPORTAR PARA TRADUCCIONES
 
 class PublicationsScreen extends StatefulWidget {
   final int? idPlataforma;
@@ -52,6 +53,29 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
     }
   }
 
+  Widget _buildDefaultPlatformBackground(Color accentColor) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            accentColor,
+            accentColor.withOpacity(0.7),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDefaultPlatformIcon(Color accentColor) {
+    return Icon(
+      Icons.account_balance,
+      color: accentColor,
+      size: 30,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -61,6 +85,15 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
       setState(() {
         _idPlataforma = widget.idPlataforma ?? args?['idPlataforma'] ?? 0;
         _platformData = args?['platformData'];
+        // Debug: Imprimir los datos recibidos
+        print('=== DEBUG PLATFORM DATA ===');
+        print('Platform data keys: ${_platformData?.keys.toList()}');
+        print('Platform name: ${_platformData?['nombrePlataforma']}');
+        print('Has fondoBytes: ${_platformData?['fondoBytes'] != null}');
+        print('Has iconoBytes: ${_platformData?['iconoBytes'] != null}');
+        print('Has fondoPlataforma: ${_platformData?['fondoPlataforma'] != null}');
+        print('Has iconoPlataforma: ${_platformData?['iconoPlataforma'] != null}');
+        print('============================');
       });
       _loadData();
     });
@@ -93,7 +126,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
       }
     } catch (e) {
       setState(() {
-        _errorMessage = "Error al cargar publicaciones: $e";
+        _errorMessage = S.of(context).Publications_Load_Error; // TRADUCIDO
       });
     }
   }
@@ -113,36 +146,108 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
     return const Color(0xFF1976D2);
   }
 
+  // Método mejorado para obtener el background
   Uint8List? _getPlatformBackgroundBytes() {
-    if (_platformData == null) return null;
-    try {
-      final fondoBytes = _platformData!['fondoBytes'];
-      if (fondoBytes != null && fondoBytes is Uint8List) return fondoBytes;
-      final fondoData = _platformData!['fondoPlataforma'];
-      if (fondoData != null) {
-        if (fondoData is String) return base64.decode(fondoData);
-        if (fondoData is Uint8List) return fondoData;
-      }
-    } catch (e) {
-      print('Error loading platform background: $e');
+    if (_platformData == null) {
+      print('No platform data available');
+      return null;
     }
-    return null;
+
+    try {
+      // Prioridad 1: fondoBytes (Uint8List directo)
+      final fondoBytes = _platformData!['fondoBytes'];
+      if (fondoBytes != null) {
+        if (fondoBytes is Uint8List && fondoBytes.isNotEmpty) {
+          print('✅ Using fondoBytes (${fondoBytes.length} bytes)');
+          return fondoBytes;
+        }
+        print('❌ fondoBytes exists but is not valid Uint8List or is empty');
+      }
+
+      // Prioridad 2: fondoPlataforma (string base64 o Uint8List)
+      final fondoPlataforma = _platformData!['fondoPlataforma'];
+      if (fondoPlataforma != null) {
+        if (fondoPlataforma is String && fondoPlataforma.isNotEmpty) {
+          try {
+            // Limpiar el string base64 de posibles prefijos
+            String cleanBase64 = fondoPlataforma;
+            if (cleanBase64.startsWith('data:image/')) {
+              cleanBase64 = cleanBase64.split(',').last;
+            }
+
+            final decoded = base64.decode(cleanBase64);
+            print('✅ Using fondoPlataforma string converted to bytes (${decoded.length} bytes)');
+            return decoded;
+          } catch (e) {
+            print('❌ Error decoding base64 background: $e');
+            print('❌ Base64 string length: ${fondoPlataforma.length}');
+            print('❌ Base64 preview: ${fondoPlataforma.substring(0, 50)}...');
+          }
+        } else if (fondoPlataforma is Uint8List && fondoPlataforma.isNotEmpty) {
+          print('✅ Using fondoPlataforma as Uint8List (${fondoPlataforma.length} bytes)');
+          return fondoPlataforma;
+        }
+        print('❌ fondoPlataforma exists but is not valid format');
+      }
+
+      print('❌ No valid background data found in platform data');
+      return null;
+    } catch (e) {
+      print('❌ Exception in _getPlatformBackgroundBytes: $e');
+      return null;
+    }
   }
 
+  // Método mejorado para obtener el icono
   Uint8List? _getPlatformIconBytes() {
-    if (_platformData == null) return null;
-    try {
-      final iconoBytes = _platformData!['iconoBytes'];
-      if (iconoBytes != null && iconoBytes is Uint8List) return iconoBytes;
-      final iconoData = _platformData!['iconoPlataforma'];
-      if (iconoData != null) {
-        if (iconoData is String) return base64.decode(iconoData);
-        if (iconoData is Uint8List) return iconoData;
-      }
-    } catch (e) {
-      print('Error loading platform icon: $e');
+    if (_platformData == null) {
+      print('No platform data available for icon');
+      return null;
     }
-    return null;
+
+    try {
+      // Prioridad 1: iconoBytes (Uint8List directo)
+      final iconoBytes = _platformData!['iconoBytes'];
+      if (iconoBytes != null) {
+        if (iconoBytes is Uint8List && iconoBytes.isNotEmpty) {
+          print('✅ Using iconoBytes (${iconoBytes.length} bytes)');
+          return iconoBytes;
+        }
+        print('❌ iconoBytes exists but is not valid Uint8List or is empty');
+      }
+
+      // Prioridad 2: iconoPlataforma (string base64 o Uint8List)
+      final iconoPlataforma = _platformData!['iconoPlataforma'];
+      if (iconoPlataforma != null) {
+        if (iconoPlataforma is String && iconoPlataforma.isNotEmpty) {
+          try {
+            // Limpiar el string base64 de posibles prefijos
+            String cleanBase64 = iconoPlataforma;
+            if (cleanBase64.startsWith('data:image/')) {
+              cleanBase64 = cleanBase64.split(',').last;
+            }
+
+            final decoded = base64.decode(cleanBase64);
+            print('✅ Using iconoPlataforma string converted to bytes (${decoded.length} bytes)');
+            return decoded;
+          } catch (e) {
+            print('❌ Error decoding base64 icon: $e');
+            print('❌ Base64 string length: ${iconoPlataforma.length}');
+            print('❌ Base64 preview: ${iconoPlataforma.substring(0, 50)}...');
+          }
+        } else if (iconoPlataforma is Uint8List && iconoPlataforma.isNotEmpty) {
+          print('✅ Using iconoPlataforma as Uint8List (${iconoPlataforma.length} bytes)');
+          return iconoPlataforma;
+        }
+        print('❌ iconoPlataforma exists but is not valid format');
+      }
+
+      print('❌ No valid icon data found in platform data');
+      return null;
+    } catch (e) {
+      print('❌ Exception in _getPlatformIconBytes: $e');
+      return null;
+    }
   }
 
   @override
@@ -173,24 +278,35 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
   }
 
   // ---------------------------
-  // HEADER
+  // HEADER MEJORADO
   // ---------------------------
   Widget _buildPlatformBanner(Color accentColor, bool isDarkMode) {
     final backgroundBytes = _getPlatformBackgroundBytes();
     final iconBytes = _getPlatformIconBytes();
+
     return Container(
       height: 200,
       width: double.infinity,
       child: Stack(
         children: [
-          backgroundBytes != null
-              ? Image.memory(
-            backgroundBytes,
-            fit: BoxFit.cover,
+          // Imagen de fondo de la plataforma
+          Container(
             width: double.infinity,
             height: double.infinity,
-          )
-              : Container(color: accentColor.withOpacity(0.3)),
+            child: backgroundBytes != null
+                ? Image.memory(
+              backgroundBytes,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+              errorBuilder: (context, error, stackTrace) {
+                print('❌ Error displaying background image: $error');
+                return _buildDefaultPlatformBackground(accentColor);
+              },
+            )
+                : _buildDefaultPlatformBackground(accentColor),
+          ),
+          // Overlay semitransparente para mejor legibilidad
           Container(
             width: double.infinity,
             height: double.infinity,
@@ -205,6 +321,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
               ),
             ),
           ),
+          // Contenido del banner
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -231,21 +348,44 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                 const SizedBox(height: 20),
                 Row(
                   children: [
+                    // Icono de la plataforma mejorado
                     Container(
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 8,
+                            spreadRadius: 2,
+                          ),
+                        ],
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: iconBytes != null
-                            ? Image.memory(iconBytes, fit: BoxFit.cover)
-                            : Icon(
-                          Icons.account_balance,
-                          color: accentColor,
-                          size: 30,
+                            ? Image.memory(
+                          iconBytes,
+                          fit: BoxFit.cover,
+                          width: 60,
+                          height: 60,
+                          errorBuilder: (context, error, stackTrace) {
+                            print('❌ Error displaying icon image: $error');
+                            return Container(
+                              width: 60,
+                              height: 60,
+                              color: Colors.white,
+                              child: _buildDefaultPlatformIcon(accentColor),
+                            );
+                          },
+                        )
+                            : Container(
+                          width: 60,
+                          height: 60,
+                          color: Colors.white,
+                          child: _buildDefaultPlatformIcon(accentColor),
                         ),
                       ),
                     ),
@@ -255,21 +395,35 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _platformData?['nombrePlataforma'] ?? 'Plataforma',
+                            _platformData?['nombrePlataforma'] ?? S.of(context).Platform_Default_Name, // TRADUCIDO
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
+                              shadows: [
+                                Shadow(
+                                  offset: Offset(1, 1),
+                                  blurRadius: 3,
+                                  color: Colors.black45,
+                                ),
+                              ],
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            _platformData?['descripcionPlataforma'] ?? 'Sin descripción',
+                            _platformData?['descripcionPlataforma'] ?? S.of(context).No_Description, // TRADUCIDO
                             style: const TextStyle(
                               color: Colors.white70,
                               fontSize: 14,
+                              shadows: [
+                                Shadow(
+                                  offset: Offset(1, 1),
+                                  blurRadius: 3,
+                                  color: Colors.black45,
+                                ),
+                              ],
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -310,7 +464,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
             children: [
               _buildTabButton(
                 icon: Icons.announcement_outlined,
-                label: 'Novedades',
+                label: S.of(context).Publications_Tab_News, // TRADUCIDO
                 isSelected: _tabController.index == 0,
                 onTap: () => _tabController.animateTo(0),
                 accentColor: accentColor,
@@ -318,7 +472,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
               ),
               _buildTabButton(
                 icon: Icons.assignment_outlined,
-                label: 'Asignaciones',
+                label: S.of(context).Publications_Tab_Assignments, // TRADUCIDO
                 isSelected: _tabController.index == 1,
                 onTap: () => _tabController.animateTo(1),
                 accentColor: accentColor,
@@ -326,7 +480,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
               ),
               _buildTabButton(
                 icon: Icons.people_outlined,
-                label: 'Personas',
+                label: S.of(context).Publications_Tab_People, // TRADUCIDO
                 isSelected: _tabController.index == 2,
                 onTap: () => _tabController.animateTo(2),
                 accentColor: accentColor,
@@ -417,7 +571,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                   Icon(Icons.edit, color: accentColor, size: 20),
                   const SizedBox(width: 12),
                   Text(
-                    'Nuevo anuncio',
+                    S.of(context).Publications_New_Announcement, // TRADUCIDO
                     style: TextStyle(
                       color: isDarkMode ? Colors.white70 : Colors.grey[600],
                       fontSize: 16,
@@ -432,8 +586,8 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
           child: _publicaciones.isEmpty
               ? _buildEmptyState(
             Icons.article_outlined,
-            'No hay novedades',
-            'Las publicaciones aparecerán aquí',
+            S.of(context).Publications_No_News, // TRADUCIDO
+            S.of(context).Publications_News_Subtitle, // TRADUCIDO
           )
               : RefreshIndicator(
             onRefresh: _loadPublicaciones,
@@ -475,7 +629,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
+          // Header con icono mejorado
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -486,15 +640,45 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        spreadRadius: 1,
+                      ),
+                    ],
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: iconBytes != null
-                        ? Image.memory(iconBytes, fit: BoxFit.cover)
-                        : Icon(
-                      Icons.description,
-                      color: accentColor,
-                      size: 20,
+                        ? Image.memory(
+                      iconBytes,
+                      fit: BoxFit.cover,
+                      width: 40,
+                      height: 40,
+                      errorBuilder: (context, error, stackTrace) {
+                        print('❌ Error displaying card icon: $error');
+                        return Container(
+                          width: 40,
+                          height: 40,
+                          color: Colors.white,
+                          child: Icon(
+                            Icons.description,
+                            color: accentColor,
+                            size: 20,
+                          ),
+                        );
+                      },
+                    )
+                        : Container(
+                      width: 40,
+                      height: 40,
+                      color: Colors.white,
+                      child: Icon(
+                        Icons.description,
+                        color: accentColor,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ),
@@ -504,7 +688,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _platformData?['nombrePlataforma'] ?? 'Plataforma',
+                        _platformData?['nombrePlataforma'] ?? S.of(context).Platform_Default_Name, // TRADUCIDO
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -605,7 +789,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
               ],
               const SizedBox(height: 16),
               Text(
-                "Publicado el: ${DateFormat('dd/MM/yyyy').format(pub.fechaPublicacion)}",
+                "${S.of(context).Publications_Published_On} ${DateFormat('dd/MM/yyyy').format(pub.fechaPublicacion)}", // TRADUCIDO
                 style: TextStyle(
                   color: isDarkMode ? Colors.white54 : Colors.grey[600],
                   fontSize: 12,
@@ -616,7 +800,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
         ),
         actions: [
           TextButton(
-            child: Text("Cerrar", style: TextStyle(color: accentColor)),
+            child: Text(S.of(context).Close, style: TextStyle(color: accentColor)), // TRADUCIDO
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -690,9 +874,9 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                             _createAnnouncement(titleController.text, contentController.text);
                             Navigator.of(context).pop();
                           },
-                          child: const Text(
-                            'Crear',
-                            style: TextStyle(
+                          child: Text(
+                            S.of(context).Publications_Create_Button, // TRADUCIDO
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -730,9 +914,9 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                               Expanded(
                                 child: TextField(
                                   controller: titleController,
-                                  decoration: const InputDecoration(
-                                    hintText: 'Anuncia algo a la clase',
-                                    hintStyle: TextStyle(
+                                  decoration: InputDecoration(
+                                    hintText: S.of(context).Publications_Title_Hint, // TRADUCIDO
+                                    hintStyle: const TextStyle(
                                       color: Colors.grey,
                                       fontSize: 16,
                                     ),
@@ -764,9 +948,9 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                             ),
                             child: TextField(
                               controller: contentController,
-                              decoration: const InputDecoration(
-                                hintText: 'Escribe tu anuncio aquí...',
-                                hintStyle: TextStyle(
+                              decoration: InputDecoration(
+                                hintText: S.of(context).Publications_Content_Hint, // TRADUCIDO
+                                hintStyle: const TextStyle(
                                   color: Colors.grey,
                                   fontSize: 16,
                                 ),
@@ -856,8 +1040,8 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                                 const SizedBox(width: 12),
                                 Text(
                                   _archivoAdjunto != null
-                                      ? 'Cambiar archivo adjunto'
-                                      : 'Agregar archivo adjunto',
+                                      ? S.of(context).Publications_Change_Attachment // TRADUCIDO
+                                      : S.of(context).Publications_Add_Attachment, // TRADUCIDO
                                   style: TextStyle(
                                     color: Colors.grey[600],
                                     fontSize: 16,
@@ -883,8 +1067,8 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
     // Validaciones básicas
     if (title.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('El título es requerido'),
+        SnackBar(
+          content: Text(S.of(context).Publications_Title_Required), // TRADUCIDO
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ),
@@ -894,8 +1078,8 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
 
     if (content.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('El contenido es requerido'),
+        SnackBar(
+          content: Text(S.of(context).Publications_Content_Required), // TRADUCIDO
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ),
@@ -905,19 +1089,19 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
 
     // Mostrar indicador de carga
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+      SnackBar(
         content: Row(
           children: [
-            SizedBox(
+            const SizedBox(
               width: 20,
               height: 20,
               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
             ),
-            SizedBox(width: 16),
-            Text('Creando anuncio...'),
+            const SizedBox(width: 16),
+            Text(S.of(context).Publications_Creating), // TRADUCIDO
           ],
         ),
-        duration: Duration(seconds: 30),
+        duration: const Duration(seconds: 30),
       ),
     );
 
@@ -941,7 +1125,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
         contenido: content.trim(),
         idPlataforma: _idPlataforma,
         idUsuario: currentUser!.idUsuario,
-        archivo: archivo, // Pasar File en lugar de XFile
+        archivo: archivo,
       );
 
       // Ocultar el indicador de carga
@@ -956,11 +1140,11 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
         // Éxito
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('¡Anuncio creado exitosamente!'),
+            content: Text(S.of(context).Publications_Created_Success), // TRADUCIDO
             backgroundColor: _getPlatformAccentColor(),
             behavior: SnackBarBehavior.floating,
             action: SnackBarAction(
-              label: 'Ver',
+              label: S.of(context).Publications_View, // TRADUCIDO
               textColor: Colors.white,
               onPressed: () {
                 // Opcional: navegar al anuncio creado
@@ -978,7 +1162,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
         await _loadPublicaciones();
       } else {
         // Error del servidor
-        final errorMessage = response.message ?? 'Error desconocido al crear el anuncio';
+        final errorMessage = response.message ?? S.of(context).Publications_Create_Error; // TRADUCIDO
         print('Error del servidor: $errorMessage');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -998,13 +1182,13 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
       // Error de conexión o excepción
       String errorMessage;
       if (e.toString().contains('SocketException') || e.toString().contains('Connection')) {
-        errorMessage = 'Error de conexión. Verifica tu internet.';
+        errorMessage = S.of(context).Connection_Error; // TRADUCIDO
       } else if (e.toString().contains('TimeoutException')) {
-        errorMessage = 'La petición tardó demasiado. Intenta de nuevo.';
+        errorMessage = S.of(context).Publications_Timeout_Error; // TRADUCIDO
       } else if (e.toString().contains('FormatException')) {
-        errorMessage = 'Error en el formato de respuesta del servidor.';
+        errorMessage = S.of(context).Publications_Format_Error; // TRADUCIDO
       } else {
-        errorMessage = 'Error inesperado: ${e.toString()}';
+        errorMessage = '${S.of(context).Unexpected_Error}: ${e.toString()}'; // TRADUCIDO
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1016,7 +1200,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
               Text(errorMessage),
               if (e.toString().length < 100)
                 Text(
-                  'Detalle: ${e.toString()}',
+                  '${S.of(context).Publications_Error_Detail}: ${e.toString()}', // TRADUCIDO
                   style: const TextStyle(fontSize: 12, color: Colors.white70),
                 ),
             ],
@@ -1025,7 +1209,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 8),
           action: SnackBarAction(
-            label: 'Reintentar',
+            label: S.of(context).Retry, // TRADUCIDO
             textColor: Colors.white,
             onPressed: () => _createAnnouncement(title, content),
           ),
@@ -1059,9 +1243,9 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'Adjuntar archivo',
-                  style: TextStyle(
+                Text(
+                  S.of(context).Publications_Attach_File, // TRADUCIDO
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -1070,7 +1254,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                 const SizedBox(height: 20),
                 _buildAttachOption(
                   icon: Icons.photo_library,
-                  title: 'Galería',
+                  title: S.of(context).Publications_Gallery, // TRADUCIDO
                   onTap: () async {
                     Navigator.pop(context);
                     final ImagePicker picker = ImagePicker();
@@ -1097,7 +1281,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                       print('Error al seleccionar imagen: $e');
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Error al seleccionar imagen: $e'),
+                          content: Text('${S.of(context).Publications_Image_Select_Error}: $e'), // TRADUCIDO
                           backgroundColor: Colors.red,
                         ),
                       );
@@ -1106,7 +1290,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                 ),
                 _buildAttachOption(
                   icon: Icons.camera_alt,
-                  title: 'Cámara',
+                  title: S.of(context).Publications_Camera, // TRADUCIDO
                   onTap: () async {
                     Navigator.pop(context);
                     final ImagePicker picker = ImagePicker();
@@ -1133,7 +1317,7 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                       print('Error al tomar foto: $e');
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Error al tomar foto: $e'),
+                          content: Text('${S.of(context).Publications_Photo_Take_Error}: $e'), // TRADUCIDO
                           backgroundColor: Colors.red,
                         ),
                       );
@@ -1142,12 +1326,12 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
                 ),
                 _buildAttachOption(
                   icon: Icons.insert_drive_file,
-                  title: 'Documento',
+                  title: S.of(context).Publications_Document, // TRADUCIDO
                   onTap: () {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Función de documentos próximamente disponible'),
+                      SnackBar(
+                        content: Text(S.of(context).Publications_Document_Soon), // TRADUCIDO
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
@@ -1200,14 +1384,14 @@ class _PublicationsScreenState extends State<PublicationsScreen> with SingleTick
   // ---------------------------
   Widget _buildAsignacionesTab() => _buildEmptyState(
     Icons.assignment_outlined,
-    'No hay asignaciones',
-    'Las tareas y trabajos aparecerán aquí',
+    S.of(context).Publications_No_Assignments, // TRADUCIDO
+    S.of(context).Publications_Assignments_Subtitle, // TRADUCIDO
   );
 
   Widget _buildPersonasTab() => _buildEmptyState(
     Icons.people_outlined,
-    'No hay personas',
-    'Los miembros de la plataforma aparecerán aquí',
+    S.of(context).Publications_No_People, // TRADUCIDO
+    S.of(context).Publications_People_Subtitle, // TRADUCIDO
   );
 
   Widget _buildEmptyState(IconData icon, String title, String subtitle) {

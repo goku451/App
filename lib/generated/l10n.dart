@@ -90,11 +90,11 @@ class S {
     );
   }
 
-  /// `Star`
-  String get Star {
+  /// `Start`
+  String get Start {
     return Intl.message(
-      'Star',
-      name: 'Star',
+      'Start',
+      name: 'Start',
       desc: '',
       args: [],
     );
@@ -1285,6 +1285,776 @@ class S {
     return Intl.message(
       'Code',
       name: 'Codigo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unexpected error`
+  String get Unexpected_Error {
+    return Intl.message(
+      'Unexpected error',
+      name: 'Unexpected_Error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User cancelled Google login`
+  String get Google_Login_Cancelled {
+    return Intl.message(
+      'User cancelled Google login',
+      name: 'Google_Login_Cancelled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error saving user`
+  String get Error_Saving_User {
+    return Intl.message(
+      'Error saving user',
+      name: 'Error_Saving_User',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Google error`
+  String get Google_Error {
+    return Intl.message(
+      'Google error',
+      name: 'Google_Error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Register with Google`
+  String get Register_With_Google {
+    return Intl.message(
+      'Register with Google',
+      name: 'Register_With_Google',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign in with Google`
+  String get Login_With_Google {
+    return Intl.message(
+      'Sign in with Google',
+      name: 'Login_With_Google',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Forgot your password? Recover account`
+  String get Forgot_Password_Recover {
+    return Intl.message(
+      'Forgot your password? Recover account',
+      name: 'Forgot_Password_Recover',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Security and Privacy`
+  String get Security_Privacy_Title {
+    return Intl.message(
+      'Security and Privacy',
+      name: 'Security_Privacy_Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy`
+  String get Privacy_Section {
+    return Intl.message(
+      'Privacy',
+      name: 'Privacy_Section',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Visibility`
+  String get Visibility_Subsection {
+    return Intl.message(
+      'Visibility',
+      name: 'Visibility_Subsection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Private account`
+  String get Private_Account {
+    return Intl.message(
+      'Private account',
+      name: 'Private_Account',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Users will not be able to see your personal information, unless you are the platform administrator.`
+  String get Private_Account_Description {
+    return Intl.message(
+      'Users will not be able to see your personal information, unless you are the platform administrator.',
+      name: 'Private_Account_Description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Activity status`
+  String get Activity_Status {
+    return Intl.message(
+      'Activity status',
+      name: 'Activity_Status',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You and users will see their activity status. You must have the option enabled.`
+  String get Activity_Status_Description {
+    return Intl.message(
+      'You and users will see their activity status. You must have the option enabled.',
+      name: 'Activity_Status_Description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Security`
+  String get Security_Section {
+    return Intl.message(
+      'Security',
+      name: 'Security_Section',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Security alerts`
+  String get Security_Alerts {
+    return Intl.message(
+      'Security alerts',
+      name: 'Security_Alerts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Security verification`
+  String get Security_Verification {
+    return Intl.message(
+      'Security verification',
+      name: 'Security_Verification',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow enabling chats through my code`
+  String get Allow_Chat_Code {
+    return Intl.message(
+      'Allow enabling chats through my code',
+      name: 'Allow_Chat_Code',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Activated`
+  String get Activated {
+    return Intl.message(
+      'Activated',
+      name: 'Activated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save login data`
+  String get Save_Login_Data {
+    return Intl.message(
+      'Save login data',
+      name: 'Save_Login_Data',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign in to SmartSys on this device without entering your data.`
+  String get Save_Login_Data_Description {
+    return Intl.message(
+      'Sign in to SmartSys on this device without entering your data.',
+      name: 'Save_Login_Data_Description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Block users`
+  String get Block_Users {
+    return Intl.message(
+      'Block users',
+      name: 'Block_Users',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Interactions`
+  String get Interactions_Subsection {
+    return Intl.message(
+      'Interactions',
+      name: 'Interactions_Subsection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notifications`
+  String get Notifications_Toggle {
+    return Intl.message(
+      'Notifications',
+      name: 'Notifications_Toggle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Comments`
+  String get Comments_Toggle {
+    return Intl.message(
+      'Comments',
+      name: 'Comments_Toggle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chat enabled`
+  String get Chat_Enabled {
+    return Intl.message(
+      'Chat enabled',
+      name: 'Chat_Enabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow downloading files from publications`
+  String get Allow_File_Download {
+    return Intl.message(
+      'Allow downloading files from publications',
+      name: 'Allow_File_Download',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Help Center`
+  String get Help_Center_Title {
+    return Intl.message(
+      'Help Center',
+      name: 'Help_Center_Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Help Center`
+  String get Help_Center_Header {
+    return Intl.message(
+      'Help Center',
+      name: 'Help_Center_Header',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hello! How can we help you?`
+  String get Help_Center_Subtitle {
+    return Intl.message(
+      'Hello! How can we help you?',
+      name: 'Help_Center_Subtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search help...`
+  String get Help_Search_Hint {
+    return Intl.message(
+      'Search help...',
+      name: 'Help_Search_Hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Popular articles`
+  String get Help_Popular_Articles {
+    return Intl.message(
+      'Popular articles',
+      name: 'Help_Popular_Articles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No results found`
+  String get Help_No_Results {
+    return Intl.message(
+      'No results found',
+      name: 'Help_No_Results',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try different search terms`
+  String get Help_Try_Different_Terms {
+    return Intl.message(
+      'Try different search terms',
+      name: 'Help_Try_Different_Terms',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create an account`
+  String get Help_Create_Account_Title {
+    return Intl.message(
+      'Create an account',
+      name: 'Help_Create_Account_Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `To create an account on our platform, go to the registration screen where you must provide your full name, valid email address and create a secure password. Once this data is completed, you will receive a verification email that you must confirm to activate your account.`
+  String get Help_Create_Account_Content {
+    return Intl.message(
+      'To create an account on our platform, go to the registration screen where you must provide your full name, valid email address and create a secure password. Once this data is completed, you will receive a verification email that you must confirm to activate your account.',
+      name: 'Help_Create_Account_Content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verify email address`
+  String get Help_Verify_Email_Title {
+    return Intl.message(
+      'Verify email address',
+      name: 'Help_Verify_Email_Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `After registering, it is important to verify your email address to activate all the functionalities of your account. Check your inbox and look for the verification email. If you don't find it, check your spam folder. Click the verification link to complete the process.`
+  String get Help_Verify_Email_Content {
+    return Intl.message(
+      'After registering, it is important to verify your email address to activate all the functionalities of your account. Check your inbox and look for the verification email. If you don\'t find it, check your spam folder. Click the verification link to complete the process.',
+      name: 'Help_Verify_Email_Content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chat`
+  String get Help_Chat_Title {
+    return Intl.message(
+      'Chat',
+      name: 'Help_Chat_Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `To start a chat with another user, you will need their unique code. Each user has a personal code that they must share with you. Go to the Chat section, enter the unique code of the user you want to chat with and a new private chat will be automatically created between you.`
+  String get Help_Chat_Content {
+    return Intl.message(
+      'To start a chat with another user, you will need their unique code. Each user has a personal code that they must share with you. Go to the Chat section, enter the unique code of the user you want to chat with and a new private chat will be automatically created between you.',
+      name: 'Help_Chat_Content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Configure your profile`
+  String get Help_Configure_Profile_Title {
+    return Intl.message(
+      'Configure your profile',
+      name: 'Help_Configure_Profile_Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customize your profile by accessing settings from the main menu. Here you can add a profile photo, write a biography, update your personal information and configure your privacy preferences. A complete profile will help you connect better with other users.`
+  String get Help_Configure_Profile_Content {
+    return Intl.message(
+      'Customize your profile by accessing settings from the main menu. Here you can add a profile photo, write a biography, update your personal information and configure your privacy preferences. A complete profile will help you connect better with other users.',
+      name: 'Help_Configure_Profile_Content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Checking session...`
+  String get checking_session {
+    return Intl.message(
+      'Checking session...',
+      name: 'checking_session',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Platform`
+  String get Platform_Default_Name {
+    return Intl.message(
+      'Platform',
+      name: 'Platform_Default_Name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `News`
+  String get Publications_Tab_News {
+    return Intl.message(
+      'News',
+      name: 'Publications_Tab_News',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Assignments`
+  String get Publications_Tab_Assignments {
+    return Intl.message(
+      'Assignments',
+      name: 'Publications_Tab_Assignments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `People`
+  String get Publications_Tab_People {
+    return Intl.message(
+      'People',
+      name: 'Publications_Tab_People',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New announcement`
+  String get Publications_New_Announcement {
+    return Intl.message(
+      'New announcement',
+      name: 'Publications_New_Announcement',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No news`
+  String get Publications_No_News {
+    return Intl.message(
+      'No news',
+      name: 'Publications_No_News',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Publications will appear here`
+  String get Publications_News_Subtitle {
+    return Intl.message(
+      'Publications will appear here',
+      name: 'Publications_News_Subtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Published on`
+  String get Publications_Published_On {
+    return Intl.message(
+      'Published on',
+      name: 'Publications_Published_On',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create`
+  String get Publications_Create_Button {
+    return Intl.message(
+      'Create',
+      name: 'Publications_Create_Button',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Announce something to the class`
+  String get Publications_Title_Hint {
+    return Intl.message(
+      'Announce something to the class',
+      name: 'Publications_Title_Hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Write your announcement here...`
+  String get Publications_Content_Hint {
+    return Intl.message(
+      'Write your announcement here...',
+      name: 'Publications_Content_Hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change attachment`
+  String get Publications_Change_Attachment {
+    return Intl.message(
+      'Change attachment',
+      name: 'Publications_Change_Attachment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add attachment`
+  String get Publications_Add_Attachment {
+    return Intl.message(
+      'Add attachment',
+      name: 'Publications_Add_Attachment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Title is required`
+  String get Publications_Title_Required {
+    return Intl.message(
+      'Title is required',
+      name: 'Publications_Title_Required',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Content is required`
+  String get Publications_Content_Required {
+    return Intl.message(
+      'Content is required',
+      name: 'Publications_Content_Required',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Creating announcement...`
+  String get Publications_Creating {
+    return Intl.message(
+      'Creating announcement...',
+      name: 'Publications_Creating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Announcement created successfully!`
+  String get Publications_Created_Success {
+    return Intl.message(
+      'Announcement created successfully!',
+      name: 'Publications_Created_Success',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View`
+  String get Publications_View {
+    return Intl.message(
+      'View',
+      name: 'Publications_View',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unknown error creating announcement`
+  String get Publications_Create_Error {
+    return Intl.message(
+      'Unknown error creating announcement',
+      name: 'Publications_Create_Error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Request took too long. Try again.`
+  String get Publications_Timeout_Error {
+    return Intl.message(
+      'Request took too long. Try again.',
+      name: 'Publications_Timeout_Error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Server response format error.`
+  String get Publications_Format_Error {
+    return Intl.message(
+      'Server response format error.',
+      name: 'Publications_Format_Error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Detail`
+  String get Publications_Error_Detail {
+    return Intl.message(
+      'Detail',
+      name: 'Publications_Error_Detail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Attach file`
+  String get Publications_Attach_File {
+    return Intl.message(
+      'Attach file',
+      name: 'Publications_Attach_File',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gallery`
+  String get Publications_Gallery {
+    return Intl.message(
+      'Gallery',
+      name: 'Publications_Gallery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Camera`
+  String get Publications_Camera {
+    return Intl.message(
+      'Camera',
+      name: 'Publications_Camera',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Document`
+  String get Publications_Document {
+    return Intl.message(
+      'Document',
+      name: 'Publications_Document',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error selecting image`
+  String get Publications_Image_Select_Error {
+    return Intl.message(
+      'Error selecting image',
+      name: 'Publications_Image_Select_Error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error taking photo`
+  String get Publications_Photo_Take_Error {
+    return Intl.message(
+      'Error taking photo',
+      name: 'Publications_Photo_Take_Error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Document feature coming soon`
+  String get Publications_Document_Soon {
+    return Intl.message(
+      'Document feature coming soon',
+      name: 'Publications_Document_Soon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No assignments`
+  String get Publications_No_Assignments {
+    return Intl.message(
+      'No assignments',
+      name: 'Publications_No_Assignments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tasks and assignments will appear here`
+  String get Publications_Assignments_Subtitle {
+    return Intl.message(
+      'Tasks and assignments will appear here',
+      name: 'Publications_Assignments_Subtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No people`
+  String get Publications_No_People {
+    return Intl.message(
+      'No people',
+      name: 'Publications_No_People',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Platform members will appear here`
+  String get Publications_People_Subtitle {
+    return Intl.message(
+      'Platform members will appear here',
+      name: 'Publications_People_Subtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error loading publications`
+  String get Publications_Load_Error {
+    return Intl.message(
+      'Error loading publications',
+      name: 'Publications_Load_Error',
       desc: '',
       args: [],
     );
