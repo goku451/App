@@ -197,7 +197,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                       ),
                       child: Text(
-                        S.of(context).Star,
+                        S.of(context).Start,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

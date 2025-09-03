@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/generated/l10n.dart';
 
 class HelpScreen extends StatefulWidget {
   const HelpScreen({super.key});
@@ -12,22 +13,22 @@ class _HelpScreenState extends State<HelpScreen> {
   String _searchQuery = "";
   int? _expandedIndex;
 
-  final List<Map<String, String>> _helpItems = [
+  List<Map<String, String>> get _helpItems => [
     {
-      'title': 'Crear una cuenta',
-      'content': 'Para crear una cuenta en nuestra plataforma, dirígete a la pantalla de registro donde deberás proporcionar tu nombre completo, correo electrónico válido y crear una contraseña segura. Una vez completados estos datos, recibirás un correo de verificación que deberás confirmar para activar tu cuenta.',
+      'title': S.of(context).Help_Create_Account_Title,
+      'content': S.of(context).Help_Create_Account_Content,
     },
     {
-      'title': 'Verificar correo electrónico',
-      'content': 'Después de registrarte, es importante verificar tu correo electrónico para activar todas las funcionalidades de tu cuenta. Revisa tu bandeja de entrada y busca el correo de verificación. Si no lo encuentras, revisa la carpeta de spam. Haz clic en el enlace de verificación para completar el proceso.',
+      'title': S.of(context).Help_Verify_Email_Title,
+      'content': S.of(context).Help_Verify_Email_Content,
     },
     {
-      'title': 'Chatear',
-      'content': 'Para iniciar un chat con otro usuario, necesitarás su código único. Cada usuario tiene un código personal que debe compartir contigo. Ve al apartado de Chat, ingresa el código único del usuario con quien deseas conversar y se creará automáticamente un nuevo chat privado entre ustedes.',
+      'title': S.of(context).Help_Chat_Title,
+      'content': S.of(context).Help_Chat_Content,
     },
     {
-      'title': 'Configurar tu perfil',
-      'content': 'Personaliza tu perfil accediendo a la configuración desde el menú principal. Aquí podrás agregar una foto de perfil, escribir una biografía, actualizar tu información personal y configurar tus preferencias de privacidad. Un perfil completo te ayudará a conectar mejor con otros usuarios.',
+      'title': S.of(context).Help_Configure_Profile_Title,
+      'content': S.of(context).Help_Configure_Profile_Content,
     },
   ];
 
@@ -66,7 +67,7 @@ class _HelpScreenState extends State<HelpScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Centro de ayuda',
+          S.of(context).Help_Center_Title,
           style: TextStyle(
             color: Theme.of(context).textTheme.titleLarge?.color,
             fontSize: 20,
@@ -99,7 +100,7 @@ class _HelpScreenState extends State<HelpScreen> {
                 child: Column(
                   children: [
                     Text(
-                      'Centro de Ayuda',
+                      S.of(context).Help_Center_Header,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -109,7 +110,7 @@ class _HelpScreenState extends State<HelpScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '¡Hola! ¿En qué podemos ayudarte?',
+                      S.of(context).Help_Center_Subtitle,
                       style: TextStyle(
                         fontSize: 18,
                         color: Colors.white.withOpacity(0.9),
@@ -144,7 +145,7 @@ class _HelpScreenState extends State<HelpScreen> {
                     color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Buscar ayuda...',
+                    hintText: S.of(context).Help_Search_Hint,
                     hintStyle: TextStyle(
                       color: Colors.grey[isDarkMode ? 400 : 400],
                     ),
@@ -190,7 +191,7 @@ class _HelpScreenState extends State<HelpScreen> {
 
               // Articles section
               Text(
-                'Artículos populares',
+                S.of(context).Help_Popular_Articles,
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -227,7 +228,7 @@ class _HelpScreenState extends State<HelpScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'No se encontraron resultados',
+                        S.of(context).Help_No_Results,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -236,7 +237,7 @@ class _HelpScreenState extends State<HelpScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Intenta con otros términos de búsqueda',
+                        S.of(context).Help_Try_Different_Terms,
                         style: TextStyle(
                           color: Colors.grey[isDarkMode ? 500 : 500],
                         ),
@@ -357,17 +358,17 @@ class _HelpScreenState extends State<HelpScreen> {
   }
 
   IconData _getIconForTitle(String title) {
-    switch (title.toLowerCase()) {
-      case 'crear una cuenta':
-        return Icons.person_add;
-      case 'verificar correo electrónico':
-        return Icons.mark_email_read;
-      case 'chatear':
-        return Icons.chat_bubble;
-      case 'configurar tu perfil':
-        return Icons.settings;
-      default:
-        return Icons.help;
+    // Comparamos usando las claves de traducción para ser más robustos
+    if (title == S.of(context).Help_Create_Account_Title) {
+      return Icons.person_add;
+    } else if (title == S.of(context).Help_Verify_Email_Title) {
+      return Icons.mark_email_read;
+    } else if (title == S.of(context).Help_Chat_Title) {
+      return Icons.chat_bubble;
+    } else if (title == S.of(context).Help_Configure_Profile_Title) {
+      return Icons.settings;
+    } else {
+      return Icons.help;
     }
   }
 }

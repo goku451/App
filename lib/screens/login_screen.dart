@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       Fluttertoast.showToast(
-        msg: 'Error inesperado: $e',
+        msg: '${S.of(context).Unexpected_Error}: $e',
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,
@@ -82,11 +82,11 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final googleSignIn = GoogleSignIn();
 
-      // 👇 Forzamos cerrar sesión antes
+      // Forzamos cerrar sesión antes
       await googleSignIn.signOut();
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
-        Fluttertoast.showToast(msg: "Usuario canceló el login de Google");
+        Fluttertoast.showToast(msg: S.of(context).Google_Login_Cancelled);
         return;
       }
 
@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         } else {
           Fluttertoast.showToast(
-            msg: "Error guardando el usuario: ${response.message}",
+            msg: "${S.of(context).Error_Saving_User}: ${response.message}",
             backgroundColor: Colors.red,
             textColor: Colors.white,
           );
@@ -129,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       Fluttertoast.showToast(
-        msg: "Error con Google: $e",
+        msg: "${S.of(context).Google_Error}: $e",
         backgroundColor: Colors.red,
         textColor: Colors.white,
       );
@@ -138,8 +138,6 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) setState(() => _isLoading = false);
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -381,7 +379,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
-                                  'Iniciar sesión con Google',
+                                  S.of(context).Login_With_Google,
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: Theme.of(context).colorScheme.onBackground,
@@ -414,7 +412,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.pushNamed(context, '/account-recover');
                           },
                           child: Text(
-                            '¿Olvidaste tu contraseña? Recuperar cuenta',
+                            S.of(context).Forgot_Password_Recover,
                             style: TextStyle(color: Color(0xFF7B7B8A)),
                           ),
                         ),
