@@ -19,14 +19,15 @@ import 'screens/account_recover.dart';
 import 'screens/ResetPasswordScreen.dart';
 import 'screens/admin_institution.dart';
 
+//juego
+import 'screens/game.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -50,7 +51,7 @@ class _MyAppState extends State<MyApp> {
   void toggleTheme() {
     setState(() {
       _themeMode =
-      _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+          _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
     });
   }
 
@@ -88,66 +89,79 @@ class _MyAppState extends State<MyApp> {
       ],
       initialRoute: '/',
       routes: {
-        '/': (context) => WelcomeScreen(
-          onLocaleChange: setLocale,
-          onThemeToggle: toggleTheme,
-        ),
-        '/register': (context) => RegisterScreen(
-          onLocaleChange: setLocale,
-          onThemeToggle: toggleTheme,
-        ),
-        '/login': (context) => LoginScreen(
-          onLocaleChange: setLocale,
-          onThemeToggle: toggleTheme,
-        ),
-        '/home': (context) => MyHomePage(
-          title: 'SmartSys Dashboard',
-          onLocaleChange: setLocale,
-          onThemeToggle: toggleTheme,
-        ),
-        '/settings': (context) => SettingsScreen(
-          onLocaleChange: setLocale,
-          onThemeToggle: toggleTheme,
-        ),
-        '/account': (context) => AccountScreen(
-          onLocaleChange: setLocale,
-          onThemeToggle: toggleTheme,
-        ),
-        '/edit-profile': (context) => EditProfileScreen(
-          onLocaleChange: setLocale,
-          onThemeToggle: toggleTheme,
-        ),
-        '/chats': (context) => ChatsScreen(
-          onLocaleChange: setLocale,
-          onThemeToggle: toggleTheme,
-        ),
-        '/chat_user': (context) => ChatUser(
-          onLocaleChange: setLocale,
-          onThemeToggle: toggleTheme,
-          idChat: 0,
-          idUsuarioEmisor: 0,
-          idUsuarioReceptor: 0,
-          nombreUsuarioReceptor: '',
-        ),
-        '/calendar': (context) => CalendarScreen(
-          onLocaleChange: setLocale,
-          onThemeToggle: toggleTheme,
-        ),
-        '/institutions': (context) => InstitutionsScreen(
-          onLocaleChange: setLocale,
-          onThemeToggle: toggleTheme,
-        ),
+        '/':
+            (context) => WelcomeScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/game':
+            (context) => FlappyBirdGame(),
+        '/register':
+            (context) => RegisterScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/login':
+            (context) => LoginScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/home':
+            (context) => MyHomePage(
+              title: 'SmartSys Dashboard',
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/settings':
+            (context) => SettingsScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/account':
+            (context) => AccountScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/edit-profile':
+            (context) => EditProfileScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/chats':
+            (context) => ChatsScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/chat_user':
+            (context) => ChatUser(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+              idChat: 0,
+              idUsuarioEmisor: 0,
+              idUsuarioReceptor: 0,
+              nombreUsuarioReceptor: '',
+            ),
+        '/calendar':
+            (context) => CalendarScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
+        '/institutions':
+            (context) => InstitutionsScreen(
+              onLocaleChange: setLocale,
+              onThemeToggle: toggleTheme,
+            ),
         '/publications': (context) {
           final args =
-          ModalRoute.of(context)?.settings.arguments
-          as Map<String, dynamic>?;
+              ModalRoute.of(context)?.settings.arguments
+                  as Map<String, dynamic>?;
           int? idPlataforma;
           if (args != null && args['idPlataforma'] != null) {
             // Convierte a int si viene como String
             idPlataforma =
-            args['idPlataforma'] is int
-                ? args['idPlataforma']
-                : int.tryParse(args['idPlataforma'].toString());
+                args['idPlataforma'] is int
+                    ? args['idPlataforma']
+                    : int.tryParse(args['idPlataforma'].toString());
           }
           return PublicationsScreen(
             idPlataforma: idPlataforma,

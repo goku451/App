@@ -148,7 +148,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                       );
                     },
                   ),
-                  // Notification bell with red dot
+                  // // Notification bell with red dot
                   Stack(
                     children: [
                       Icon(

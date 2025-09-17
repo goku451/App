@@ -191,22 +191,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ListTile(
                 leading: Icon(
-                  Icons.report,
-                  color: Theme.of(context).colorScheme.onBackground,
-                ),
-                title: Text(
-                  S.of(context).Report,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.titleLarge?.color,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  // Lógica para reportar plataforma
-                },
-              ),
-              ListTile(
-                leading: Icon(
                   Icons.exit_to_app,
                   color: Theme.of(context).colorScheme.onBackground,
                 ),

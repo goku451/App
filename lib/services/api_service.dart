@@ -11,7 +11,7 @@ import 'dart:io';
 
 class ApiService {
   // RECORDAR CAMBIAR SOLO LA IP A LA IP LOCAL DE LA COMPUTADORA
-  static const String baseUrl = 'http://192.168.1.36:3000';
+  static const String baseUrl = 'http://192.168.1.6:3000';
 
   // Headers por defecto
   static Map<String, String> get defaultHeaders => {
@@ -680,24 +680,16 @@ class ApiService {
       );
       final responseData = json.decode(response.body);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = json.decode(response.body);
-
-        if (data['ok'] == true) {
-          return ApiResponse.success(
-            data: data['data'],
-            message: data['msg'] ?? 'Publicación creada exitosamente',
-          );
-        } else {
-          return ApiResponse.error(
-            message: data['msg'] ?? 'Error al crear publicación',
-          );
-        }
-
+if (response.statusCode == 200 || response.statusCode == 201) {
+        return ApiResponse.success(
+          data: true,
+          message: responseData['mensaje'] ?? 'Unido a la plataforma privada',
+        );
       } else {
-        final data = json.decode(response.body);
         return ApiResponse.error(
-          message: data['msg'] ?? 'Error ${response.statusCode}',
+          message:
+              responseData['mensaje'] ??
+              'Error al unirse a la plataforma pública',
         );
       }
     } catch (e) {
@@ -707,6 +699,7 @@ class ApiService {
       );
     }
   }
+
   // ------------------ PUBLICACIONES ------------------ //
 
   // Obtener todas las publicaciones de una plataforma

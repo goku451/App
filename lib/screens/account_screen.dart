@@ -81,7 +81,7 @@ class _AccountScreenState extends State<AccountScreen> {
         Navigator.pushNamed(context, '/calendar'); // Navega a calendario
         break;
       case 4:
-      // Already on account screen
+        // Already on account screen
         break;
     }
   }
@@ -131,15 +131,26 @@ class _AccountScreenState extends State<AccountScreen> {
               // Welcome section with profile picture
               Container(
                 decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? const Color.fromARGB(255, 65, 65, 65) // gris oscuro en modo oscuro
-                      : Colors.white, // blanco en modo claro
+                  color:
+                      isDarkMode
+                          ? const Color.fromARGB(
+                            255,
+                            65,
+                            65,
+                            65,
+                          ) // gris oscuro en modo oscuro
+                          : Colors.white, // blanco en modo claro
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: isDarkMode
-                          ? Colors.black.withOpacity(0.3) // sombra más fuerte en modo oscuro
-                          : Colors.black.withOpacity(0.05), // sombra más suave en modo claro
+                      color:
+                          isDarkMode
+                              ? Colors.black.withOpacity(
+                                0.3,
+                              ) // sombra más fuerte en modo oscuro
+                              : Colors.black.withOpacity(
+                                0.05,
+                              ), // sombra más suave en modo claro
                       blurRadius: 2,
                       spreadRadius: 1,
                     ),
@@ -152,9 +163,9 @@ class _AccountScreenState extends State<AccountScreen> {
                       radius: 35,
                       backgroundColor: Colors.grey[300],
                       backgroundImage:
-                      currentUser?.fotoBytes != null
-                          ? MemoryImage(currentUser!.fotoBytes!)
-                          : const AssetImage('assets/plat.png'),
+                          currentUser?.fotoBytes != null
+                              ? MemoryImage(currentUser!.fotoBytes!)
+                              : const AssetImage('assets/plat.png'),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -172,34 +183,38 @@ class _AccountScreenState extends State<AccountScreen> {
                           // ✅ NOMBRE DINÁMICO DEL USUARIO
                           _isLoadingUser
                               ? Row(
-                            children: [
-                              Container(
-                                width: 140,
-                                height: 22,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[isDarkMode ? 600 : 300],
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              SizedBox(
-                                width: 14,
-                                height: 14,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.grey[400],
-                                ),
-                              ),
-                            ],
-                          )
+                                children: [
+                                  Container(
+                                    width: 140,
+                                    height: 22,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Colors.grey[isDarkMode ? 600 : 300],
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  SizedBox(
+                                    width: 14,
+                                    height: 14,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.grey[400],
+                                    ),
+                                  ),
+                                ],
+                              )
                               : Text(
-                            userName,
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).textTheme.titleLarge?.color,
-                            ),
-                          ),
+                                userName,
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      Theme.of(
+                                        context,
+                                      ).textTheme.titleLarge?.color,
+                                ),
+                              ),
 
                           const SizedBox(height: 8),
                         ],
@@ -231,38 +246,44 @@ class _AccountScreenState extends State<AccountScreen> {
                     _buildAccountOption(
                       icon: Icons.language,
                       title:
-                      Localizations.localeOf(context).languageCode == 'es'
-                          ? S
-                          .of(context)
-                          .En // Si está español, mostrar "Inglés"
-                          : S
-                          .of(context)
-                          .Es, // Si está inglés, mostrar "Español"
+                          Localizations.localeOf(context).languageCode == 'es'
+                              ? S
+                                  .of(context)
+                                  .En // Si está español, mostrar "Inglés"
+                              : S
+                                  .of(context)
+                                  .Es, // Si está inglés, mostrar "Español"
                       onTap: () {
                         final newLocale =
-                        Localizations.localeOf(context).languageCode == 'es'
-                            ? const Locale('en')
-                            : const Locale('es');
+                            Localizations.localeOf(context).languageCode == 'es'
+                                ? const Locale('en')
+                                : const Locale('es');
                         widget.onLocaleChange(newLocale);
                       },
                     ),
                     const SizedBox(height: 12),
                     _buildAccountOption(
                       icon:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? Icons.light_mode
-                          : Icons.dark_mode,
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Icons.light_mode
+                              : Icons.dark_mode,
                       title:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? S
-                          .of(context)
-                          .Light_Mode // Si está dark, mostrar modo claro
-                          : S
-                          .of(context)
-                          .Dark_Mode, // Si está light, mostrar modo oscuro
+                          Theme.of(context).brightness == Brightness.dark
+                              ? S
+                                  .of(context)
+                                  .Light_Mode // Si está dark, mostrar modo claro
+                              : S
+                                  .of(context)
+                                  .Dark_Mode, // Si está light, mostrar modo oscuro
                       onTap: () {
                         widget.onThemeToggle();
                       },
+                    ),
+                    const SizedBox(height: 12),
+                    _buildAccountOption(
+                      icon: Icons.games,
+                      title: "Flappy Bird",
+                      onTap: () => Navigator.pushNamed(context, '/game'),
                     ),
                   ],
                 ),
@@ -289,9 +310,15 @@ class _AccountScreenState extends State<AccountScreen> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         elevation: 0,
-        backgroundColor: isDarkMode
-            ? const Color.fromARGB(255, 65, 65, 65) // gris oscuro en modo oscuro
-            : Colors.white, // blanco en modo claro
+        backgroundColor:
+            isDarkMode
+                ? const Color.fromARGB(
+                  255,
+                  65,
+                  65,
+                  65,
+                ) // gris oscuro en modo oscuro
+                : Colors.white, // blanco en modo claro
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
           BottomNavigationBarItem(
@@ -324,15 +351,26 @@ class _AccountScreenState extends State<AccountScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDarkMode
-            ? const Color.fromARGB(255, 65, 65, 65) // gris oscuro en modo oscuro
-            : Colors.white, // blanco en modo claro
+        color:
+            isDarkMode
+                ? const Color.fromARGB(
+                  255,
+                  65,
+                  65,
+                  65,
+                ) // gris oscuro en modo oscuro
+                : Colors.white, // blanco en modo claro
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: isDarkMode
-                ? Colors.black.withOpacity(0.3) // sombra más fuerte en modo oscuro
-                : Colors.black.withOpacity(0.05), // sombra más suave en modo claro
+            color:
+                isDarkMode
+                    ? Colors.black.withOpacity(
+                      0.3,
+                    ) // sombra más fuerte en modo oscuro
+                    : Colors.black.withOpacity(
+                      0.05,
+                    ), // sombra más suave en modo claro
             blurRadius: 2,
             spreadRadius: 1,
           ),
@@ -352,10 +390,7 @@ class _AccountScreenState extends State<AccountScreen> {
             color: Theme.of(context).textTheme.titleLarge?.color,
           ),
         ),
-        trailing: Icon(
-          Icons.chevron_right,
-          color: Colors.grey[400],
-        ),
+        trailing: Icon(Icons.chevron_right, color: Colors.grey[400]),
         onTap: onTap,
       ),
     );
